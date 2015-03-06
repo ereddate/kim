@@ -2,7 +2,9 @@
 开发框架
 
 # 说明
-	jq-app或自定义属性名：应用父标签
+	kim-app = name view名称或自定义属性名：应用父标签 
+
+	kim-control属性标注为kim控件 = name 控件名称
 
 	model属性名：操作对象
 	
