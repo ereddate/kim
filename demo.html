@@ -5,61 +5,77 @@
 		<script src="jquery.2.1.3.js"></script>
 	</head>
 	<body>
-		<div jq-app>
-			<header>
-				<h1 jq-model="to title_show:custom:title_fun" jq-result="title_show">title:{{title}}</h1>
-				<p><span jq-result="desc">desc</span> <button jq-model="to desc:click:desc_show">from click</button></p>
+		<div kim-app="view">
+			<header kim-control="header">
+				<h1 model="to this:[custom=handle.title_fun]">title：{{title}}</h1>
+				<p><span to="desc">desc</span> <button model="to desc:[click=handle.desc_show]">from click</button></p>
 			</header>
 			<div>
-				<input type="text" value="" jq-model="to test:keyup" /><span jq-result="test"></span>
-				<p><select jq-model="to select_show:change"><option value="0">请选择...</option><option value="1">aaa</option></select><span jq-result="select_show"></span></p>
-				<p><input jq-model="to select_show1:keyup" value="" /><select jq-result="select_show1"><option value="0">请选择...</option><option value="1">aaa</option></select></p>
-				<p><span jq-model="op op_val.obja-(op_val.objb+op_val.objc)*op_val.objd/op_val.obje:exp">loading...</span></p>
-				<p><span jq-model="op op_val.obja-(op_val.objb+op_val.objc)">loading...</span></p>
-				<p><span jq-model="op op_exp">loading...</span></p>
-				<p><span jq-model="op op_exp:exp">loading...</span></p>
-				<p><span jq-model="to span_show:custom:span_fun" jq-result="span_show">show:{{result}}</span></p>
+				<input type="text" value="" model="to test:[keyup]" /><span to="test"></span>
+				<p><select model="to select_show:[change]"><option value="0">请选择...</option><option value="1">aaa</option></select><span to="select_show"></span></p>
+				<p><input model="to select_show1:[keyup]" value="" /><select to="select_show1"><option value="0">请选择...</option><option value="1">aaa</option></select></p>
+				<p><span model="op this:[data.op_val.obja-(data.op_val.objb+data.op_val.objc)*data.op_val.objd/data.op_val.obje,exp,3]">loading...</span></p>
+				<p><span model="op this:[data.op_val.obja-(data.op_val.objb+data.op_val.objc),4]">loading...</span></p>
+				<p><span model="op this:[handle.op_exp]">loading...</span></p>
+				<p><span model="op this:[handle.op_exp,exp,5]">loading...</span></p>
+				<p><span model="to this:[custom=handle.span_fun]">show：{{to}}</span></p>
+				<p><span model="ft this:[money]">price：{{12000000000}}</span></p>
+				<p><span model="ft this:[phone]">phone：{{12000000000}}</span></p>
+				<p><span model="ft this:[card]">card：{{1200000000000000}}</span></p>
 			</div>
 		</div>
-		<div ng-app>
+		<div ng-app="view">
 			<header>
-				<h1 jq-model="to title_show1:custom:title_fun1" jq-result="title_show1">title:{{title}}</h1>
-				<p><span jq-result="desc">desc</span> <button jq-model="to desc:click:desc_show">from click</button></p>
+				<h1 model="to this:[custom=data.title_fun1]">title：{{title}}</h1>
+				<p><span to="desc">desc</span> <button model="to desc:[click=handle.desc_show]">from click</button></p>
 			</header>
-			<div><input type="text" value="" jq-model="to test:keyup" /><span jq-result="test"></span></div>
+			<div><input type="text" value="" model="to test:[keyup]" /><span to="test"></span></div>
 		</div>
 
 		<script src="kim.0.0.1.js"></script>
 		<script>
-			console.log(kim({
-				base:"jq-app",
-				op_val:{
-					obja:300.70,
-					objb:200.5,
-					objc:100.10,
-					objd:400,
-					obje:500.50
+			var obj;
+			console.log(obj = kim({
+				base:"kim-app",
+				data:{
+					op_val:{
+						obja:300.70,
+						objb:200.5,
+						objc:100.10,
+						objd:400,
+						obje:500.50
+					},
 				},
-				title_fun:function(e, from, to){
-					return {title:"title0"};
-				},
-				span_fun:function(e, from, to){
-					return {result:"custom"};
-				},
-				op_exp:function(){
-					return "(300-200+100)*400/500";
-				},
-				desc_show:function(e, from, to){
-					jQuery(to).html("from click ok!");
+				handle:{
+					title_fun:function(e, from, to){
+						return {title:"title0"};
+					},
+					span_fun:function(e, from, to){
+						return {to:"custom"};
+					},
+					op_exp:function(){
+						return "(300-200+100)*400/500";
+					},
+					desc_show:function(e, from, to, target){
+						jQuery(to).html("from click ok!");
+						var control = jQuery(target.controls["header"]).clone();
+						jQuery(target.views["view"]).append(control);
+						obj.buildItem(control);
+					}
 				}
 			}));
+			obj.refresh();
 			console.log(kim({
 				base:"ng-app",
-				title_fun1:{
-					title:"title1"
+				data:{
+					title_fun1:{
+						title:"title1"
+					}
 				},
-				desc_show:function(e, from, to){
-					jQuery(to).html("from click ok! ng");
+				handle:{
+					desc_show:function(e, from, to){
+						jQuery(to).html("from click ok! ng");
+					}
 				}
 			}))
 		</script>
