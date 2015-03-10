@@ -94,7 +94,7 @@
 			result.each(function(i, target) {
 				!self.views && (self.views = {});
 				self.views[jQuery(target).attr(name.replace(/\[|\]/gi, ""))] = target;
-				$(target).find('[kim-control]').each(function(i, control){
+				$(target).find('[kim-control]').each(function(i, control) {
 					!self.controls && (self.controls = {});
 					self.controls[$(control).attr("kim-control")] = $(control).clone();
 				});
@@ -116,89 +116,99 @@
 			args = false;
 		len > 0 && (args = (/\[(.+)\]/.exec(options[1])));
 		if (args) {
-			switch (comm[0]) {
-				case "to":
-					args = args[1].split('=');
-					findElems(self.children, selem, {
-						verify: options[0],
-						end: function(elem) {
-							if (args.length == 1) {
-								bind.call(self, comm[0], selem, elem, args[0]);
-							} else if (args.length == 2) {
-								var evalV;
-								var obj = /\./.test(args[1]) ? (evalV = new Function('a', 'return a["' + args[1].split('.').join('"]["') + '"];')(self.config)) : self.config[args[1]];
-								bind.call(self, comm[0], selem, elem, args[0], obj);
-							}
-						}
-					});
-					break;
-				case "op":
-					args = args[1].split(',');
-					var exp = args[0];
-					var exps = exp.split(/\-|\+|\*|\/|\(|\)/gi);
-					if (exps.length > 1) {
-						$.each(exps, function(i, obj) {
-							if (obj != "") {
-								var names = obj.split('.'),
-									evalV = new Function('a', 'return a["' + names.join('"]["') + '"];')(self.config);
-								exp = exp.replace(obj, typeof evalV == "function" ? evalV() : evalV);
-							}
-						});
-					} else if (/\./.test(exps.join(''))) {
-						var names = exps.join('').split('.'),
-							evalV = new Function('a', 'return a["' + names.join('"]["') + '"];')(self.config);
-						exp = typeof evalV == "function" ? evalV() : self.config[evalV]();
-					}
-					var fval = new Function("return " + exp + ";")();
-					setResult((len >= 2 && args[1] == "exp" ? exp + "=" + fval.toFixed(args[2] ? args[2] : 2) : fval.toFixed(args[1] ? args[1] : 2)), selem);
-					break;
-				case "ft":
-					findElems(self.children, selem, {
-						verify: options[0],
-						end: function(elem) {
-							args = args[1];
-							switch (args) {
-								case "money":
-								case "number":
-								case "phone":
-									var rp = /\{\{([0-9]*)*\}\}/.exec($(elem).html()),
-										rpa, temp, n;
-									rp && $.each(rp, function(i, arr) {
-										if (i > 0) {
-											rpa = arr,
-												rpa = rpa.split('');
-											for (n = rpa.length; n > 0; n--) {
-												n % (/(phone)/.test(args) ? 4 : 3) == 0 && rpa.splice(n - 1, 0, (/(phone)/.test(args) ? " " : ","));
-											}
-											setResult(($(elem).html()).replace("{{" + arr + "}}", rpa.join('')), elem);
-										}
-									});
-									break;
-								case "card":
-									var rp = /\{\{([0-9]*)*\}\}/.exec($(elem).html());
-									rp && $.each(rp, function(i, arr) {
-										if (i > 0) {
-											setResult(($(elem).html()).replace("{{" + arr + "}}", arr.replace(/(\d{4})(?=\d)/gi, "$1 ")), elem);
-										}
-									});
-									break;
-								case "datetime":
-									var rp = /\{\{(.+)\}\}/.exec($(elem).html()),
-										temp;
-									rp && $.each(rp, function(i, arr) {
-										if (i > 0) {
-											temp = dateTimeF(arr);
-											setResult(temp, elem);
-										}
-									});
-									break;
-							}
-						}
-					});
-					break;
-			}
+			method[comm[0]].call(self, options[0], args, len, selem);
 		}
 	}
+	var method = {
+		extend: function(target, args) {
+			jQuery.extend(target, args);
+			return method;
+		}
+	};
+	method["to"] = function(id, args, len, parent) {
+		var self = this;
+		args = args[1].split('=');
+		findElems(self.children, parent, {
+			verify: id,
+			end: function(elem) {
+				if (args.length == 1) {
+					bind.call(self, "to", parent, elem, args[0]);
+				} else if (args.length == 2) {
+					var evalV;
+					var obj = /\./.test(args[1]) ? (evalV = new Function('a', 'return a["' + args[1].split('.').join('"]["') + '"];')(self.config)) : self.config[args[1]];
+					bind.call(self, "to", parent, elem, args[0], obj);
+				}
+			}
+		});
+	};
+	method["op"] = function(id, args, len, parent) {
+		var self = this;
+		args = args[1].split(',');
+		var exp = args[0];
+		var exps = exp.split(/\-|\+|\*|\/|\(|\)/gi);
+		if (exps.length > 1) {
+			$.each(exps, function(i, obj) {
+				if (obj != "") {
+					var names = obj.split('.'),
+						evalV = new Function('a', 'return a["' + names.join('"]["') + '"];')(self.config);
+					exp = exp.replace(obj, typeof evalV == "function" ? evalV() : evalV);
+				}
+			});
+		} else if (/\./.test(exps.join(''))) {
+			var names = exps.join('').split('.'),
+				evalV = new Function('a', 'return a["' + names.join('"]["') + '"];')(self.config);
+			exp = typeof evalV == "function" ? evalV() : self.config[evalV]();
+		}
+		var fval = new Function("return " + exp + ";")();
+		setResult((len >= 2 && args[1] == "exp" ? exp + "=" + fval.toFixed(args[2] ? args[2] : 2) : fval.toFixed(args[1] ? args[1] : 2)), parent);
+	};
+	method["ft"] = function(id, args, len, parent) {
+		var self = this;
+		findElems(self.children, parent, {
+			verify: id,
+			end: function(elem) {
+				args = args[1];
+				method["ft"][args] && method["ft"][args](elem, args);
+			}
+		});
+	};
+	jQuery.each(["money", "number", "phone"], function(i, name) {
+		method["ft"][name] = function(elem, args) {
+			var rp = /\{\{([0-9]*)*\}\}/.exec($(elem).html()),
+				rpa, temp, n;
+			rp && $.each(rp, function(i, arr) {
+				if (i > 0) {
+					rpa = arr,
+						rpa = rpa.split('');
+					for (n = rpa.length; n > 0; n--) {
+						n % (/(phone)/.test(args) ? 4 : 3) == 0 && rpa.splice(n - 1, 0, (/(phone)/.test(args) ? " " : ","));
+					}
+					setResult(($(elem).html()).replace("{{" + arr + "}}", rpa.join('')), elem);
+				}
+			});
+		};
+	});
+	method.extend(method["ft"], {
+		"card": function(elem, args) {
+			var rp = /\{\{([0-9]*)*\}\}/.exec($(elem).html());
+			rp && $.each(rp, function(i, arr) {
+				if (i > 0) {
+					setResult(($(elem).html()).replace("{{" + arr + "}}", arr.replace(/(\d{4})(?=\d)/gi, "$1 ")), elem);
+				}
+			});
+		},
+		"datetime": function(elem, args) {
+			var rp = /\{\{(.+)\}\}/.exec($(elem).html()),
+				temp;
+			rp && $.each(rp, function(i, arr) {
+				if (i > 0) {
+					temp = dateTimeF(arr);
+					setResult(temp, elem);
+				}
+			});
+		}
+	});
+
 	var kim = function(ops) {
 		return new kim.fn.init(ops);
 	};
@@ -214,6 +224,13 @@
 		},
 		buildItem: function(elem) {
 			init.call(this, elem);
+		},
+		extend: function(name, func) {
+			method["ft"][name] = function(elem, args){
+				func(elem, args, function(temp){
+					setResult(temp, elem);
+				});
+			};
 		}
 	};
 	kim.fn.init.prototype = kim.fn;
