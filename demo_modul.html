@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+	</head>
+	<body ng-app>
+		<form ng-control="form">
+			<input type="text" value="" name="usname" ng-item="usname" ng-blur="usname_blur" />
+			<input type="text" value="" name="uspassword" ng-item="uspassword" ng-blur="uspassword_blur" />
+			<a href="#" data-errortip="错误提示" data-datatype="json" data-method="post" data-api="#" data-form="form" ng-item="submit" ng-click="submit_click">提交A</a>
+		</form>
+		<script src="http://static.domyshop.com/domy/resources/dist/0.0.2/libs/libs.0.0.2.min.js"></script>
+		<script src="submit.js"></script>
+	</body>
+</html>
