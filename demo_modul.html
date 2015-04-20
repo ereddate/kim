@@ -4,12 +4,28 @@
 		<meta charset="utf-8" />
 	</head>
 	<body ng-app>
-		<form ng-control="form">
-			<input type="text" value="" name="usname" ng-item="usname" ng-blur="usname_blur" />
-			<input type="text" value="" name="uspassword" ng-item="uspassword" ng-blur="uspassword_blur" />
-			<a href="#" data-errortip="错误提示" data-datatype="json" data-method="post" data-api="#" data-form="form" ng-item="submit" ng-click="submit_click">提交A</a>
-		</form>
+		<div ng-page="home" ng-show="show">
+			<div ng-view="aaa" ng-show="show">
+				<form ng-control="form">
+					<h1 ng-item="usname_show">usname</h1>
+					<h2 ng-item="uspassword_show">uspassword</h2>
+					<input type="text" value="" name="usname" ng-item="usname" ng-blur="usname_blur" ng-change="usname_change" />
+					<input type="password" value="" name="uspassword" ng-item="uspassword" ng-blur="uspassword_blur" ng-keyup="uspassword_keyup" />
+					<a href="#" data-errortip="错误提示" data-datatype="json" data-method="post" data-api="#" data-form="form" ng-item="submit" ng-click="submit_click">提交A</a>
+				</form>
+				<div ng-control="button">
+					<a href="#" ng-item="showbbb" ng-click="showbbb">show-bbb</a>
+					<a href="#" ng-item="nextservice" ng-click="nextservice">service</a>
+				</div>
+			</div>
+			<div ng-view="bbb" ng-show="hide">2222<div ng-control="buttonb"><a href="#" ng-item="closebbb" ng-click="closebbb">close</a></div></div>
+		</div>
+		<div ng-page="service" ng-show="hide">
+			<div ng-view="foot">
+				<div>400-006-0067</div>
+				<div ng-control="bottom"><a href="#" ng-item="gohome" ng-click="gohome">gohome</a></div>
+			</div>
+		</div>
 		<script src="http://static.domyshop.com/domy/resources/dist/0.0.2/libs/libs.0.0.2.min.js"></script>
-		<script src="submit.js"></script>
 	</body>
 </html>
