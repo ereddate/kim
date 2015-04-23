@@ -2,30 +2,161 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
+		<style>
+			.on{color:red;text-decoration:none;}
+		</style>
 	</head>
-	<body ng-app>
-		<div ng-page="home" ng-show="show">
-			<div ng-view="aaa" ng-show="show">
-				<form ng-control="form">
-					<h1 ng-item="usname_show">usname</h1>
-					<h2 ng-item="uspassword_show">uspassword</h2>
-					<input type="text" value="" name="usname" ng-item="usname" ng-blur="usname_blur" ng-change="usname_change" />
-					<input type="password" value="" name="uspassword" ng-item="uspassword" ng-blur="uspassword_blur" ng-keyup="uspassword_keyup" />
-					<a href="#" data-errortip="错误提示" data-datatype="json" data-method="post" data-api="#" data-form="form" ng-item="submit" ng-click="submit_click">提交A</a>
-				</form>
-				<div ng-control="button">
-					<a href="#" ng-item="showbbb" ng-click="showbbb">show-bbb</a>
-					<a href="#" ng-item="nextservice" ng-click="nextservice">service</a>
+	<body>
+		<div ng-app="test" ng-show="show">
+			<div ng-page="home" ng-show="show">
+				<div ng-view="headera">
+					<div ng-control="nava"><a href="#" ng-item="gohomea" ng-click="gohome_click">home</a> <a href="#" ng-item="goproducta" ng-click="goproduct_click">product</a> <a href="#" ng-item="goservicea" ng-click="goservice_click">service</a></div>
 				</div>
+				<div ng-view="maina">
+					<div ng-control="list" ng-datalist="getlist_post">
+						<div ng-item="list_tmpl_{{id}}">
+							<h1>{{title}}</h1>
+							<p>{{decoration}}</p>
+						</div>
+					</div>
+					<div ng-control="list_pagenum"><a href="{{num}}" ng-item="pagenum_{{num}}" ng-click="pagenum_click">{{shownum}}</a></div>
+					1
+				</div>
+				<div ng-view="footera">&copy;2015.</div>
 			</div>
-			<div ng-view="bbb" ng-show="hide">2222<div ng-control="buttonb"><a href="#" ng-item="closebbb" ng-click="closebbb">close</a></div></div>
-		</div>
-		<div ng-page="service" ng-show="hide">
-			<div ng-view="foot">
-				<div>400-006-0067</div>
-				<div ng-control="bottom"><a href="#" ng-item="gohome" ng-click="gohome">gohome</a></div>
+			<div ng-page="product" ng-show="hide">
+				<div ng-view="headerb">
+					<div ng-control="navb"><a href="#" ng-item="gohomeb" ng-click="gohome_click">home</a> <a href="#" ng-item="goproductb" ng-click="goproduct_click">product</a> <a href="#" ng-item="goserviceb" ng-click="goservice_click">service</a></div>
+				</div>
+				<div ng-view="mainb">
+					<div ng-control="form" ng-datatmpl="getform_get">
+						<input type="text" value="{{test}}" name="test" ng-item="test_input" ng-keyup="test_keyup" />
+						<p><span ng-item="test_result"></span></p>
+					</div>
+					2
+				</div>
+				<div ng-view="footerb">&copy;2015.</div>
+			</div>
+			<div ng-page="service" ng-show="hide">
+				<div ng-view="headerc">
+					<div ng-control="navc"><a href="#" ng-item="gohomec" ng-click="gohome_click">home</a> <a href="#" ng-item="goproductc" ng-click="goproduct_click">product</a> <a href="#" ng-item="goservicec" ng-click="goservice_click">service</a></div>
+				</div>
+				<div ng-view="mainc">
+					<div ng-control="aaa">
+						<select ng-item="select" name="select" ng-datalist="getselect_get" ng-change="select_change" ng-model="valid(required:不能为空:selecterror)"><option value="{{value}}">{{title}}</option></select>
+						<span ng-item="selectval"></span>
+						<span ng-item="selecterror"></span>
+						<input ng-item="inputvalid" name="inputvalid" ng-model="valid(required:不能为空:inputerror)" value="" />
+						<span ng-item="inputerror"></span>
+						<input ng-item="inputvalid_a" name="inputvalid_a" ng-model="valid(required:不能为空:input_aerror)" value="" />
+						<span ng-item="input_aerror"></span>
+					</div>
+					3
+				</div>
+				<div ng-view="footerc">&copy;2015.</div>
 			</div>
 		</div>
+
 		<script src="http://static.domyshop.com/domy/resources/dist/0.0.2/libs/libs.0.0.2.min.js"></script>
+		<script src="kim.0.0.1.js"></script>
+		<script>
+		;
+		(function() {
+			console.log(jQuery.model({
+				initialization: function(){
+					this.app["test"].item["gohomea"].click();
+				},
+				handle: {
+					input_aerror: function(status, tip, target){
+						jQuery(this).show().html(tip);
+					},
+					select_change:function(e, target){
+						target.app["test"].item["selectval"].html(jQuery(this).val());
+					},
+					getselect_get: function(render, target){
+						var data = [{
+							value:"",
+							title:"请选择..."
+						},{
+							value:1,
+							title:"aaa"
+						},{
+							value:2,
+							title:"bbb"
+						},{
+							value:3,
+							title:"ccc"
+						},{
+							value:4,
+							title:"ddd"
+						}];
+						render(data);
+					},
+					pagenum_click: function(e, target){
+						e.preventDefault();
+						alert(jQuery(this).attr("href"));
+					},
+					getform_get: function(render, target){
+						var data = {
+							test: "input data"
+						};
+						render(data);
+					},
+					test_keyup: function(e, target){
+						target.app["test"].item["test_result"].html(jQuery(this).val());
+					},
+					getlist_post: function(render, target){
+						var url = "http://www.domyshop.com/Home/Cart/pageCartList?r=0.15105288074240997&callback=jQuery1111038380557446250385_1429578750367&_=1429578750373"
+						window["jQuery1111038380557446250385_1429578750367"] = function(data){
+							data = [
+								{
+									id:0,
+									title:"adfasdfasdfas00",
+									decoration:"adfasdfasdfasdfasdfasdfasd"
+								},{
+									id:1,
+									title:"adfasdfasdfas11",
+									decoration:"adfasdfasdfasdfasdfasdfasd"
+								},{
+									id:2,
+									title:"adfasdfasdfas22",
+									decoration:"adfasdfasdfasdfasdfasdfasd"
+								},{
+									id:3,
+									title:"adfasdfasdfas33",
+									decoration:"adfasdfasdfasdfasdfasdfasd"
+								}
+							];
+							var parent = target.app["test"].control["list_pagenum"];
+							var tmpl = parent.html();
+							parent.data("tmpl", tmpl);
+							var html = [];
+							jQuery.each([{num:0, shownum:1},{num:1, shownum:2}], function(i, obj){
+								html.push(target.tmpl(obj, tmpl));
+							});
+							var elem = jQuery(html.join(' '));
+							parent.html(elem);
+							target.add(parent);
+							render(data);
+						};
+						jQuery("head").append(jQuery(unescape("%3Cscript%3E%3C/script%3E")).attr("src", url));
+					},
+					gohome_click: function(e, target){
+						e.preventDefault();
+						target.togglePage("test", "home").find("ng-item").toggleClass('on', false).eq("ng-item-gohomea").toggleClass('on');
+					},
+					goproduct_click: function(e, target){
+						e.preventDefault();
+						target.togglePage("test", "product").find("ng-item").toggleClass('on', false).eq("ng-item-goproductb").toggleClass('on');
+					},
+					goservice_click: function(e, target){
+						e.preventDefault();
+						target.togglePage("test", "service").find("ng-item").toggleClass('on', false).eq("ng-item-goservicec").toggleClass('on');
+					}
+				}
+			}));
+
+		})()
+		</script>
 	</body>
 </html>
