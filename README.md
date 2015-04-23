@@ -6,7 +6,7 @@
 # 结构
 结构由以下内容组成：
 
-ng-app 应用
+ng-app 应用（支持多应用)
 
 ng-page 页
 
@@ -23,6 +23,14 @@ ng-item 元素
 ng-[app|page|view|control|item]="name" 对象名称
 
 ng-show="show|hide" 是否显示
+
+ng-datalist 可循环的数据列表
+
+ng-datatmpl 不可循环的数据模板
+
+ng-model 插件
+
+	valid 表单测证 valid(验证类型:错误提示:提示元素或回调)
 
 2015-4-19 新思路 end
 
