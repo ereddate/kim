@@ -65,15 +65,13 @@
 		;
 		(function() {
 
-			jQuery.extend(jQuery.kim.fn.model, {
+			jQuery.kim.modelExtend({
 				test: function(elem){
 					var self = this;
 					jQuery(elem).html("test");
 					return this;
 				}
-			});
-
-			console.log(jQuery.kim({
+			})({
 				initialization: function(){
 					this.app["test"].item["gohomea"].click();
 				},
@@ -185,7 +183,7 @@
 						target.togglePage("test", "service").find("ng-item").toggleClass('on', false).eq("ng-item-goservicec").toggleClass('on');
 					}
 				}
-			}));
+			});
 
 		})()
 		</script>
