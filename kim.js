@@ -177,7 +177,6 @@
 					if (!self.app[app][type]) self.app[app][type] = {};
 					self.app[app][type][name] = elem;
 				}
-				//self[next].length += 1;
 				_initTmpl.call(self, elem);
 				_initShow(elem);
 				_initHandle.call(self, elem);
@@ -270,7 +269,7 @@
 		var self = this;
 		var args = argments,
 			len = args.length;
-		if (len <= 1){
+		if (len <= 1) {
 			return this;
 		}
 		if (len == 2)(func = name, name = elem, elem = false);
@@ -471,6 +470,17 @@
 			return true;
 		}
 	};
+
+	kim.modelExtend = function(args){
+		if (typeof args == "undefined") return;
+		var bool = false;
+		jQuery.each(args, function(name, val){
+			if (!(name in kim.fn.model)){
+				kim.fn.model[name] = val;
+			}
+		});
+		return this;
+	}
 
 	jQuery.kim = kim;
 })()
