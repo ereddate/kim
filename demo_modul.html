@@ -13,10 +13,11 @@
 					<div ng-control="nava"><a href="#" ng-item="gohomea" ng-click="gohome_click">home</a> <a href="#" ng-item="goproducta" ng-click="goproduct_click">product</a> <a href="#" ng-item="goservicea" ng-click="goservice_click">service</a></div>
 				</div>
 				<div ng-view="maina">
-					<div ng-control="list" ng-datalist="getlist_post">
+					<div ng-control="list" ng-list="getlist_post">
 						<div ng-item="list_tmpl_{{id}}">
 							<h1>{{title}}</h1>
 							<p>{{decoration}}</p>
+							<a href="#" ng-item="list_removeitem" ng-click="list_removeitem_click" data-id="{{id}}">删除</a> <a href="#" ng-item="list_upitem" ng-click="list_upitem_click" data-id="{{id}}">收起</a>
 						</div>
 					</div>
 					<div ng-control="list_pagenum"><a href="{{num}}" ng-item="pagenum_{{num}}" ng-click="pagenum_click">{{shownum}}</a></div>
@@ -29,7 +30,7 @@
 					<div ng-control="navb"><a href="#" ng-item="gohomeb" ng-click="gohome_click">home</a> <a href="#" ng-item="goproductb" ng-click="goproduct_click">product</a> <a href="#" ng-item="goserviceb" ng-click="goservice_click">service</a></div>
 				</div>
 				<div ng-view="mainb">
-					<div ng-control="form" ng-datatmpl="getform_get">
+					<div ng-control="form" ng-tmpl="getform_get">
 						<input type="text" value="{{test}}" name="test" ng-item="test_input" ng-keyup="test_keyup" />
 						<p><span ng-item="test_result"></span></p>
 					</div>
@@ -43,13 +44,14 @@
 				</div>
 				<div ng-view="mainc">
 					<div ng-control="aaa">
-						<select ng-item="select" name="select" ng-datalist="getselect_get" ng-change="select_change" ng-model="valid(required:不能为空:selecterror)"><option value="{{value}}">{{title}}</option></select>
+						<select ng-item="select" name="select" ng-list="getselect_get" ng-change="select_change" ng-model="valid(required:不能为空:selecterror)"><option value="{{value}}">{{title}}</option></select>
 						<span ng-item="selectval"></span>
 						<span ng-item="selecterror"></span>
 						<input ng-item="inputvalid" name="inputvalid" ng-model="valid(required:不能为空:inputerror)" value="" />
 						<span ng-item="inputerror"></span>
 						<input ng-item="inputvalid_a" name="inputvalid_a" ng-model="valid(required:不能为空:input_aerror)" value="" />
 						<span ng-item="input_aerror"></span>
+						<div ng-item="modeltest" ng-model="test()"></div>
 					</div>
 					3
 				</div>
@@ -57,16 +59,44 @@
 			</div>
 		</div>
 
-		<script src="libs.0.0.2.min.js"></script>
+		<script src="http://static.domyshop.com/domy/resources/dist/0.0.2/libs/libs.0.0.2.min.js"></script>
 		<script src="kim.0.0.1.js"></script>
 		<script>
 		;
 		(function() {
-			console.log(jQuery.model({
+
+			jQuery.extend(jQuery.kim.fn.model, {
+				test: function(elem, args, target){
+					var self = this;
+					console.log("test")
+				}
+			});
+
+			console.log(jQuery.kim({
 				initialization: function(){
 					this.app["test"].item["gohomea"].click();
 				},
 				handle: {
+					list_removeitem_click: function(e, target){
+						e.preventDefault();
+						jQuery(this).parents(".ng-item").hide();
+					},
+					list_upitem_click: function(e, target){
+						e.preventDefault();
+						var parent = target.app["test"].item["list_tmpl_"+jQuery(this).attr("data-id")];
+						if (!jQuery(this).data("isshow")){
+							var h = parent.height();
+							jQuery(this).data("height", h).data("isshow", true);
+							parent.animate({
+								height: h/2
+							}, "slow");
+						}else{
+							jQuery(this).data("isshow", false)
+							parent.animate({
+								height: jQuery(this).data("height", h)
+							}, "slow");
+						}
+					},
 					input_aerror: function(status, tip, target){
 						jQuery(this).show().html(tip);
 					},
@@ -106,7 +136,7 @@
 						target.app["test"].item["test_result"].html(jQuery(this).val());
 					},
 					getlist_post: function(render, target){
-						var url = "http://www.aaa.com/b?r=0.15105288074240997&callback=jQuery1111038380557446250385_1429578750367&_=1429578750373"
+						var url = "http://www.domyshop.com/Home/Cart/pageCartList?r=0.15105288074240997&callback=jQuery1111038380557446250385_1429578750367&_=1429578750373"
 						window["jQuery1111038380557446250385_1429578750367"] = function(data){
 							data = [
 								{
