@@ -15,7 +15,7 @@
 					<p data-id="{{id}}">{{decoration}}</p>
 				</div>
 				<div ng-control="cccb">
-					<select ng-item="select" name="select" ng-list="getselect_get" ng-change="select_change" ng-model="valid(required:不能为空:selecterror)"><option value="{{value}}">{{title}}</option></select>
+					<select ng-item="select" name="select" ng-list="getselect_get" ng-change="select_change" ng-valid="required:不能为空:selecterror"><option value="{{value}}">{{title}}</option></select>
 					<span ng-item="selectval"></span>
 					<span ng-item="selecterror"></span>
 				</div>
@@ -26,7 +26,7 @@
 	<script>
 		//扩展KIM.MODEL自定义语义
 		jQuery.extend(jQuery.kim.fn.model, {
-			test: function(elem, args, target){
+			test: function(elem){
 				var self = this;
 				console.log("test")
 			}
@@ -77,7 +77,7 @@ ng-list 可循环的数据列表
 
 ng-tmpl 不可循环的数据模板
 
-ng-model 插件
+ng-插件名
 
 	valid 表单测证 valid(验证类型:错误提示:提示元素或回调)
 
