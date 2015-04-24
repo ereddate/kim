@@ -25,10 +25,11 @@
 	<script src="kim.js"></script>
 	<script>
 		//扩展KIM.MODEL自定义语义
-		jQuery.extend(jQuery.kim.fn.model, {
+		jQuery.kim.modelExtend({
 			test: function(elem){
 				var self = this;
-				console.log("test")
+				jQuery(elem).html("test");
+				return this;
 			}
 		});
 		//使用KIM
@@ -80,4 +81,8 @@ ng-tmpl 不可循环的数据模板
 ng-插件名
 
 	valid 表单测证 valid(验证类型:错误提示:提示元素或回调)
+	
+#方法
+
+jQuery.kim.modelExtend({...}); 插件扩展
 
