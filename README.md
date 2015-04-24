@@ -2,6 +2,26 @@
 	依托jQuery的依赖注入型的前端模板开发框架，适用于中小型移动端网站开发。核心：语义化标签、依赖注入、数据绑定等等。
 	
 #引入及使用
+	<div ng-app="test" ng-show="show">
+		<div ng-page="home" ng-show="show">
+			<div ng-view="headera">
+				<div ng-control="nava" ng-list="getData">
+					<div ng-item="list_tmpl_{{id}}">
+						<p>{{decoration}}</p>
+						<a href="#" ng-item="testclick" ng-click="test_click" data-id="{{id}}">删除</a>
+					</div>
+				</div>
+				<div ng-control="bbba" ng-tmpl="getData">
+					<p data-id="{{id}}">{{decoration}}</p>
+				</div>
+				<div ng-control="cccb">
+					<select ng-item="select" name="select" ng-list="getselect_get" ng-change="select_change" ng-model="valid(required:不能为空:selecterror)"><option value="{{value}}">{{title}}</option></select>
+					<span ng-item="selectval"></span>
+					<span ng-item="selecterror"></span>
+				</div>
+			</div>
+		</div>
+	</div>
 	<script src="kim.js"></script>
 	<script>
 		//扩展KIM.MODEL自定义语义
@@ -15,17 +35,21 @@
 		jQuery.kim({
 			initialization: function(){
 				//初始页面
+				this.app["test"].item["gohomea"].click();
 			},
 			handle:{
 				test_click: function(e, target){
 					//事件
+					//页面元素的内部调用及操作
+					target.app["test"].item["test_result"].html(jQuery(this).val());
 				},
 				getData: function(render, target){
 					//数据注入模板
 					render(data);
 				},
 				...
-			}});
+			}
+		});
 	</script>
 
 # 结构
