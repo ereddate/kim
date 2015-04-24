@@ -57,7 +57,7 @@
 		jQuery.each(events, function(i, eventname) {
 			if (obj && typeof jQuery(obj).attr("ng-" + eventname) != "undefined") {
 				var eventhandle = jQuery(obj).attr("ng-" + eventname);
-				self.config.handle[eventhandle] && jQuery(obj).off(eventname).on(eventname, function(e) {
+				self.config.handle[eventhandle] && jQuery(obj).on(eventname, function(e) {
 					/click/.test(eventname) && e.preventDefault();
 					self.config.handle[eventhandle].call(this, e, self);
 				});
@@ -146,28 +146,11 @@
 		return temp;
 	}
 
-	function _initTmpl(elem){
+	function _initTmpl(elem) {
 		var self = this;
-		jQuery(elem).attr("ng-list") && self.config.handle[jQuery(elem).attr("ng-list")].call(self, function(data) {
-			var tmpl = jQuery(elem).html(),
-				html = [];
-			jQuery(elem).data("tmpl", tmpl);
-			jQuery.each(data, function(i, obj) {
-				var temp = tmpl;
-				temp = _tmpl(obj, temp);
-				html.push(temp);
-			});
-			var newitem = jQuery(html.join(''));
-			jQuery(elem).html(newitem).show();
-			_add.call(self, elem);
-		}, self) || jQuery(elem).attr("ng-tmpl") && self.config.handle[jQuery(elem).attr("ng-tmpl")].call(self, function(data) {
-			var tmpl = jQuery(elem).html();
-			jQuery(elem).data("tmpl", tmpl);
-			tmpl = _tmpl(data, tmpl);
-			var newitema = jQuery(tmpl);
-			jQuery(elem).html(newitema).show();
-			_add.call(self, elem);
-		}, self);
+		jQuery.each(self.model, function(name, obj) {
+			typeof jQuery(elem).attr("ng-" + name) != "undefined" && self.model[name].call(self, elem);
+		});
 	}
 
 	function _initData(elem) {
@@ -198,7 +181,7 @@
 				_initTmpl.call(self, elem);
 				_initShow(elem);
 				_initHandle.call(self, elem);
-				_initModel.call(self, elem);
+				//_initModel.call(self, elem);
 			}
 		});
 		end.call(self, elem);
@@ -271,28 +254,103 @@
 		};
 	});
 	jQuery.each(events, function(i, name) {
-		kim.fn["on" + _capitalize(name)] = function(func) {
+		kim.fn["on" + _capitalize(name)] = function(elem, func) {
 			var self = this;
-			self.active && jQuery(self.active).on(name, function(e) {
-				func.call(this, e, self);
-			});
-			return this;
-		};
-		kim.fn.off = function(name) {
-			var self = this;
-			self.active && jQuery(self.active).off(name);
-			return this;
-		};
-		kim.fn.one = function(func) {
-			var self = this;
-			self.active && jQuery(self.active).off(name).on(name, function(e) {
+			var args = argments,
+				len = args.length;
+			if (len == 1)(func = elem, elem = false);
+			(elem || self.active) && jQuery(self.active).on(name, function(e) {
 				func.call(this, e, self);
 			});
 			return this;
 		};
 	});
 
-	kim.fn.model = {};
+	kim.fn.one = function(elem, name, func) {
+		var self = this;
+		var args = argments,
+			len = args.length;
+		if (len <= 1){
+			return this;
+		}
+		if (len == 2)(func = name, name = elem, elem = false);
+		(elem || self.active) && jQuery(self.active).off(name).on(name, function(e) {
+			func.call(this, e, self);
+		});
+		return this;
+	};
+
+	kim.fn.off = function(elem, name) {
+		var self = this;
+		var args = argments,
+			len = args.length;
+		if (len == 1)(name = elem, elem = false);
+		(elem || self.active) && jQuery(self.active).off(name);
+		return this;
+	};
+
+	kim.fn.model = {
+		list: function(elem) {
+			var self = this;
+			self.config.handle[jQuery(elem).attr("ng-list")].call(self, function(data) {
+				var tmpl = jQuery(elem).html(),
+					html = [];
+				jQuery(elem).data("tmpl", tmpl);
+				jQuery.each(data, function(i, obj) {
+					var temp = tmpl;
+					temp = _tmpl(obj, temp);
+					html.push(temp);
+				});
+				var newitem = jQuery(html.join(''));
+				jQuery(elem).html(newitem).show();
+				_add.call(self, elem);
+			}, self);
+
+			return this;
+		},
+		tmpl: function(elem) {
+			var self = this;
+			self.config.handle[jQuery(elem).attr("ng-tmpl")].call(self, function(data) {
+				var tmpl = jQuery(elem).html();
+				jQuery(elem).data("tmpl", tmpl);
+				tmpl = _tmpl(data, tmpl);
+				var newitema = jQuery(tmpl);
+				jQuery(elem).html(newitema).show();
+				_add.call(self, elem);
+			}, self);
+
+			return this;
+		},
+		valid: function(elem) {
+			var self = this,
+				command, regex, regval, args;
+			if (jQuery(elem).attr("ng-valid")) {
+				command = jQuery(elem).attr("ng-valid");
+				args = command.split(',');
+				jQuery(elem).on(/select/.test((elem.length && elem[0] || elem).tagName.toLowerCase()) ? "change" : "blur", function() {
+					var val = jQuery(elem).val();
+					jQuery.each(args, function(i, ops) {
+						ops = ops.split(':');
+						var type = ops[0],
+							tip = ops[1],
+							callback = ops[2];
+						if (typeof val == "undefined") {
+							func.call(self, elem, tip, "输入内容不能为空", callback);
+							return false;
+						}
+						if (validtype && (type in validtype)) {
+							var bool = validtype[type].call(self, elem, val, tip, callback);
+							if (bool) {
+								done.call(self, elem, callback);
+							}
+						}
+					});
+				});
+			}
+
+			return this;
+		}
+	};
 
 	function _findClassElem(elem, name) {
 		return jQuery(elem).parents(".ng-app").find(".ng-page-" + name).length > 0 && jQuery(elem).parents(".ng-app").find(".ng-page-" + name) || jQuery(elem).parents(".ng-app").find(".ng-view-" + name).length > 0 && jQuery(elem).parents(".ng-app").find(".ng-view-" + name) || jQuery(elem).parents(".ng-app").find(".ng-control-" + name).length > 0 && jQuery(elem).parents(".ng-app").find(".ng-control-" + name).length || jQuery(elem).parents(".ng-app").find(".ng-item-" + name).length > 0 && jQuery(elem).parents(".ng-app").find(".ng-item-" + name);
@@ -413,33 +471,6 @@
 			return true;
 		}
 	};
-
-	jQuery.extend(kim.fn.model, {
-		valid: function(elem, args, target) {
-			var self = this;
-			jQuery(elem).on(/select/.test((elem.length && elem[0] || elem).tagName.toLowerCase()) ? "change" : "blur", function() {
-				var val = jQuery(elem).val();
-				jQuery.each(args, function(i, ops) {
-					ops = ops.split(':');
-					var type = ops[0],
-						tip = ops[1],
-						callback = ops[2];
-					if (typeof val == "undefined") {
-						func.call(self, elem, tip, "输入内容不能为空", callback);
-						return false;
-					}
-					if (validtype && (type in validtype)) {
-						var bool = validtype[type].call(self, elem, val, tip, callback);
-						if (bool) {
-							done.call(self, elem, callback);
-						}
-					}
-				});
-			});
-
-			return target;
-		}
-	});
 
 	jQuery.kim = kim;
 })()
