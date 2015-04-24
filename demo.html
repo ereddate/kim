@@ -44,14 +44,14 @@
 				</div>
 				<div ng-view="mainc">
 					<div ng-control="aaa">
-						<select ng-item="select" name="select" ng-list="getselect_get" ng-change="select_change" ng-model="valid(required:不能为空:selecterror)"><option value="{{value}}">{{title}}</option></select>
+						<select ng-item="select" name="select" ng-list="getselect_get" ng-change="select_change" ng-valid="required:不能为空:selecterror"><option value="{{value}}">{{title}}</option></select>
 						<span ng-item="selectval"></span>
 						<span ng-item="selecterror"></span>
-						<input ng-item="inputvalid" name="inputvalid" ng-model="valid(required:不能为空:inputerror)" value="" />
+						<input ng-item="inputvalid" name="inputvalid" ng-valid="required:不能为空:inputerror" value="" />
 						<span ng-item="inputerror"></span>
-						<input ng-item="inputvalid_a" name="inputvalid_a" ng-model="valid(required:不能为空:input_aerror)" value="" />
+						<input ng-item="inputvalid_a" name="inputvalid_a" ng-valid="required:不能为空:input_aerror" value="" />
 						<span ng-item="input_aerror"></span>
-						<div ng-item="modeltest" ng-model="test()"></div>
+						<div ng-item="modeltest" ng-test=""></div>
 					</div>
 					3
 				</div>
@@ -66,9 +66,10 @@
 		(function() {
 
 			jQuery.extend(jQuery.kim.fn.model, {
-				test: function(elem, args, target){
+				test: function(elem){
 					var self = this;
-					console.log("test")
+					jQuery(elem).html("test");
+					return this;
 				}
 			});
 
@@ -136,7 +137,7 @@
 						target.app["test"].item["test_result"].html(jQuery(this).val());
 					},
 					getlist_post: function(render, target){
-						var url = "http://www.xxx.com/pageCartList?r=0.15105288074240997&callback=jQuery1111038380557446250385_1429578750367&_=1429578750373"
+						var url = "http://www.xxx.com/artList?r=0.15105288074240997&callback=jQuery1111038380557446250385_1429578750367&_=1429578750373"
 						window["jQuery1111038380557446250385_1429578750367"] = function(data){
 							data = [
 								{
