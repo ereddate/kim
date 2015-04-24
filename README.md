@@ -4,7 +4,28 @@
 #引入及使用
 	<script src="kim.js"></script>
 	<script>
-		jQuery.kim({...});
+		//扩展KIM.MODEL自定义语义
+		jQuery.extend(jQuery.kim.fn.model, {
+			test: function(elem, args, target){
+				var self = this;
+				console.log("test")
+			}
+		});
+		//使用KIM
+		jQuery.kim({
+			initialization: function(){
+				//初始页面
+			},
+			handle:{
+				test_click: function(e, target){
+					//事件
+				},
+				getData: function(render, target){
+					//数据注入模板
+					render(data);
+				},
+				...
+			}});
 	</script>
 
 # 结构
