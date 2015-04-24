@@ -23,9 +23,9 @@
 					parent: elem
 				};
 				elem.addClass("ng-app ng-app-" + name);
-				_initData.call(self, elem);
+				_initTmpl.call(self, elem);
 				_initShow(elem);
-				_add.call(self, elem, 0);
+				_add.call(self, elem);
 			}
 		} else {
 			jQuery(elem).children().each(function(i, obj) {
@@ -37,9 +37,7 @@
 	function _initModel(elem) {
 		var self = this,
 			command, regex, regval;
-		jQuery(elem).attr("ng-model") && (command = jQuery(elem).attr("ng-model"), regex = (new RegExp("(" + command.replace(/\)/, ")\\)").replace(/\(/, ")\\(("))), console.log(regex), regval = regex.exec(command), regval && jQuery(elem).on(/select/.test((elem.length && elem[0] || elem).tagName.toLowerCase()) ? "change" : "blur", function() {
-			self.model && self.model[regval[1]] && self.model[regval[1]].call(self, elem, regval[2].split(','), self);
-		}));
+		jQuery(elem).attr("ng-model") && (command = jQuery(elem).attr("ng-model"), regex = (new RegExp("(" + command.replace(/\)/, ")\\)").replace(/\(/, ")\\(("))), regval = regex.exec(command), regval && self.model && self.model[regval[1]] && self.model[regval[1]].call(self, elem, regval[2] && regval[2].split(','), self));
 	}
 
 	function _judgmentType(html) {
@@ -148,9 +146,9 @@
 		return temp;
 	}
 
-	function _initData(elem) {
+	function _initTmpl(elem){
 		var self = this;
-		jQuery(elem).attr("ng-datalist") && self.config.handle[jQuery(elem).attr("ng-datalist")].call(self, function(data) {
+		jQuery(elem).attr("ng-list") && self.config.handle[jQuery(elem).attr("ng-list")].call(self, function(data) {
 			var tmpl = jQuery(elem).html(),
 				html = [];
 			jQuery(elem).data("tmpl", tmpl);
@@ -161,53 +159,55 @@
 			});
 			var newitem = jQuery(html.join(''));
 			jQuery(elem).html(newitem).show();
-			_add.call(self, elem, _judgmentType(elem.html()));
-		}, self) || jQuery(elem).attr("ng-datatmpl") && self.config.handle[jQuery(elem).attr("ng-datatmpl")].call(self, function(data) {
+			_add.call(self, elem);
+		}, self) || jQuery(elem).attr("ng-tmpl") && self.config.handle[jQuery(elem).attr("ng-tmpl")].call(self, function(data) {
 			var tmpl = jQuery(elem).html();
 			jQuery(elem).data("tmpl", tmpl);
 			tmpl = _tmpl(data, tmpl);
 			var newitema = jQuery(tmpl);
 			jQuery(elem).html(newitema).show();
-			_add.call(self, elem, _judgmentType(elem.html()));
+			_add.call(self, elem);
 		}, self);
+	}
+
+	function _initData(elem) {
+		var self = this;
 	}
 
 	function _add(elem, num) {
 		var self = this;
-		if (num < 0) return;
 		jQuery(elem).children().each(function(i, obj) {
-			_initItem.call(self, jQuery(obj), num, function(obj, n) {
-				_add.call(self, obj, (n > item.length - 1 ? -1 : n));
+			_initItem.call(self, jQuery(obj), function(obj, n) {
+				_add.call(self, obj);
 			});
 		});
 	}
 
-	function _initItem(elem, num, end) {
-		var self = this,
-			type = item[num];
-		if (typeof elem.attr("ng-" + type) != "undefined" && !/\{\{/.test(elem.attr("ng-" + type))) {
-			var name = (elem.attr("ng-" + type) != "" ? elem.attr("ng-" + type) : type + Math.random());
-			elem.addClass("ng-" + type + " ng-" + type + "-" + name);
-			var app = elem.parents(".ng-app").attr("ng-app");
-			if (self.app[app]) {
-				if (!self.app[app][type]) self.app[app][type] = {};
-				self.app[app][type][name] = elem;
+	function _initItem(elem, end) {
+		var self = this;
+		jQuery.each(item, function(i, type) {
+			if (typeof elem.attr("ng-" + type) != "undefined" && !/\{\{/.test(elem.attr("ng-" + type))) {
+				var name = (elem.attr("ng-" + type) != "" ? elem.attr("ng-" + type) : type + Math.random());
+				elem.addClass("ng-" + type + " ng-" + type + "-" + name);
+				var app = elem.parents(".ng-app").attr("ng-app");
+				if (self.app[app]) {
+					if (!self.app[app][type]) self.app[app][type] = {};
+					self.app[app][type][name] = elem;
+				}
+				//self[next].length += 1;
+				_initTmpl.call(self, elem);
+				_initShow(elem);
+				_initHandle.call(self, elem);
+				_initModel.call(self, elem);
 			}
-			//self[next].length += 1;
-			_initData.call(self, elem);
-			_initShow(elem);
-			_initHandle.call(self, elem);
-			_initModel.call(self, elem);
-		} else {
-			_add.call(self, elem, _judgmentType(jQuery(elem).html()));
-		}
-		end.call(self, elem, num += 1);
+		});
+		end.call(self, elem);
 	}
 
-	var model = function(ops) {
-		return new model.fn.init(ops);
+	var kim = function(ops) {
+		return new kim.fn.init(ops);
 	};
-	model.fn = model.prototype = {
+	kim.fn = kim.prototype = {
 		init: function(ops) {
 			if (!this.config) this.config = {};
 			jQuery.extend(this.config, ops);
@@ -219,9 +219,9 @@
 			return this.app[app] && this.app[app][type] && this.app[app][type][name] && (this.app[app][type][name + (this[type].length += 1)] = this.app[app][type][name].clone(clone || false));
 		}
 	};
-	model.fn.init.prototype = model.fn;
+	kim.fn.init.prototype = kim.fn;
 
-	jQuery.extend(model.fn, {
+	jQuery.extend(kim.fn, {
 		toggle: function(app, type, val) {
 			var self = this,
 				elem;
@@ -255,7 +255,7 @@
 		add: function(elem) {
 			var self = this,
 				target = elem || self.active;
-			_add.call(self, target, _judgmentType(jQuery(target).html()));
+			_add.call(self, target);
 			return this;
 		},
 		tmpl: function(data, tmpl) {
@@ -266,24 +266,24 @@
 	});
 
 	jQuery.each(item, function(i, name) {
-		model.fn["toggle" + _capitalize(name)] = function(app, val) {
+		kim.fn["toggle" + _capitalize(name)] = function(app, val) {
 			return this.toggle(app, name, val);
 		};
 	});
 	jQuery.each(events, function(i, name) {
-		model.fn["on" + _capitalize(name)] = function(func) {
+		kim.fn["on" + _capitalize(name)] = function(func) {
 			var self = this;
 			self.active && jQuery(self.active).on(name, function(e) {
 				func.call(this, e, self);
 			});
 			return this;
 		};
-		model.fn.off = function(name) {
+		kim.fn.off = function(name) {
 			var self = this;
 			self.active && jQuery(self.active).off(name);
 			return this;
 		};
-		model.fn.one = function(func) {
+		kim.fn.one = function(func) {
 			var self = this;
 			self.active && jQuery(self.active).off(name).on(name, function(e) {
 				func.call(this, e, self);
@@ -292,7 +292,7 @@
 		};
 	});
 
-	model.fn.model = {};
+	kim.fn.model = {};
 
 	function _findClassElem(elem, name) {
 		return jQuery(elem).parents(".ng-app").find(".ng-page-" + name).length > 0 && jQuery(elem).parents(".ng-app").find(".ng-page-" + name) || jQuery(elem).parents(".ng-app").find(".ng-view-" + name).length > 0 && jQuery(elem).parents(".ng-app").find(".ng-view-" + name) || jQuery(elem).parents(".ng-app").find(".ng-control-" + name).length > 0 && jQuery(elem).parents(".ng-app").find(".ng-control-" + name).length || jQuery(elem).parents(".ng-app").find(".ng-item-" + name).length > 0 && jQuery(elem).parents(".ng-app").find(".ng-item-" + name);
@@ -414,30 +414,32 @@
 		}
 	};
 
-	jQuery.extend(model.fn.model, {
+	jQuery.extend(kim.fn.model, {
 		valid: function(elem, args, target) {
 			var self = this;
-			var val = jQuery(elem).val();
-			jQuery.each(args, function(i, ops) {
-				ops = ops.split(':');
-				var type = ops[0],
-					tip = ops[1],
-					callback = ops[2];
-				if (typeof val == "undefined") {
-					func.call(self, elem, tip, "输入内容不能为空", callback);
-					return false;
-				}
-				if (validtype && (type in validtype)) {
-					var bool = validtype[type].call(self, elem, val, tip, callback);
-					if (bool) {
-						done.call(self, elem, callback);
+			jQuery(elem).on(/select/.test((elem.length && elem[0] || elem).tagName.toLowerCase()) ? "change" : "blur", function() {
+				var val = jQuery(elem).val();
+				jQuery.each(args, function(i, ops) {
+					ops = ops.split(':');
+					var type = ops[0],
+						tip = ops[1],
+						callback = ops[2];
+					if (typeof val == "undefined") {
+						func.call(self, elem, tip, "输入内容不能为空", callback);
+						return false;
 					}
-				}
+					if (validtype && (type in validtype)) {
+						var bool = validtype[type].call(self, elem, val, tip, callback);
+						if (bool) {
+							done.call(self, elem, callback);
+						}
+					}
+				});
 			});
 
 			return target;
 		}
 	});
 
-	jQuery.model = model;
+	jQuery.kim = kim;
 })()
