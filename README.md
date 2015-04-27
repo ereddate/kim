@@ -34,7 +34,7 @@
 			}
 		});
 		//使用KIM
-		//可以这样写jQuery.kim({...}) 或者 jQuery(".main").kim({...})
+		//可以这样写jQuery.kim({...}) 或者 jQuery(".main").kim({...}) 或者 kim({...})
 		jQuery.kim({
 			initialization: function(){
 				//初始页面
