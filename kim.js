@@ -1,11 +1,15 @@
 ;
 (function() {
-	function _init() {
-		var self = this,
-			ren = jQuery("html").children();
+	function _init(elem) {
+		var self = this;
+		if (elem) {
+			_initApp.call(self, jQuery(elem));
+			return;
+		}
+		ren = jQuery("html").children();
 		ren.each(function(i, obj) {
-			var elem = jQuery(obj);
-			_initApp.call(self, elem);
+			var a = jQuery(obj);
+			_initApp.call(self, a);
 		});
 	}
 
@@ -186,14 +190,18 @@
 		end.call(self, elem);
 	}
 
-	var kim = function(ops) {
-		return new kim.fn.init(ops);
+	var kim = function(elem, ops) {
+		return new kim.fn.init(elem, ops);
 	};
 	kim.fn = kim.prototype = {
-		init: function(ops) {
+		init: function() {
+			var args = arguments,
+				ops, elem;
+			if (typeof args[1] == "undefined") ops = args[0], elem = undefined;
+			else elem = args[0], ops = args[1];
 			if (!this.config) this.config = {};
 			jQuery.extend(this.config, ops);
-			_init.call(this);
+			_init.call(this, elem);
 			this.config.initialization.call(this);
 			return this;
 		},
@@ -255,7 +263,7 @@
 	jQuery.each(events, function(i, name) {
 		kim.fn["on" + _capitalize(name)] = function(elem, func) {
 			var self = this;
-			var args = argments,
+			var args = arguments,
 				len = args.length;
 			if (len == 1)(func = elem, elem = false);
 			(elem || self.active) && jQuery(self.active).on(name, function(e) {
@@ -267,7 +275,7 @@
 
 	kim.fn.one = function(elem, name, func) {
 		var self = this;
-		var args = argments,
+		var args = arguments,
 			len = args.length;
 		if (len <= 1) {
 			return this;
@@ -281,7 +289,7 @@
 
 	kim.fn.off = function(elem, name) {
 		var self = this;
-		var args = argments,
+		var args = arguments,
 			len = args.length;
 		if (len == 1)(name = elem, elem = false);
 		(elem || self.active) && jQuery(self.active).off(name);
@@ -304,6 +312,10 @@
 		});
 		return this;
 	}
+
+	jQuery.fn.kim = function(ops) {
+		return kim(this, ops);
+	};
 
 	jQuery.kim = kim;
 	window.kim = kim;
