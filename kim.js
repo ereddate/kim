@@ -1,73 +1,9 @@
 ;
 (function() {
-	function _init(elem) {
-		var self = this;
-		if (elem) {
-			_initApp.call(self, jQuery(elem));
-			return;
-		}
-		ren = jQuery("html").children();
-		ren.each(function(i, obj) {
-			var a = jQuery(obj);
-			_initApp.call(self, a);
-		});
-	}
 
 	var events = ["load", "click", "change", "blur", "focus", "contextmenu", "formchange", "forminput", "input", "invalid", "reset", "select", "submit", "keyup", "keydown", "keypress", "drag", "dragend", "dragenter", "dragleave", "dragover", "dragstart", "drop", "mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel", "scroll", "dblclick", "error", "resize", "unload", "abort", "canplay", "canplaythrough", "durationchange", "emptied", "ended", "loadeddata", "loadedmetadata", "loadstart", "pause", "play", "playing", "progress", "ratechange", "readystatechange", "seeked", "seeking", "stalled", "suspend", "timeupdate", "volumechange", "waiting", "afterprint", "beforeprint", "beforeunload", "haschange", "message", "offline", "online", "pagehide", "pageshow", "popstate", "redo", "storage", "undo"];
 
 	var item = ["page", "view", "control", "item"];
-
-	function _initApp(elem) {
-		var self = this;
-		if (typeof elem.attr("ng-app") != "undefined") {
-			if (!self.app) self.app = {};
-			var name = (elem.attr("ng-app") != "" ? elem.attr("ng-app") : "app" + Math.random());
-			if (!self.app[name]) {
-				self.app[name] = {
-					parent: elem
-				};
-				elem.addClass("ng-app ng-app-" + name);
-				_initTmpl.call(self, elem);
-				_initShow(elem);
-				_add.call(self, elem);
-			}
-		} else {
-			jQuery(elem).children().each(function(i, obj) {
-				_initApp.call(self, jQuery(obj));
-			});
-		}
-	}
-
-	function _initModel(elem) {
-		var self = this,
-			command, regex, regval;
-		jQuery(elem).attr("ng-model") && (command = jQuery(elem).attr("ng-model"), regex = (new RegExp("(" + command.replace(/\)/, ")\\)").replace(/\(/, ")\\(("))), regval = regex.exec(command), regval && self.model && self.model[regval[1]] && self.model[regval[1]].call(self, elem, regval[2] && regval[2].split(','), self));
-	}
-
-	function _judgmentType(html) {
-		if (/ng\-page/.test(html)) {
-			return 0;
-		} else if (/ng\-view/.test(html)) {
-			return 1;
-		} else if (/ng\-control/.test(html)) {
-			return 2;
-		} else if (/ng\-item/.test(html)) {
-			return 3;
-		}
-	}
-
-	function _initHandle(obj) {
-		var self = this;
-		jQuery.each(events, function(i, eventname) {
-			if (obj && typeof jQuery(obj).attr("ng-" + eventname) != "undefined") {
-				var eventhandle = jQuery(obj).attr("ng-" + eventname);
-				self.config.handle[eventhandle] && jQuery(obj).on(eventname, function(e) {
-					/click/.test(eventname) && e.preventDefault();
-					self.config.handle[eventhandle].call(this, e, self);
-				});
-			}
-		});
-	}
 
 	function _getConstructorName(o) {
 		//加o.constructor是因为IE下的window和document
@@ -136,12 +72,6 @@
 		return val[0].toUpperCase() + val.substr(1);
 	}
 
-	function _initShow(elem) {
-		var self = this,
-			show = jQuery(elem).attr("ng-show");
-		typeof show != "undefined" && jQuery(elem)[show == "show" ? "show" : "hide"]();
-	}
-
 	function _tmpl(data, temp) {
 		jQuery.each(data, function(name, val) {
 			var regex = new RegExp("\{\{" + name + "\}\}", "gi");
@@ -150,44 +80,114 @@
 		return temp;
 	}
 
-	function _initTmpl(elem) {
-		var self = this;
-		jQuery.each(self.model, function(name, obj) {
-			typeof jQuery(elem).attr("ng-" + name) != "undefined" && self.model[name].call(self, elem);
-		});
-	}
+	var model = function(elem, target) {
+		return new model.fn.init(elem, target);
+	};
 
-	function _initData(elem) {
-		var self = this;
-	}
-
-	function _add(elem, num) {
-		var self = this;
-		jQuery(elem).children().each(function(i, obj) {
-			_initItem.call(self, jQuery(obj), function(obj, n) {
-				_add.call(self, obj);
-			});
-		});
-	}
-
-	function _initItem(elem, end) {
-		var self = this;
-		jQuery.each(item, function(i, type) {
-			if (typeof elem.attr("ng-" + type) != "undefined" && !/\{\{/.test(elem.attr("ng-" + type))) {
-				var name = (elem.attr("ng-" + type) != "" ? elem.attr("ng-" + type) : type + Math.random());
-				elem.addClass("ng-" + type + " ng-" + type + "-" + name);
-				var app = elem.parents(".ng-app").attr("ng-app");
-				if (self.app[app]) {
-					if (!self.app[app][type]) self.app[app][type] = {};
-					self.app[app][type][name] = elem;
+	model.fn = model.prototype = {
+		init: function(elem, target) {
+			this.elem = elem;
+			this.target = target;
+			return this;
+		},
+		_initApp: function() {
+			var self = this,
+				elem = self.elem,
+				target = self.target;
+			if (typeof elem.attr("ng-app") != "undefined") {
+				if (!target.app) target.app = {};
+				var name = (elem.attr("ng-app") != "" ? elem.attr("ng-app") : "app" + Math.random());
+				if (!target.app[name]) {
+					target.app[name] = {
+						parent: elem
+					};
+					elem.addClass("ng-app ng-app-" + name);
+					model(elem, target)._initTmpl()._initShow()._add();
 				}
-				_initTmpl.call(self, elem);
-				_initShow(elem);
-				_initHandle.call(self, elem);
-				//_initModel.call(self, elem);
+			} else {
+				jQuery(elem).children().each(function(i, obj) {
+					model(jQuery(obj), target)._initApp();
+				});
 			}
+			return this;
+		},
+		_initHandle: function() {
+			var self = this,
+				target = self.target,
+				elem = self.elem;
+			jQuery.each(events, function(i, eventname) {
+				if (elem && typeof jQuery(elem).attr("ng-" + eventname) != "undefined") {
+					var eventhandle = jQuery(elem).attr("ng-" + eventname);
+					target.config.handle[eventhandle] && jQuery(elem).on(eventname, function(e) {
+						/click/.test(eventname) && e.preventDefault();
+						target.config.handle[eventhandle].call(this, e, target);
+					});
+				}
+			});
+			return this;
+		},
+		_initShow: function() {
+			var self = this,
+				elem = self.elem,
+				target = self.target,
+				show = jQuery(elem).attr("ng-show");
+			typeof show != "undefined" && jQuery(elem)[show == "show" ? "show" : "hide"]();
+			return this;
+		},
+		_initTmpl: function(elem) {
+			var self = this,
+				elem = self.elem,
+				target = self.target;
+			jQuery.each(target.model, function(name, obj) {
+				typeof jQuery(elem).attr("ng-" + name) != "undefined" && target.model[name].call(target, elem);
+			});
+			return this;
+		},
+		_add: function() {
+			var self = this,
+				elem = self.elem,
+				target = self.target;
+			jQuery(elem).children().each(function(i, obj) {
+				model(jQuery(obj), target)._initItem(function(obj) {
+					model(obj, target)._add();
+				});
+			});
+			return this;
+		},
+		_initItem: function(end) {
+			var self = this,
+				elem = self.elem,
+				target = self.target;
+			jQuery.each(item, function(i, type) {
+				if (typeof elem.attr("ng-" + type) != "undefined" && !/\{\{/.test(elem.attr("ng-" + type))) {
+					var name = (elem.attr("ng-" + type) != "" ? elem.attr("ng-" + type) : type + Math.random());
+					elem.addClass("ng-" + type + " ng-" + type + "-" + name);
+					var app = elem.parents(".ng-app").attr("ng-app");
+					if (target.app[app]) {
+						if (!target.app[app][type]) target.app[app][type] = {};
+						target.app[app][type][name] = elem;
+					}
+					model(elem, target)._initTmpl()._initShow()._initHandle();
+				}
+			});
+			end(elem);
+			return this;
+		}
+	};
+
+	model.fn.init.prototype = model.fn;
+
+	function _init(elem) {
+		var self = this;
+		if (elem) {
+			model(elem, self)._initApp();
+			return;
+		}
+		ren = jQuery("html").children();
+		ren.each(function(i, obj) {
+			var a = jQuery(obj);
+			model(a, self)._initApp();
 		});
-		end.call(self, elem);
 	}
 
 	var kim = function(elem, ops) {
@@ -245,7 +245,7 @@
 		add: function(elem) {
 			var self = this,
 				target = elem || self.active;
-			_add.call(self, target);
+			model(target, self)._add();
 			return this;
 		},
 		tmpl: function(data, tmpl) {
