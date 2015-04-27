@@ -74,13 +74,13 @@ ng-[app|page|view|control|item]="name" 对象名称
 
 ng-show="show|hide" 是否显示
 
-ng-list 可循环的数据列表
-
-ng-tmpl 不可循环的数据模板
-
 ng-插件名
 
 	valid 表单测证 ng-valid="验证类型:错误提示:提示元素或回调"
+	
+	list 数据列表 ng-list="导入数据的方法名"
+	
+	tmpl 数据模板 ng-tmpl="导入数据的方法名"
 	
 #方法
 
