@@ -211,46 +211,62 @@
 	};
 	kim.fn.init.prototype = kim.fn;
 
+	function activeElem(elem) {
+		var self = this;
+		var len = jQuery(elem).length;
+		if (len < self.length) {
+			for (var i = 0; i < self.length; i++)
+				if (i >= len) delete self[i];
+			self.length = len;
+			//return;
+		}
+		jQuery(elem).each(function(i, obj) {
+			self[i] = obj;
+		});
+		self.length = len;
+	}
+
 	jQuery.extend(kim.fn, {
 		toggle: function(app, type, val) {
 			var self = this,
 				elem;
 			jQuery.each(self.app[app][type], function(name, obj) {
-				if (name == val) elem = jQuery(obj).show().attr("ng-show", "show");
+				if (name == val)(elem = obj, jQuery(obj).show().attr("ng-show", "show"));
 				else jQuery(obj).hide().attr("ng-show", "hide");
 			});
-			this.active = elem;
+			activeElem.call(self, elem);
+			//this.active = elem;
 			return this;
 		},
 		eq: function(val) {
 			var self = this;
-			typeof val == "string" ? self.active.each(function(i, elem) {
+			typeof val == "string" ? jQuery(self).each(function(i, elem) {
 				if (jQuery(elem).hasClass(val)) {
-					self.active = jQuery(elem);
+					activeElem.call(self, elem);
 					return false;
 				}
-			}) : (self.active = self.active.eq(val));
+			}) : activeElem.call(self, jQuery(self).eq(val));
 			return this;
 		},
 		find: function(val) {
 			var self = this;
-			self.active = self.active.find("." + val.replace(/\./gi, ""));
+			activeElem.call(self, jQuery(self).find("." + val.replace(/\./gi, "")));
 			return this;
 		},
 		toggleClass: function(val, bool) {
 			var self = this;
-			self.active = typeof bool != "undefined" && self.active.hasClass(val) == bool || self.active.hasClass(val) ? self.active.removeClass(val) : self.active.addClass(val);
+			activeElem.call(self, (typeof bool != "undefined" && jQuery(self).hasClass(val) == bool || jQuery(self).hasClass(val) ? jQuery(self).removeClass(val) : jQuery(self).addClass(val)));
 			return this;
 		},
 		add: function(elem) {
 			var self = this,
-				target = elem || self.active;
+				target = elem || self;
 			model(target, self)._add();
 			return this;
 		},
 		tmpl: function(data, tmpl) {
 			var self = this;
-			tmpl = tmpl || jQuery(self.active).html();
+			tmpl = tmpl || jQuery(self).html();
 			return _tmpl(data, tmpl);
 		}
 	});
@@ -266,7 +282,7 @@
 			var args = arguments,
 				len = args.length;
 			if (len == 1)(func = elem, elem = false);
-			(elem || self.active) && jQuery(self.active).on(name, function(e) {
+			(elem || self) && jQuery(self).on(name, function(e) {
 				func.call(this, e, self);
 			});
 			return this;
@@ -281,7 +297,7 @@
 			return this;
 		}
 		if (len == 2)(func = name, name = elem, elem = false);
-		(elem || self.active) && jQuery(self.active).off(name).on(name, function(e) {
+		(elem || self) && jQuery(self).off(name).on(name, function(e) {
 			func.call(this, e, self);
 		});
 		return this;
@@ -292,7 +308,7 @@
 		var args = arguments,
 			len = args.length;
 		if (len == 1)(name = elem, elem = false);
-		(elem || self.active) && jQuery(self.active).off(name);
+		(elem || self) && jQuery(self).off(name);
 		return this;
 	};
 
@@ -316,6 +332,12 @@
 	jQuery.fn.kim = function(ops) {
 		return kim(this, ops);
 	};
+
+	if (typeof define === "function" && define.amd) {
+		define("kim", [], function() {
+			return kim;
+		});
+	}
 
 	jQuery.kim = kim;
 	window.kim = kim;
