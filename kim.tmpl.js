@@ -9,7 +9,7 @@
 				tmpl = jQuery.kim.tmpl(data, tmpl);
 				var newitema = jQuery(tmpl);
 				jQuery(elem).html(newitema).show();
-				self.add(elem);
+				self.build(elem);
 			}, self);
 
 			return this;

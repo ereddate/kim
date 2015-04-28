@@ -7,7 +7,7 @@
 		</style>
 	</head>
 	<body>
-		<div ng-app="test" ng-show="show">
+		<div ng-app="test" ng-show="show" class="main">
 			<div ng-page="home" ng-show="show">
 				<div ng-view="headera">
 					<div ng-control="nava"><a href="#" ng-item="gohomea" ng-click="gohome_click">home</a> <a href="#" ng-item="goproducta" ng-click="goproduct_click">product</a> <a href="#" ng-item="goservicea" ng-click="goservice_click">service</a></div>
@@ -61,9 +61,9 @@
 
 		<script src="jquery.js"></script>
 		<script src="kim.js"></script>
-		<script src="kim-valid.js"></script>
-		<script src="kim-list.js"></script>
-		<script src="kim-tmpl.js"></script>
+		<script src="kim.valid.js"></script>
+		<script src="kim.list.js"></script>
+		<script src="kim.tmpl.js"></script>
 		<script>
 		;
 		(function() {
@@ -74,7 +74,27 @@
 					jQuery(elem).html("test");
 					return this;
 				}
-			})({
+			});
+
+			jQuery.extend(jQuery.kim.fn, {
+				toggle: function(app, type, val) {
+					var self = this,
+						elem;
+					jQuery.each(self.app[app][type], function(name, obj) {
+						if (name == val)(elem = obj, jQuery(obj).show().attr("ng-show", "show"));
+						else jQuery(obj).hide().attr("ng-show", "hide");
+					});
+					self.get(elem);
+					return this;
+				},
+				toggleClass: function(val, bool) {
+					var self = this;
+					self.get(typeof bool != "undefined" && jQuery(self).hasClass(val) == bool || jQuery(self).hasClass(val) ? jQuery(self).removeClass(val) : jQuery(self).addClass(val));
+					return this;
+				}
+			});
+
+			console.log(jQuery(".main").kim({
 				initialization: function(){
 					this.app["test"].item["gohomea"].click();
 				},
@@ -168,25 +188,25 @@
 							});
 							var elem = jQuery(html.join(' '));
 							parent.html(elem);
-							target.add(parent);
+							target.build(parent);
 							render(data);
 						};
 						jQuery("head").append(jQuery(unescape("%3Cscript%3E%3C/script%3E")).attr("src", url));
 					},
 					gohome_click: function(e, target){
 						e.preventDefault();
-						target.togglePage("test", "home").find("ng-item").toggleClass('on', false).eq("ng-item-gohomea").toggleClass('on');
+						target.toggle("test", "page", "home").find("ng-item").toggleClass('on', false).eq("ng-item-gohomea").toggleClass('on');
 					},
 					goproduct_click: function(e, target){
 						e.preventDefault();
-						target.togglePage("test", "product").find("ng-item").toggleClass('on', false).eq("ng-item-goproductb").toggleClass('on');
+						target.toggle("test", "page", "product").find("ng-item").toggleClass('on', false).eq("ng-item-goproductb").toggleClass('on');
 					},
 					goservice_click: function(e, target){
 						e.preventDefault();
-						target.togglePage("test", "service").find("ng-item").toggleClass('on', false).eq("ng-item-goservicec").toggleClass('on');
+						target.toggle("test", "page", "service").find("ng-item").toggleClass('on', false).eq("ng-item-goservicec").toggleClass('on');
 					}
 				}
-			});
+			}));
 
 		})()
 		</script>

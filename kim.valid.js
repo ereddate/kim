@@ -22,7 +22,7 @@
 		}));
 	}
 
-	var validtype = {
+	jQuery.kim.validType = {
 		addressmin5: function(elem, val, tip, callback) {
 			if (val.length < 5) {
 				func.call(this, elem, tip, "地址至少要输入5个字", callback);
@@ -138,8 +138,8 @@
 							func.call(self, elem, tip, "输入内容不能为空", callback);
 							return false;
 						}
-						if (validtype && (type in validtype)) {
-							var bool = validtype[type].call(self, elem, val, tip, callback);
+						if (jQuery.kim.validType && (type in jQuery.kim.validType)) {
+							var bool = jQuery.kim.validType[type].call(self, elem, val, tip, callback);
 							if (bool) {
 								done.call(self, elem, callback);
 							}

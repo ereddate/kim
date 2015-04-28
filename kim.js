@@ -1,7 +1,7 @@
 ;
 (function() {
 
-	var events = ["load", "click", "change", "blur", "focus", "contextmenu", "formchange", "forminput", "input", "invalid", "reset", "select", "submit", "keyup", "keydown", "keypress", "drag", "dragend", "dragenter", "dragleave", "dragover", "dragstart", "drop", "mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel", "scroll", "dblclick", "error", "resize", "unload", "abort", "canplay", "canplaythrough", "durationchange", "emptied", "ended", "loadeddata", "loadedmetadata", "loadstart", "pause", "play", "playing", "progress", "ratechange", "readystatechange", "seeked", "seeking", "stalled", "suspend", "timeupdate", "volumechange", "waiting", "afterprint", "beforeprint", "beforeunload", "haschange", "message", "offline", "online", "pagehide", "pageshow", "popstate", "redo", "storage", "undo", "touchstart", "touchend", "touchmove", "gesturestart", "gesturechange", "gestureend"];
+	var events = ["load", "click", "change", "blur", "focus", "contextmenu", "formchange", "forminput", "input", "invalid", "reset", "select", "submit", "keyup", "keydown", "keypress", "drag", "dragend", "dragenter", "dragleave", "dragover", "dragstart", "drop", "mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel", "scroll", "dblclick", "error", "resize", "unload", "abort", "canplay", "canplaythrough", "durationchange", "emptied", "ended", "loadeddata", "loadedmetadata", "loadstart", "pause", "play", "playing", "progress", "ratechange", "readystatechange", "seeked", "seeking", "stalled", "suspend", "timeupdate", "volumechange", "waiting", "afterprint", "beforeprint", "beforeunload", "haschange", "message", "offline", "online", "pagehide", "pageshow", "popstate", "redo", "storage", "undo"];
 
 	var item = ["page", "view", "control", "item"];
 
@@ -204,9 +204,6 @@
 			_init.call(this, elem);
 			this.config.initialization.call(this);
 			return this;
-		},
-		clone: function(app, type, name, clone) {
-			return this.app[app] && this.app[app][type] && this.app[app][type][name] && (this.app[app][type][name + (this[type].length += 1)] = this.app[app][type][name].clone(clone || false));
 		}
 	};
 	kim.fn.init.prototype = kim.fn;
@@ -227,17 +224,6 @@
 	}
 
 	jQuery.extend(kim.fn, {
-		toggle: function(app, type, val) {
-			var self = this,
-				elem;
-			jQuery.each(self.app[app][type], function(name, obj) {
-				if (name == val)(elem = obj, jQuery(obj).show().attr("ng-show", "show"));
-				else jQuery(obj).hide().attr("ng-show", "hide");
-			});
-			activeElem.call(self, elem);
-			//this.active = elem;
-			return this;
-		},
 		eq: function(val) {
 			var self = this;
 			typeof val == "string" ? jQuery(self).each(function(i, elem) {
@@ -253,12 +239,11 @@
 			activeElem.call(self, jQuery(self).find("." + val.replace(/\./gi, "")));
 			return this;
 		},
-		toggleClass: function(val, bool) {
-			var self = this;
-			activeElem.call(self, (typeof bool != "undefined" && jQuery(self).hasClass(val) == bool || jQuery(self).hasClass(val) ? jQuery(self).removeClass(val) : jQuery(self).addClass(val)));
+		get: function(elem){
+			activeElem.call(this, elem);
 			return this;
 		},
-		add: function(elem) {
+		build: function(elem) {
 			var self = this,
 				target = elem || self;
 			model(target, self)._add();
@@ -270,47 +255,6 @@
 			return _tmpl(data, tmpl);
 		}
 	});
-
-	jQuery.each(item, function(i, name) {
-		kim.fn["toggle" + _capitalize(name)] = function(app, val) {
-			return this.toggle(app, name, val);
-		};
-	});
-	jQuery.each(events, function(i, name) {
-		kim.fn["on" + _capitalize(name)] = function(elem, func) {
-			var self = this;
-			var args = arguments,
-				len = args.length;
-			if (len == 1)(func = elem, elem = false);
-			(elem || self) && jQuery(self).on(name, function(e) {
-				func.call(this, e, self);
-			});
-			return this;
-		};
-	});
-
-	kim.fn.one = function(elem, name, func) {
-		var self = this;
-		var args = arguments,
-			len = args.length;
-		if (len <= 1) {
-			return this;
-		}
-		if (len == 2)(func = name, name = elem, elem = false);
-		(elem || self) && jQuery(self).off(name).on(name, function(e) {
-			func.call(this, e, self);
-		});
-		return this;
-	};
-
-	kim.fn.off = function(elem, name) {
-		var self = this;
-		var args = arguments,
-			len = args.length;
-		if (len == 1)(name = elem, elem = false);
-		(elem || self) && jQuery(self).off(name);
-		return this;
-	};
 
 	kim.fn.model = {};
 

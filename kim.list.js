@@ -14,7 +14,7 @@
 				});
 				var newitem = jQuery(html.join(''));
 				jQuery(elem).html(newitem).show();
-				self.add(elem);
+				self.build(elem);
 			}, self);
 
 			return this;
