@@ -142,7 +142,7 @@
 				if (typeof jQuery(elem).attr("ng-" + name) != "undefined") {
 					var command = jQuery(elem).attr("ng-" + name);
 					if (/\(/.test(command)) {
-						var regex = new RegExp("(" + command.replace(/\)/, ")\\\)").replace(/\(/, ")\\\((").replace(/(\_|\-)/gi, "\\$1")) ;
+						var regex = new RegExp("(" + command.replace(/\)/, ")\\\)").replace(/\(/, ")\\\((").replace(/(\_|\-)/gi, "\\$1"));
 						//console.log(regex)
 						command = regex.exec(command);
 						//console.log(command);
@@ -181,6 +181,7 @@
 					if (target.app[app]) {
 						if (!target.app[app][type]) target.app[app][type] = {};
 						target.app[app][type][name] = elem;
+
 					}
 					model(elem, target)._initShow()._initTmpl()._initHandle();
 				}
@@ -255,6 +256,18 @@
 			return this;
 		},
 		get: function(elem) {
+			if (typeof elem == "string") {
+				if (/ng\-/.test(elem) && (new regExp(item.join('\-|'))).test(elem)) {
+					return this.find(elem);
+				} else {
+					var self = this;
+					jQuery.each(item, function(i, name) {
+						var obj = self.find("ng-" + name + "-" + elem);
+						if (obj.length > 0) return false;
+					});
+					return this;
+				}
+			}
 			activeElem.call(this, elem);
 			return this;
 		},
