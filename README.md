@@ -6,7 +6,7 @@
 	<div ng-app="test" ng-show="show">
 		<div ng-page="home" ng-show="show">
 			<div ng-view="headera">
-				<div ng-control="nava" ng-list="getData(callback_name)">
+				<div ng-control="nava" ng-list="getData(callback_name)" ng-filter="obj.id == 1">
 					<div ng-item="list_tmpl_{{id}}">
 						<p>{{decoration}}</p>
 						<a href="#" ng-item="testclick" ng-click="test_click" data-id="{{id}}">删除</a>
@@ -48,6 +48,16 @@
 				},
 				getData: function(render, target){
 					//数据注入模板
+					var data = [
+						{
+							decoration: "aaa",
+							id:1
+						},
+						{
+							decoration: "bbb",
+							id:2
+						}
+					]
 					render(data);
 				},
 				callback_name: function(elem, target){
@@ -84,8 +94,12 @@ ng-插件名
 	valid 表单测证 ng-valid="验证类型:错误提示:提示元素或回调"
 	
 	list 数据列表 ng-list="导入数据的方法名([导入后的回调])"
+
+		ng-filter="过滤表达式" 私有过滤属性
 	
 	tmpl 数据模板 ng-tmpl="导入数据的方法名([导入后的回调])"
+
+		ng-filter="过滤表达式" 私有过滤属性
 	
 #方法
 

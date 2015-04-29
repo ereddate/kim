@@ -73,11 +73,16 @@
 	}
 
 	function _tmpl(data, temp) {
-		jQuery.each(data, function(name, val) {
-			var regex = new RegExp("\{\{" + name + "\}\}", "gi");
-			temp = temp.replace(regex, (typeof val == "string" && val || typeof val == "function" && val() || _stringify(val)));
-		});
-		return temp;
+		if (data) {
+			if (typeof data == "function") (data = data());
+			jQuery.each(data, function(name, val) {
+				var regex = new RegExp("\{\{" + name + "\}\}", "gi");
+				temp = temp.replace(regex, (typeof val == "string" && val || typeof val == "function" && val() || _stringify(val)));
+			});
+			return temp;
+		}else {
+			return "";
+		}
 	}
 
 	var model = function(elem, target) {

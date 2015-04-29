@@ -44,7 +44,7 @@
 				</div>
 				<div ng-view="mainc">
 					<div ng-control="aaa">
-						<select ng-item="select" name="select" ng-list="getselect_get" ng-change="select_change" ng-valid="required:不能为空:selecterror"><option value="{{value}}">{{title}}</option></select>
+						<select ng-item="select" name="select" ng-list="getselect_get" ng-filter="obj.value == 2" ng-change="select_change" ng-valid="required:不能为空:selecterror"><option value="{{value}}">{{title}}</option></select>
 						<span ng-item="selectval"></span>
 						<span ng-item="selecterror"></span>
 						<input ng-item="inputvalid" name="inputvalid" ng-valid="required:不能为空:inputerror" value="" />
