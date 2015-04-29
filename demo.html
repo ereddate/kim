@@ -13,14 +13,14 @@
 					<div ng-control="nava"><a href="#" ng-item="gohomea" ng-click="gohome_click">home</a> <a href="#" ng-item="goproducta" ng-click="goproduct_click">product</a> <a href="#" ng-item="goservicea" ng-click="goservice_click">service</a></div>
 				</div>
 				<div ng-view="maina">
-					<div ng-control="list" ng-list="getlist_post">
+					<div ng-control="list" ng-list="getlist_post(list_callback)">
 						<div ng-item="list_tmpl_{{id}}">
 							<h1>{{title}}</h1>
 							<p>{{decoration}}</p>
 							<a href="#" ng-item="list_removeitem" ng-click="list_removeitem_click" data-id="{{id}}">删除</a> <a href="#" ng-item="list_upitem" ng-click="list_upitem_click" data-id="{{id}}">收起</a>
 						</div>
 					</div>
-					<div ng-control="list_pagenum"><a href="{{num}}" ng-item="pagenum_{{num}}" ng-click="pagenum_click">{{shownum}}</a></div>
+					<div ng-control="list_pagenum" ng-list="getnum_get"><a href="{{num}}" ng-item="pagenum_{{num}}" ng-click="pagenum_click">{{shownum}}</a></div>
 					1
 				</div>
 				<div ng-view="footera">&copy;2015.</div>
@@ -157,9 +157,10 @@
 					test_keyup: function(e, target){
 						target.app["test"].item["test_result"].html(jQuery(this).val());
 					},
+					getnum_get: function(render, target){
+						render([{num:0, shownum:1},{num:1, shownum:2}]);
+					},
 					getlist_post: function(render, target){
-						var url = "http://www.xxx.com/artList?r=0.15105288074240997&callback=jQuery1111038380557446250385_1429578750367&_=1429578750373"
-						window["jQuery1111038380557446250385_1429578750367"] = function(data){
 							data = [
 								{
 									id:0,
@@ -179,19 +180,10 @@
 									decoration:"adfasdfasdfasdfasdfasdfasd"
 								}
 							];
-							var parent = target.app["test"].control["list_pagenum"];
-							var tmpl = parent.html();
-							parent.data("tmpl", tmpl);
-							var html = [];
-							jQuery.each([{num:0, shownum:1},{num:1, shownum:2}], function(i, obj){
-								html.push(target.tmpl(obj, tmpl));
-							});
-							var elem = jQuery(html.join(' '));
-							parent.html(elem);
-							target.build(parent);
 							render(data);
-						};
-						jQuery("head").append(jQuery(unescape("%3Cscript%3E%3C/script%3E")).attr("src", url));
+					},
+					list_callback: function(elem, target){
+						console.log(elem)
 					},
 					gohome_click: function(e, target){
 						e.preventDefault();

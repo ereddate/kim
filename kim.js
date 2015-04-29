@@ -139,7 +139,22 @@
 				elem = self.elem,
 				target = self.target;
 			jQuery.each(target.model, function(name, obj) {
-				typeof jQuery(elem).attr("ng-" + name) != "undefined" && target.model[name].call(target, elem);
+				if (typeof jQuery(elem).attr("ng-" + name) != "undefined") {
+					var command = jQuery(elem).attr("ng-" + name);
+					if (/\(/.test(command)) {
+						var regex = new RegExp("(" + command.replace(/\)/, ")\\\)").replace(/\(/, ")\\\((").replace(/(\_|\-)/gi, "\\$1")) ;
+						//console.log(regex)
+						command = regex.exec(command);
+						//console.log(command);
+					}
+					if (typeof command == "string") {
+						target.model[name].call(target, elem, command);
+						return true;
+					} else if (command) {
+						var args = [elem, command[1], command[2], target];
+						target.model[name].apply(target, args);
+					}
+				}
 			});
 			return this;
 		},
@@ -167,7 +182,7 @@
 						if (!target.app[app][type]) target.app[app][type] = {};
 						target.app[app][type][name] = elem;
 					}
-					model(elem, target)._initTmpl()._initShow()._initHandle();
+					model(elem, target)._initShow()._initTmpl()._initHandle();
 				}
 			});
 			end(elem);
