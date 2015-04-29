@@ -217,7 +217,7 @@
 			if (!this.config) this.config = {};
 			jQuery.extend(this.config, ops);
 			_init.call(this, elem);
-			this.config.initialization.call(this);
+			this.config.initialization && this.config.initialization.call(this);
 			return this;
 		}
 	};
