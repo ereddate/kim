@@ -6,7 +6,7 @@
 	<div ng-app="test" ng-show="show">
 		<div ng-page="home" ng-show="show">
 			<div ng-view="headera">
-				<div ng-control="nava" ng-list="getData">
+				<div ng-control="nava" ng-list="getData(callback_name)">
 					<div ng-item="list_tmpl_{{id}}">
 						<p>{{decoration}}</p>
 						<a href="#" ng-item="testclick" ng-click="test_click" data-id="{{id}}">删除</a>
@@ -50,6 +50,9 @@
 					//数据注入模板
 					render(data);
 				},
+				callback_name: function(elem, target){
+					//数据注入后回调
+				},
 				...
 			}
 		});
@@ -80,9 +83,9 @@ ng-插件名
 
 	valid 表单测证 ng-valid="验证类型:错误提示:提示元素或回调"
 	
-	list 数据列表 ng-list="导入数据的方法名"
+	list 数据列表 ng-list="导入数据的方法名([导入后的回调])"
 	
-	tmpl 数据模板 ng-tmpl="导入数据的方法名"
+	tmpl 数据模板 ng-tmpl="导入数据的方法名([导入后的回调])"
 	
 #方法
 
