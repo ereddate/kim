@@ -10,7 +10,7 @@
 		<div ng-app="test" ng-show="show" class="main">
 			<div ng-page="home" ng-show="show">
 				<div ng-view="headera">
-					<div ng-control="nava"><a href="#" ng-item="gohomea" ng-click="gohome_click">home</a> <a href="#" ng-item="goproducta" ng-click="goproduct_click">product</a> <a href="#" ng-item="goservicea" ng-click="goservice_click">service</a></div>
+					<div ng-control="nava"><a href="home" ng-item="gohomea" ng-click="gohome_click">home</a> <a href="product" ng-item="goproducta" ng-click="goproduct_click">product</a> <a href="service" ng-item="goservicea" ng-click="goservice_click">service</a></div>
 				</div>
 				<div ng-view="maina">
 					<div ng-control="list" ng-list="getlist_post(list_callback)">
@@ -27,7 +27,7 @@
 			</div>
 			<div ng-page="product" ng-show="hide">
 				<div ng-view="headerb">
-					<div ng-control="navb"><a href="#" ng-item="gohomeb" ng-click="gohome_click">home</a> <a href="#" ng-item="goproductb" ng-click="goproduct_click">product</a> <a href="#" ng-item="goserviceb" ng-click="goservice_click">service</a></div>
+					<div ng-control="navb"><a href="home" ng-item="gohomeb" ng-click="gohome_click">home</a> <a href="product" ng-item="goproductb" ng-click="goproduct_click">product</a> <a href="service" ng-item="goserviceb" ng-click="goservice_click">service</a></div>
 				</div>
 				<div ng-view="mainb">
 					<div ng-control="form" ng-tmpl="getform_get">
@@ -40,7 +40,7 @@
 			</div>
 			<div ng-page="service" ng-show="hide">
 				<div ng-view="headerc">
-					<div ng-control="navc"><a href="#" ng-item="gohomec" ng-click="gohome_click">home</a> <a href="#" ng-item="goproductc" ng-click="goproduct_click">product</a> <a href="#" ng-item="goservicec" ng-click="goservice_click">service</a></div>
+					<div ng-control="navc"><a href="home" ng-item="gohomec" ng-click="gohome_click">home</a> <a href="product" ng-item="goproductc" ng-click="goproduct_click">product</a> <a href="service" ng-item="goservicec" ng-click="goservice_click">service</a></div>
 				</div>
 				<div ng-view="mainc">
 					<div ng-control="aaa">
@@ -64,141 +64,232 @@
 		<script src="kim.valid.js"></script>
 		<script src="kim.list.js"></script>
 		<script src="kim.tmpl.js"></script>
+		<script src="kim.define.js"></script>
 		<script>
 		;
 		(function() {
 
-			jQuery.kim.modelExtend({
-				test: function(elem){
-					var self = this;
-					jQuery(elem).html("test");
-					return this;
+			define(function(require, exports, module) {
+				jQuery.kim.modelExtend({
+					test: function(elem) {
+						var self = this;
+						jQuery(elem).html("test");
+						return this;
+					}
+				});
+
+				jQuery.extend(jQuery.kim.fn, {
+					toggle: function(app, type, val) {
+						var self = this,
+							elem;
+						jQuery.each(self.app[app][type], function(name, obj) {
+							if (name == val)(elem = obj, jQuery(obj).show().attr("ng-show", "show"));
+							else jQuery(obj).hide().attr("ng-show", "hide");
+						});
+						self.get(elem);
+						return this;
+					},
+					toggleClass: function(val, bool) {
+						var self = this;
+						self.get(typeof bool != "undefined" && jQuery(self).hasClass(val) == bool || jQuery(self).hasClass(val) ? jQuery(self).removeClass(val) : jQuery(self).addClass(val));
+						return this;
+					}
+				});
+			});
+
+			define("init", function(require, exports, module) {
+				return function(target){
+					target.app["test"].item["gohomea"].click();
 				}
 			});
 
-			jQuery.extend(jQuery.kim.fn, {
-				toggle: function(app, type, val) {
-					var self = this,
-						elem;
-					jQuery.each(self.app[app][type], function(name, obj) {
-						if (name == val)(elem = obj, jQuery(obj).show().attr("ng-show", "show"));
-						else jQuery(obj).hide().attr("ng-show", "hide");
-					});
-					self.get(elem);
-					return this;
-				},
-				toggleClass: function(val, bool) {
-					var self = this;
-					self.get(typeof bool != "undefined" && jQuery(self).hasClass(val) == bool || jQuery(self).hasClass(val) ? jQuery(self).removeClass(val) : jQuery(self).addClass(val));
-					return this;
+			define("list_removeitem_click", function(require, exports, module) {
+				return function(target){
+					jQuery(target).parents(".ng-item").hide();
 				}
 			});
 
-			console.log(jQuery(".main").kim({
-				initialization: function(){
-					this.app["test"].item["gohomea"].click();
-				},
-				handle: {
-					list_removeitem_click: function(e, target){
-						e.preventDefault();
-						jQuery(this).parents(".ng-item").hide();
-					},
-					list_upitem_click: function(e, target){
-						e.preventDefault();
-						var parent = target.app["test"].item["list_tmpl_"+jQuery(this).attr("data-id")];
-						if (!jQuery(this).data("isshow")){
-							var h = parent.height();
-							jQuery(this).data("height", h).data("isshow", true);
-							parent.animate({
-								height: h/2
-							}, "slow");
-						}else{
-							jQuery(this).data("isshow", false)
-							parent.animate({
-								height: jQuery(this).data("height", h)
-							}, "slow");
-						}
-					},
-					input_aerror: function(status, tip, target){
-						jQuery(this).show().html(tip);
-					},
-					select_change:function(e, target){
-						target.app["test"].item["selectval"].html(jQuery(this).val());
-					},
-					getselect_get: function(render, target){
-						var data = [{
-							value:"",
-							title:"请选择..."
-						},{
-							value:1,
-							title:"aaa"
-						},{
-							value:2,
-							title:"bbb"
-						},{
-							value:3,
-							title:"ccc"
-						},{
-							value:4,
-							title:"ddd"
-						}];
-						render(data);
-					},
-					pagenum_click: function(e, target){
-						e.preventDefault();
-						alert(jQuery(this).attr("href"));
-					},
-					getform_get: function(render, target){
-						var data = {
-							test: "input data"
-						};
-						render(data);
-					},
-					test_keyup: function(e, target){
-						target.app["test"].item["test_result"].html(jQuery(this).val());
-					},
-					getnum_get: function(render, target){
-						render([{num:0, shownum:1},{num:1, shownum:2}]);
-					},
-					getlist_post: function(render, target){
-							data = [
-								{
-									id:0,
-									title:"adfasdfasdfas00",
-									decoration:"adfasdfasdfasdfasdfasdfasd"
-								},{
-									id:1,
-									title:"adfasdfasdfas11",
-									decoration:"adfasdfasdfasdfasdfasdfasd"
-								},{
-									id:2,
-									title:"adfasdfasdfas22",
-									decoration:"adfasdfasdfasdfasdfasdfasd"
-								},{
-									id:3,
-									title:"adfasdfasdfas33",
-									decoration:"adfasdfasdfasdfasdfasdfasd"
-								}
-							];
-							render(data);
-					},
-					list_callback: function(elem, target){
-						console.log(elem)
-					},
-					gohome_click: function(e, target){
-						e.preventDefault();
-						target.toggle("test", "page", "home").find("ng-item").toggleClass('on', false).eq("ng-item-gohomea").toggleClass('on');
-					},
-					goproduct_click: function(e, target){
-						e.preventDefault();
-						target.toggle("test", "page", "product").find("ng-item").toggleClass('on', false).eq("ng-item-goproductb").toggleClass('on');
-					},
-					goservice_click: function(e, target){
-						e.preventDefault();
-						target.toggle("test", "page", "service").find("ng-item").toggleClass('on', false).eq("ng-item-goservicec").toggleClass('on');
+			define("list_upitem_click", function(require, exports, module){
+				return function(elem, target){
+					var parent = target.app["test"].item["list_tmpl_"+jQuery(this).attr("data-id")];
+					if (!jQuery(this).data("isshow")){
+						var h = parent.height();
+						jQuery(this).data("height", h).data("isshow", true);
+						parent.animate({
+							height: h/2
+						}, "slow");
+					}else{
+						jQuery(this).data("isshow", false)
+						parent.animate({
+							height: jQuery(this).data("height", h)
+						}, "slow");
 					}
 				}
-			}));
+			});
+
+			define("input_aerror", function(require, exports, module){
+				return function(target, tip){
+					jQuery(target).show().html(tip);
+				}
+			});
+
+			define("select_change", function(require, exports, module){
+				return function(elem, target){
+					target.app["test"].item["selectval"].html(jQuery(elem).val());
+				}
+			});
+
+			define("getselect_get", function(require, exports, module){
+				return function(render){
+					var data = [{
+						value:"",
+						title:"请选择..."
+					},{
+						value:1,
+						title:"aaa"
+					},{
+						value:2,
+						title:"bbb"
+					},{
+						value:3,
+						title:"ccc"
+					},{
+						value:4,
+						title:"ddd"
+					}];
+					render(data);
+				}
+			});
+
+			define("pagenum_click", function(require, exports, module){
+				return function(elem){
+					alert(jQuery(elem).attr("href"));
+				}
+			});
+
+			define("getform_get", function(require, exports, module){
+				return function(render){
+					var data = {
+						test: "input data"
+					};
+					render(data);
+				}
+			});
+
+			define("test_keyup", function(require, exports, module){
+				return function(elem, target){
+					target.app["test"].item["test_result"].html(jQuery(elem).val());
+				}
+			});
+
+			define("getnum_get", function(require, exports, module){
+				return function(render){
+					render([{num:0, shownum:1},{num:1, shownum:2}]);
+				}
+			});
+
+			define("getlist_post", function(require, exports, module){
+				return function(render){
+					var data = [
+						{
+							id:0,
+							title:"adfasdfasdfas00",
+							decoration:"adfasdfasdfasdfasdfasdfasd"
+						},{
+							id:1,
+							title:"adfasdfasdfas11",
+							decoration:"adfasdfasdfasdfasdfasdfasd"
+						},{
+							id:2,
+							title:"adfasdfasdfas22",
+							decoration:"adfasdfasdfasdfasdfasdfasd"
+						},{
+							id:3,
+							title:"adfasdfasdfas33",
+							decoration:"adfasdfasdfasdfasdfasdfasd"
+						}
+					];
+					render(data);
+				}
+			});
+
+			define("gotab_click", function(require, exports, module){
+				return function(elem, target, page, name){
+					target.toggle("test", "page", page).find("ng-item").toggleClass('on', false).eq("ng-item-"+name).toggleClass('on');
+				}
+			});
+
+			define(function(require, exports, module) {
+				var init = require("init"),
+					list_removeitem_click = require("list_removeitem_click"),
+					list_upitem_click = require("list_upitem_click"),
+					input_aerror = require("input_aerror"),
+					select_change = require("select_change"),
+					getselect_get = require("getselect_get"),
+					pagenum_click = require("pagenum_click"),
+					getform_get = require("getform_get"),
+					test_keyup = require("test_keyup"),
+					getnum_get = require("getnum_get"),
+					getlist_post = require("getlist_post"),
+					gotab_click = require("gotab_click");
+
+				jQuery(".main").kim({
+					initialization: function() {
+						init(this);
+					},
+					handle: {
+						list_removeitem_click: function(e, target){
+							e.preventDefault();
+							list_removeitem_click(this);
+						},
+						list_upitem_click: function(e, target){
+							e.preventDefault();
+							list_upitem_click(this, target);
+						},
+						input_aerror: function(status, tip, target){
+							input_aerror(this, tip);
+						},
+						select_change:function(e, target){
+							select_change(this, target);
+						},
+						getselect_get: function(render, target){
+							getselect_get(render);
+						},
+						pagenum_click: function(e, target){
+							e.preventDefault();
+							pagenum_click(this, target);
+						},
+						getform_get: function(render, target){
+							getform_get(render);
+						},
+						test_keyup: function(e, target){
+							test_keyup(this, target);
+						},
+						getnum_get: function(render, target){
+							getnum_get(render);
+						},
+						getlist_post: function(render, target){
+							getlist_post(render);
+						},
+						list_callback: function(elem, target){
+							console.log(elem)
+						},
+						gohome_click: function(e, target){
+							e.preventDefault();
+							gotab_click(this, target, "home", "gohomea");
+						},
+						goproduct_click: function(e, target){
+							e.preventDefault();
+							gotab_click(this, target, "product", "goproductb");
+						},
+						goservice_click: function(e, target){
+							e.preventDefault();
+							gotab_click(this, target, "service", "goservicec");
+						}
+					}
+				});
+
+			});
 
 		})()
 		</script>

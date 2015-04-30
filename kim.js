@@ -74,13 +74,13 @@
 
 	function _tmpl(data, temp) {
 		if (data) {
-			if (typeof data == "function") (data = data());
+			if (typeof data == "function")(data = data());
 			jQuery.each(data, function(name, val) {
 				var regex = new RegExp("\{\{" + name + "\}\}", "gi");
 				temp = temp.replace(regex, (typeof val == "string" && val || typeof val == "function" && val() || _stringify(val)));
 			});
 			return temp;
-		}else {
+		} else {
 			return "";
 		}
 	}
@@ -286,6 +286,16 @@
 			var self = this;
 			tmpl = tmpl || jQuery(self).html();
 			return _tmpl(data, tmpl);
+		},
+		getName: function(elem) {
+			var tagname = "";
+			jQuery.each(item, function(i, name) {
+				if (jQuery(elem).hasClass("ng-" + name)) {
+					tagname = jQuery(elem).attr("ng-" + name);
+					return false;
+				}
+			});
+			return tagname;
 		}
 	});
 

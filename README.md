@@ -105,3 +105,7 @@ ng-插件名
 
 jQuery.kim.modelExtend({...}); 插件扩展
 
+define(["module name"[, ["module dependencies", ...]], ] function(require, exports, module){...}); 模块化开发。
+
+	可以使用nodejs grunt工具按情况配置合并、压缩、发布等。
+
