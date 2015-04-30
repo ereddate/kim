@@ -25,47 +25,58 @@
 	</div>
 	<script src="kim.js"></script>
 	<script>
-		//扩展KIM.MODEL自定义语义
-		jQuery.kim.modelExtend({
-			test: function(elem){
-				var self = this;
-				jQuery(elem).html("test");
-				return this;
+		//define定义模块
+		define("init", function(require, exports, module){
+			return function(){
+				//扩展KIM.MODEL自定义语义
+				jQuery.kim.modelExtend({
+					test: function(elem){
+						var self = this;
+						jQuery(elem).html("test");
+						return this;
+					}
+				});
 			}
 		});
+		
 		//使用KIM
-		//可以这样写jQuery.kim({...}) 或者 jQuery(".main").kim({...}) 或者 kim({...})
-		jQuery.kim({
-			initialization: function(){
-				//初始页面
-				this.app["test"].item["gohomea"].click();
-			},
-			handle:{
-				test_click: function(e, target){
-					//事件
-					//页面元素的内部调用及操作
-					target.app["test"].item["test_result"].html(jQuery(this).val());
+		define(function(require, exports, module){
+			var init = require("init");
+			init();
+
+			//可以这样写jQuery.kim({...}) 或者 jQuery(".main").kim({...}) 或者 kim({...})
+			jQuery.kim({
+				initialization: function(){
+					//初始页面
+					this.app["test"].item["gohomea"].click();
 				},
-				getData: function(render, target){
-					//数据注入模板
-					var data = [
-						{
-							decoration: "aaa",
-							id:1
-						},
-						{
-							decoration: "bbb",
-							id:2
-						}
-					]
-					render(data);
-				},
-				callback_name: function(elem, target){
-					//数据注入后回调
-				},
-				...
-			}
-		});
+				handle:{
+					test_click: function(e, target){
+						//事件
+						//页面元素的内部调用及操作
+						target.app["test"].item["test_result"].html(jQuery(this).val());
+					},
+					getData: function(render, target){
+						//数据注入模板
+						var data = [
+							{
+								decoration: "aaa",
+								id:1
+							},
+							{
+								decoration: "bbb",
+								id:2
+							}
+						]
+						render(data);
+					},
+					callback_name: function(elem, target){
+						//数据注入后回调
+					},
+					...
+				}
+			});
+		});		
 	</script>
 
 # 结构
