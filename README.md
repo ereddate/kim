@@ -45,7 +45,7 @@
 			init();
 
 			//可以这样写jQuery.kim({...}) 或者 jQuery(".main").kim({...}) 或者 kim({...})
-			//jQuery.kim.require写法可以是 jQuery.kim.require(["a", "b"], function(){...}) 或者 jQuery.kim.require("a", function(){...})
+			//jQuery.kim.require写法可以是 jQuery.kim.require(["a", "b"], function(){...}) 或者 jQuery.kim.require("a", function(){...}) 或者 jQuery.kim.require("a b", function(){...})
 			jQuery.kim.require.use(["a", "b"], function(result){
 				var a = result["a"],
 					b = result["b"];
@@ -124,6 +124,8 @@ jQuery.kim.modelExtend({...}); 插件扩展
 jQuery.kim.require.use(["a", "b"], function(){...}); 引入依赖
 
 或者 jQuery.kim.require.use("a", function(){...}); 引入依赖
+
+或者 jQuery.kim.require.use("a b", function(){...}); 引入依赖
 
 define(["module name"[, ["module dependencies", ...]], ] function(require, exports, module){...}); 模块化开发。
 

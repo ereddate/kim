@@ -16,12 +16,13 @@
 		},
 		use: function(name, callback) {
 			var result;
-			if (isArray(name)) {
+			if (isArray(name) || typeof name == "string" && name.split(' ').length > 1) {
 				result = {};
+				if (typeof name == "string") name = name.split(' ');
 				jQuery.each(name, function(i, str) {
 					result[str] = _require(str);
 				});
-			} else {
+			} else{
 				result = _require(name);
 			}
 			callback && callback(result);
