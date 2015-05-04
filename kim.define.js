@@ -45,40 +45,81 @@
 	}
 
 	function _require(name) {
-		var require = jQuery.kim.require;
-		var result = name && require.cache[name] && require.cache[name].exports && (typeof require.cache[name].exports == "function" && require.cache[name].exports || require.cache[name].exports);
+		var require = jQuery.kim.require,
+			options = require.cache[name],
+			result;
+		if (name && options && options.exports) {
+			result = typeof options.exports == "function" && options.exports || options.exports;
+		} else {
+			result = _exec(options);
+		}
 		return result;
 	}
+
+	function _exec(options) {
+		var _exprots = {},
+			module = {
+				exports: {}
+			},
+			than, result;
+		try {
+			result = options.factory(_require, _exprots, module),
+				than = result || _exprots || "exprots" in module && module.exports,
+				options.exports = than,
+				options.status = STATUS.executed;
+		} catch (e) {
+			options.exports = {},
+				options.status = STATUS.error;
+		}
+		return result;
+	}
+
+	var STATUS = {
+		loaded: 1,
+		executed: 2,
+		error: 3
+	};
 
 	var define = function() {
 		var args = arguments,
 			len = args.length,
-			name, dependencies, callback;
+			name, dependencies, factory;
 		if (len == 1) {
-			callback = args[0];
+			factory = args[0];
 		} else if (len == 2) {
-			name = args[0], callback = args[1];
+			name = args[0], factory = args[1];
 		} else if (len == 3) {
-			name = args[0], dependencies = args[1], callback = args[2];
+			name = args[0], dependencies = args[1], factory = args[2];
 		}
 		var options = {
 			name: (!name && ("model_" + Math.random()) || name),
 			dependencies: dependencies,
-			callback: callback,
+			factory: factory,
 			exports: {},
-			status: 0
+			status: STATUS.loaded
 		};
 		//console.log("name: "+options.name)
-		var ops = _analyRequire(callback);
+		var ops = _analyRequire(factory);
 		jQuery.extend(options, ops);
-		var _exprots = {},
+
+
+		/*var _exprots = {},
 			module = {
 				exports: {}
 			};
-		var result = callback(_require, _exprots, module);
-		var than = result || _exprots || "exprots" in module && module.exports;
-		options.exports = than;
+		var result;
+		try {
+			result = factory(_require, _exprots, module)
+			var than = result || _exprots || "exprots" in module && module.exports;
+			options.exports = than;
+			options.status = STATUS.executed;
+		} catch (e) {
+			options.exports = {};
+			options.status = STATUS.error;
+		};*/
 		jQuery.kim.require.cache[options.name] = options;
+
+		_exec(options);
 		//console.log(require.cache)
 	};
 
