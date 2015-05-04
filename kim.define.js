@@ -1,6 +1,10 @@
 ;
 (function() {
 
+	function isArray(v) {
+		return typeof v != "undefined" && v.constructor == Array ? true : false;
+	};
+
 	var model = function() {
 		return new model.fn.init();
 	};
@@ -8,14 +12,25 @@
 	model.fn = model.prototype = {
 		init: function() {
 			this.cache = {};
-			this.data = {};
 			return this;
+		},
+		use: function(name, callback) {
+			var result;
+			if (isArray(name)) {
+				result = {};
+				jQuery.each(name, function(i, str) {
+					result[str] = _require(str);
+				});
+			} else {
+				result = _require(name);
+			}
+			callback && callback(result);
 		}
 	};
 
 	model.fn.init.prototype = model.fn;
 
-	var require = model();
+	jQuery.kim.require = model();
 
 	function _analyRequire(func) {
 		var funContext = func.toString(),
@@ -30,6 +45,7 @@
 	}
 
 	function _require(name) {
+		var require = jQuery.kim.require;
 		var result = name && require.cache[name] && require.cache[name].exports && (typeof require.cache[name].exports == "function" && require.cache[name].exports || require.cache[name].exports);
 		return result;
 	}
@@ -55,12 +71,14 @@
 		//console.log("name: "+options.name)
 		var ops = _analyRequire(callback);
 		jQuery.extend(options, ops);
-		var _exprots = {};
-		require.exports = {};
-		var result = callback(_require, _exprots, require);
-		var than = result || _exprots || require.exports;
+		var _exprots = {},
+			module = {
+				exports: {}
+			};
+		var result = callback(_require, _exprots, module);
+		var than = result || _exprots || "exprots" in module && module.exports;
 		options.exports = than;
-		require.cache[options.name] = options;
+		jQuery.kim.require.cache[options.name] = options;
 		//console.log(require.cache)
 	};
 

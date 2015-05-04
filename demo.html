@@ -229,66 +229,67 @@
 					pagenum_click = require("pagenum_click"),
 					getform_get = require("getform_get"),
 					test_keyup = require("test_keyup"),
-					getnum_get = require("getnum_get"),
-					getlist_post = require("getlist_post"),
-					gotab_click = require("gotab_click");
+					getnum_get = require("getnum_get");
 
-				jQuery(".main").kim({
-					initialization: function() {
-						init(this);
-					},
-					handle: {
-						list_removeitem_click: function(e, target){
-							e.preventDefault();
-							list_removeitem_click(this);
+				jQuery.kim.require.use(["getlist_post","gotab_click"], function(result){
+					var getlist_post = result["getlist_post"],
+						gotab_click = result["gotab_click"];
+					jQuery(".main").kim({
+						initialization: function() {
+							init(this);
 						},
-						list_upitem_click: function(e, target){
-							e.preventDefault();
-							list_upitem_click(this, target);
-						},
-						input_aerror: function(status, tip, target){
-							input_aerror(this, tip);
-						},
-						select_change:function(e, target){
-							select_change(this, target);
-						},
-						getselect_get: function(render, target){
-							getselect_get(render);
-						},
-						pagenum_click: function(e, target){
-							e.preventDefault();
-							pagenum_click(this, target);
-						},
-						getform_get: function(render, target){
-							getform_get(render);
-						},
-						test_keyup: function(e, target){
-							test_keyup(this, target);
-						},
-						getnum_get: function(render, target){
-							getnum_get(render);
-						},
-						getlist_post: function(render, target){
-							getlist_post(render);
-						},
-						list_callback: function(elem, target){
-							console.log(elem)
-						},
-						gohome_click: function(e, target){
-							e.preventDefault();
-							gotab_click(this, target, "home", "gohomea");
-						},
-						goproduct_click: function(e, target){
-							e.preventDefault();
-							gotab_click(this, target, "product", "goproductb");
-						},
-						goservice_click: function(e, target){
-							e.preventDefault();
-							gotab_click(this, target, "service", "goservicec");
+						handle: {
+							list_removeitem_click: function(e, target){
+								e.preventDefault();
+								list_removeitem_click(this);
+							},
+							list_upitem_click: function(e, target){
+								e.preventDefault();
+								list_upitem_click(this, target);
+							},
+							input_aerror: function(status, tip, target){
+								input_aerror(this, tip);
+							},
+							select_change:function(e, target){
+								select_change(this, target);
+							},
+							getselect_get: function(render, target){
+								getselect_get(render);
+							},
+							pagenum_click: function(e, target){
+								e.preventDefault();
+								pagenum_click(this, target);
+							},
+							getform_get: function(render, target){
+								getform_get(render);
+							},
+							test_keyup: function(e, target){
+								test_keyup(this, target);
+							},
+							getnum_get: function(render, target){
+								getnum_get(render);
+							},
+							getlist_post: function(render, target){
+								getlist_post(render);
+							},
+							list_callback: function(elem, target){
+								console.log(elem)
+							},
+							gohome_click: function(e, target){
+								e.preventDefault();
+								gotab_click(this, target, "home", "gohomea");
+							},
+							goproduct_click: function(e, target){
+								e.preventDefault();
+								gotab_click(this, target, "product", "goproductb");
+							},
+							goservice_click: function(e, target){
+								e.preventDefault();
+								gotab_click(this, target, "service", "goservicec");
+							}
 						}
-					}
+					});
 				});
-
 			});
 
 		})()

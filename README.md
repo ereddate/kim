@@ -45,36 +45,41 @@
 			init();
 
 			//可以这样写jQuery.kim({...}) 或者 jQuery(".main").kim({...}) 或者 kim({...})
-			jQuery.kim({
-				initialization: function(){
-					//初始页面
-					this.app["test"].item["gohomea"].click();
-				},
-				handle:{
-					test_click: function(e, target){
-						//事件
-						//页面元素的内部调用及操作
-						target.app["test"].item["test_result"].html(jQuery(this).val());
+			//jQuery.kim.require写法可以是 jQuery.kim.require(["a", "b"], function(){...}) 或者 jQuery.kim.require("a", function(){...})
+			jQuery.kim.require.use(["a", "b"], function(result){
+				var a = result["a"],
+					b = result["b"];
+				jQuery.kim({
+					initialization: function(){
+						//初始页面
+						this.app["test"].item["gohomea"].click();
 					},
-					getData: function(render, target){
-						//数据注入模板
-						var data = [
-							{
-								decoration: "aaa",
-								id:1
-							},
-							{
-								decoration: "bbb",
-								id:2
-							}
-						]
-						render(data);
-					},
-					callback_name: function(elem, target){
-						//数据注入后回调
-					},
-					...
-				}
+					handle:{
+						test_click: function(e, target){
+							//事件
+							//页面元素的内部调用及操作
+							target.app["test"].item["test_result"].html(jQuery(this).val());
+						},
+						getData: function(render, target){
+							//数据注入模板
+							var data = [
+								{
+									decoration: "aaa",
+									id:1
+								},
+								{
+									decoration: "bbb",
+									id:2
+								}
+							]
+							render(data);
+						},
+						callback_name: function(elem, target){
+							//数据注入后回调
+						},
+						...
+					}
+				});
 			});
 		});		
 	</script>
@@ -115,6 +120,10 @@ ng-插件名
 #方法
 
 jQuery.kim.modelExtend({...}); 插件扩展
+
+jQuery.kim.require.use(["a", "b"], function(){...}); 引入依赖
+
+或者 jQuery.kim.require.use("a", function(){...}); 引入依赖
 
 define(["module name"[, ["module dependencies", ...]], ] function(require, exports, module){...}); 模块化开发。
 
