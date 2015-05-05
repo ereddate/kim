@@ -5,6 +5,15 @@
 		return typeof v != "undefined" && v.constructor == Array ? true : false;
 	};
 
+	function isEmpty(v) {
+		var a = function(e) {
+			var t;
+			for (t in e) return !1;
+			return !0
+		};
+		return typeof v == "undefined" || v == null || typeof v == "string" && jQuery.trim(v) == "" || isArray(v) && v.length == 0 || typeof v == "object" && a(v) ? true : false;
+	}
+
 	var model = function() {
 		return new model.fn.init();
 	};
@@ -22,10 +31,11 @@
 				jQuery.each(name, function(i, str) {
 					result[str] = _require(str);
 				});
-			} else{
+			} else {
 				result = _require(name);
 			}
 			callback && callback(result);
+			return this;
 		}
 	};
 
@@ -47,12 +57,14 @@
 
 	function _require(name) {
 		var require = jQuery.kim.require,
-			options = require.cache[name],
+			options = require.cache[name] || false,
 			result;
-		if (name && options && options.exports) {
-			result = typeof options.exports == "function" && options.exports || options.exports;
-		} else {
-			result = _exec(options);
+		if (name && options) {
+			if (options.status == 3) {
+				result = typeof options.exports == "function" && options.exports || options.exports;
+			} else if (options.status < 3 && options.status > 0) {
+				result = _exec(options);
+			}
 		}
 		return result;
 	}
@@ -63,6 +75,11 @@
 				exports: {}
 			},
 			than, result;
+		if (options.status == 2) {
+			jQuery.each(options.dependencies, function(i, name) {
+				_require(name);
+			});
+		}
 		try {
 			result = options.factory(_require, _exprots, module),
 				than = result || _exprots || "exprots" in module && module.exports,
@@ -77,9 +94,26 @@
 
 	var STATUS = {
 		loaded: 1,
-		executed: 2,
-		error: 3
+		readed: 2,
+		executed: 3,
+		error: 4
 	};
+
+	function _analyDefine(name, dependencies, factory) {
+		var options = {
+			name: (!name && ("model_" + Math.random()) || name),
+			dependencies: dependencies,
+			factory: factory,
+			exports: {},
+			status: isArray(dependencies) || typeof dependencies != "undefined" ? STATUS.readed : STATUS.loaded
+		};
+		var ops = _analyRequire(factory);
+		jQuery.extend(options, ops);
+
+		jQuery.kim.require.cache[options.name] = options;
+
+		_exec(options);
+	}
 
 	var define = function() {
 		var args = arguments,
@@ -92,36 +126,8 @@
 		} else if (len == 3) {
 			name = args[0], dependencies = args[1], factory = args[2];
 		}
-		var options = {
-			name: (!name && ("model_" + Math.random()) || name),
-			dependencies: dependencies,
-			factory: factory,
-			exports: {},
-			status: STATUS.loaded
-		};
-		//console.log("name: "+options.name)
-		var ops = _analyRequire(factory);
-		jQuery.extend(options, ops);
 
-
-		/*var _exprots = {},
-			module = {
-				exports: {}
-			};
-		var result;
-		try {
-			result = factory(_require, _exprots, module)
-			var than = result || _exprots || "exprots" in module && module.exports;
-			options.exports = than;
-			options.status = STATUS.executed;
-		} catch (e) {
-			options.exports = {};
-			options.status = STATUS.error;
-		};*/
-		jQuery.kim.require.cache[options.name] = options;
-
-		_exec(options);
-		//console.log(require.cache)
+		_analyDefine((!name && ("model_" + Math.random()) || name), dependencies, factory);
 	};
 
 	window.define = define;
