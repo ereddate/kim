@@ -367,6 +367,14 @@
 	}
 
 	jQuery.extend(kim.fn, {
+		tap: function(callback){
+			kim.tap(this, callback);
+			return this;
+		},
+		swipe: function(callback){
+			kim.swipe(this, callback);
+			return this;
+		},
 		eq: function(val) {
 			var self = this;
 			typeof val == "string" ? jQuery(self).each(function(i, elem) {
