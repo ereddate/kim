@@ -1,11 +1,5 @@
 ;
 (function() {
-	function isEmptyObject(obj) {
-		for (var n in obj) {
-			return false
-		}
-		return true;
-	}
 	jQuery.kim.modelExtend({
 		list: function() {
 			var self = this;
@@ -18,7 +12,7 @@
 					filterfunc = filter && new Function("obj", "return " + filter + " && obj;");
 				var tmpl = jQuery(elem).html(),
 					html = [];
-				jQuery(elem).data("tmpl", tmpl);
+				jQuery(elem).data("tmpl", tmpl).data("data", data);
 				jQuery.each(data, function(i, obj) {
 					var result = filterfunc && filterfunc(obj);
 					if (!result) {
@@ -30,7 +24,12 @@
 				var newitem = jQuery(html.join(''));
 				jQuery(elem).html(newitem).show();
 				//self.build(elem);
-				if (len == 4) args[2] && args[2] != "" && self.config.handle[args[2]] && self.config.handle[args[2]].call(self, elem, self);
+				var callbacks = jQuery.Callbacks();
+
+				jQuery.each(args, function(i, arg) {
+					if (i > 1 && i < len - 1) self.config.handle && callbacks.add(self.config.handle[arg]);
+				});
+				callbacks.fire(elem, self);
 			}, self);
 
 			return this;

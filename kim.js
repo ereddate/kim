@@ -6,6 +6,10 @@
 
 	var item = ["page", "view", "control", "item"];
 
+	function isArray(v) {
+		return typeof v != "undefined" && v.constructor == Array ? true : false;
+	};
+
 	function _getConstructorName(o) {
 		//加o.constructor是因为IE下的window和document
 		if (o != null && o.constructor != null) {
@@ -272,8 +276,12 @@
 					if (typeof command == "string") {
 						target.model[name].call(target, elem, command);
 						return true;
-					} else if (command) {
-						var args = [elem, command[1], command[2], target];
+					} else if (command && isArray(command) && command.length > 0) {
+						var args = [elem, command[1]];
+						jQuery.each(command[2].split(','), function(i, str) {
+							args.push(str);
+						});
+						args.push(target);
 						target.model[name].apply(target, args);
 					}
 				}
@@ -303,7 +311,6 @@
 					if (target.app[app]) {
 						if (!target.app[app][type]) target.app[app][type] = {};
 						target.app[app][type][name] = elem;
-
 					}
 					model(elem, target)._initShow()._initTmpl()._initHandle();
 				}

@@ -11,7 +11,7 @@
 				var filter = jQuery(elem).attr("ng-filter"),
 					filterfunc = filter && new Function("obj", "return " + filter + " && obj;");
 				var tmpl = jQuery(elem).html();
-				jQuery(elem).data("tmpl", tmpl);
+				jQuery(elem).data("tmpl", tmpl).data("data", data);
 				tmpl = jQuery.kim.tmpl(function() {
 					var temp = typeof data == "array" ? [] : {};
 					jQuery.each(data, function(i, obj) {
@@ -25,7 +25,12 @@
 				var newitema = jQuery(tmpl);
 				jQuery(elem).html(newitema).show();
 				//self.build(elem);
-				if (len == 4) args[2] && args[2] != "" && self.config.handle[args[2]] && self.config.handle[args[2]].call(self, elem, self);
+				var callbacks = jQuery.Callbacks();
+
+				jQuery.each(args, function(i, arg) {
+					if (i > 1 && i < len - 1) self.config.handle && callbacks.add(self.config.handle[arg]);
+				});
+				callbacks.fire(elem, self);
 			}, self);
 
 			return this;

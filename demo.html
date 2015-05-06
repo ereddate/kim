@@ -13,7 +13,7 @@
 					<div ng-control="nava"><a href="home" ng-item="gohomea" ng-click="gohome_click">home</a> <a href="product" ng-item="goproducta" ng-click="goproduct_click">product</a> <a href="service" ng-item="goservicea" ng-click="goservice_click">service</a></div>
 				</div>
 				<div ng-view="maina">
-					<div ng-control="list" ng-list="getlist_post(list_callback)">
+					<div ng-control="list" ng-list="getlist_post(list_callback,list_callback,list_callback,list_callback)">
 						<div ng-item="list_tmpl_{{id}}" ng-swipe="swipetest">
 							<h1>{{title}}</h1>
 							<p>{{decoration}}</p>
@@ -231,6 +231,7 @@
 					test_keyup = require("test_keyup"),
 					getnum_get = require("getnum_get");
 
+				var num = 1;
 				jQuery.kim.require.use(["getlist_post","gotab_click"], function(result){
 					var getlist_post = result["getlist_post"],
 						gotab_click = result["gotab_click"];
@@ -281,6 +282,8 @@
 							},
 							list_callback: function(elem, target){
 								console.log(elem)
+								num+=1;
+								console.log(num)
 							},
 							gohome_click: function(e, target){
 								e.preventDefault();
