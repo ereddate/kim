@@ -6,10 +6,10 @@
 	<div ng-app="test" ng-show="show">
 		<div ng-page="home" ng-show="show">
 			<div ng-view="headera">
-				<div ng-control="nava" ng-list="getData(callback_name)" ng-filter="obj.id == 1">
+				<div ng-control="nava" ng-list="getData(callback_name)" ng-filter="obj.id == 1" ng-swipe="swipetest">
 					<div ng-item="list_tmpl_{{id}}">
 						<p>{{decoration}}</p>
-						<a href="#" ng-item="testclick" ng-click="test_click" data-id="{{id}}">删除</a>
+						<a href="#" ng-item="testclick" ng-click="test_click" data-id="{{id}}" ng-tap="taptest">删除</a>
 					</div>
 				</div>
 				<div ng-control="bbba" ng-tmpl="getData">
@@ -57,6 +57,16 @@
 						this.app["test"].item["gohomea"].click();
 					},
 					handle:{
+						swipetest: function(direction, offset, e, target){
+							if (direction == "left"){
+								left...
+							}else{
+								right...
+							}
+						},
+						taptest: function(offset, e, target){
+							console.log("tap")
+						},
 						test_click: function(e, target){
 							//事件
 							//页面元素的内部调用及操作
