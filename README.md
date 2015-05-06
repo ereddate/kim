@@ -111,6 +111,8 @@ ng-item 元素
 
 	属性：ng-[click|blur|change|...]="function name" 事件对应的程序名
 
+	属性增加 ng-swipe 和 ng-tap 事件支持
+
 #公共属性
 
 ng-[app|page|view|control|item]="name" 对象名称
