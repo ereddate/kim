@@ -103,10 +103,10 @@
 		};
 	}
 
-	function _validSwipe(coords) {
+	function _validSwipe(coords, direction) {
 		if (!this.startCoords) return false;
 		var deltaY = Math.abs(coords.y - this.startCoords.y);
-		var deltaX = (coords.x - this.startCoords.x) * -1;
+		var deltaX = (coords.x - this.startCoords.x) * direction;
 		return this.valid &&
 			deltaY < 75 &&
 			deltaX > 0 &&
@@ -119,7 +119,7 @@
 		jQuery.each(["touchstart", "touchend", "touchmove", "touchcancel"], function(i, name) {
 			jQuery(elem).data(type, true).off(name).on(name, function(e) {
 				var evt = e.target;
-				if (jQuery(evt).data(type)) {
+				if (jQuery(evt).data(type) || !jQuery(evt).data(type) && jQuery(this).data(type)) {
 					switch (name.replace("touch", "")) {
 						case "start":
 							this.startCoords = getCoordinates(e);
@@ -177,8 +177,9 @@
 								if (!this.active) return;
 								this.active = false;
 								var coords = getCoordinates(e);
-								var result = _validSwipe.call(this, coords);
-								callback && callback.call(this, result ? "left" : "right", coords, e, target);
+								var left = _validSwipe.call(this, coords, -1),
+									right = _validSwipe.call(this, coords, 1);
+								callback && callback.call(this, left ? "left" : right ? "right" : undefined, coords, e, target);
 								return;
 							} else {
 								e.preventDefault();
@@ -367,11 +368,11 @@
 	}
 
 	jQuery.extend(kim.fn, {
-		tap: function(callback){
+		tap: function(callback) {
 			kim.tap(this, callback);
 			return this;
 		},
-		swipe: function(callback){
+		swipe: function(callback) {
 			kim.swipe(this, callback);
 			return this;
 		},
