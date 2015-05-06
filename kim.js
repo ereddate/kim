@@ -1,7 +1,7 @@
 ;
 (function() {
 
-	var events = ["load", "click", "change", "blur", "focus", "contextmenu", "formchange", "forminput", "input", "invalid", "reset", "select", "submit", "keyup", "keydown", "keypress", "drag", "dragend", "dragenter", "dragleave", "dragover", "dragstart", "drop", "mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel", "scroll", "dblclick", "error", "resize", "unload", "abort", "canplay", "canplaythrough", "durationchange", "emptied", "ended", "loadeddata", "loadedmetadata", "loadstart", "pause", "play", "playing", "progress", "ratechange", "readystatechange", "seeked", "seeking", "stalled", "suspend", "timeupdate", "volumechange", "waiting", "afterprint", "beforeprint", "beforeunload", "haschange", "message", "offline", "online", "pagehide", "pageshow", "popstate", "redo", "storage", "undo", "tap", "swipeLeft", "swipeRight"];
+	var events = ["load", "click", "change", "blur", "focus", "contextmenu", "formchange", "forminput", "input", "invalid", "reset", "select", "submit", "keyup", "keydown", "keypress", "drag", "dragend", "dragenter", "dragleave", "dragover", "dragstart", "drop", "mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel", "scroll", "dblclick", "error", "resize", "unload", "abort", "canplay", "canplaythrough", "durationchange", "emptied", "ended", "loadeddata", "loadedmetadata", "loadstart", "pause", "play", "playing", "progress", "ratechange", "readystatechange", "seeked", "seeking", "stalled", "suspend", "timeupdate", "volumechange", "waiting", "afterprint", "beforeprint", "beforeunload", "haschange", "message", "offline", "online", "pagehide", "pageshow", "popstate", "redo", "storage", "undo", "tap", "swipe"];
 	//, "gesturestart", "gestureend", "gesturechange"
 
 	var item = ["page", "view", "control", "item"];
@@ -103,10 +103,10 @@
 		};
 	}
 
-	function _validSwipe(coords, direction) {
+	function _validSwipe(coords) {
 		if (!this.startCoords) return false;
 		var deltaY = Math.abs(coords.y - this.startCoords.y);
-		var deltaX = (coords.x - this.startCoords.x) * direction;
+		var deltaX = (coords.x - this.startCoords.x) * -1;
 		return this.valid &&
 			deltaY < 75 &&
 			deltaX > 0 &&
@@ -115,109 +115,85 @@
 	}
 
 	function _touch(elem, type, callback) {
+		var target = this;
 		jQuery.each(["touchstart", "touchend", "touchmove", "touchcancel"], function(i, name) {
-			jQuery(elem).off(name).on(name, function(e) {
-				switch (name.replace("touch", "")) {
-					case "start":
-						this.startCoords = getCoordinates(e);
-						if (/swipe/.test(type)) {
-							this.active = true;
-							this.totalX = 0;
-							this.totalY = 0;
-							this.lastPos = this.startCoords;
-							this.valid = true;
-						} else {
-							this.active = false;
-							//callback && callback.call(this, this.startCoord, e, target);
-						}
-						break;
-					case "move":
-						if (!this.active) return;
-
-						// Android will send a touchcancel if it thinks we're starting to scroll.
-						// So when the total distance (+ or - or both) exceeds 10px in either direction,
-						// we either:
-						// - On totalX > totalY, we send preventDefault() and treat this as a swipe.
-						// - On totalY > totalX, we let the browser handle it as a scroll.
-
-						if (!this.startCoords) return;
-						var coords = getCoordinates(e);
-
-						this.totalX += Math.abs(coords.x - this.lastPos.x);
-						this.totalY += Math.abs(coords.y - this.lastPos.y);
-
-						this.lastPos = coords;
-
-						if (this.totalX < 10 && this.totalY < 10) {
-							return;
-						}
-
-						if (this.totalY > this.totalX) {} else {
-							e.preventDefault();
-							//callback && callback.call(this, coords, e, target);
-						}
-						break;
-					case "cancel":
-						if (!this.active) return;
-
-						// Android will send a touchcancel if it thinks we're starting to scroll.
-						// So when the total distance (+ or - or both) exceeds 10px in either direction,
-						// we either:
-						// - On totalX > totalY, we send preventDefault() and treat this as a swipe.
-						// - On totalY > totalX, we let the browser handle it as a scroll.
-
-						if (!this.startCoords) return;
-						var coords = getCoordinates(e);
-
-						this.totalX += Math.abs(coords.x - this.lastPos.x);
-						this.totalY += Math.abs(coords.y - this.lastPos.y);
-
-						this.lastPos = coords;
-
-						if (this.totalX < 10 && this.totalY < 10) {
-							return;
-						}
-
-						// One of totalX or totalY has exceeded the buffer, so decide on swipe vs. scroll.
-						if (this.totalY > this.totalX) {
-							// Allow native scrolling to take over.
-							this.active = false;
-							this.valid = false;
-							//callback && callback.call(this, e, target);
-						}
-						break;
-					case "end":
-						if (/swipe/.test(type)) {
-							if (!this.active) return;
-							this.active = false;
-							var coords = getCoordinates(e);
-							if (_validSwipe.call(this, coords, /Left/.test(type) ? -1 : 1)) {
-								callback && callback.call(this, coords, e, target);
+			jQuery(elem).data(type, true).off(name).on(name, function(e) {
+				var evt = e.target;
+				if (jQuery(evt).data(type)) {
+					switch (name.replace("touch", "")) {
+						case "start":
+							this.startCoords = getCoordinates(e);
+							if (/swipe/.test(type)) {
+								this.active = true;
+								this.totalX = 0;
+								this.totalY = 0;
+								this.lastPos = this.startCoords;
+								this.valid = true;
+							} else {
+								this.active = false;
 							}
-							return;
-						} else {
-							var selfElem = this;
-							if (selfElem.TouchTimeout) clearTimeout(selfElem.TouchTimeout);
-							selfElem.TouchTimeout = setTimeout(function() {
-								callback && callback.call(selfElem, getCoordinates(e), e, target);
-							}, 250);
-						}
-						break;
+							break;
+						case "move":
+							if (!this.active) return;
+
+							if (!this.startCoords) return;
+							var coords = getCoordinates(e);
+
+							this.totalX += Math.abs(coords.x - this.lastPos.x);
+							this.totalY += Math.abs(coords.y - this.lastPos.y);
+
+							this.lastPos = coords;
+
+							if (this.totalX < 10 && this.totalY < 10) {
+								return;
+							}
+
+							if (this.totalY > this.totalX) {} else {
+								e.preventDefault();
+							}
+							break;
+						case "cancel":
+							if (!this.active) return;
+
+							if (!this.startCoords) return;
+							var coords = getCoordinates(e);
+
+							this.totalX += Math.abs(coords.x - this.lastPos.x);
+							this.totalY += Math.abs(coords.y - this.lastPos.y);
+
+							this.lastPos = coords;
+
+							if (this.totalX < 10 && this.totalY < 10) {
+								return;
+							}
+
+							if (this.totalY > this.totalX) {
+								this.active = false;
+								this.valid = false;
+							}
+							break;
+						case "end":
+							if (/swipe/.test(type) && 'lastPos' in this) {
+								if (!this.active) return;
+								this.active = false;
+								var coords = getCoordinates(e);
+								var result = _validSwipe.call(this, coords);
+								callback && callback.call(this, result ? "left" : "right", coords, e, target);
+								return;
+							} else {
+								e.preventDefault();
+								var selfElem = this;
+								if (selfElem.TouchTimeout) clearTimeout(selfElem.TouchTimeout);
+								selfElem.TouchTimeout = setTimeout(function() {
+									callback && callback.call(selfElem, getCoordinates(e), e, target);
+								}, 250);
+							}
+							break;
+					}
 				}
 			});
 		});
 	}
-
-	jQuery.each(["tap", "swipeLeft", "swipeRight"], function(i, name) {
-		jQuery.kim[name] = function(elem, callback) {
-			_touch(elem, name, callback);
-		};
-	});
-
-	jQuery.kim.tap = function(elem) {
-		_touch(elem, "tap"
-			target.config.handle[eventhandle]);
-	};
 
 	var model = function(elem, target) {
 		return new model.fn.init(elem, target);
@@ -259,7 +235,7 @@
 					var eventhandle = jQuery(elem).attr("ng-" + eventname);
 					if (target.config.handle[eventhandle]) {
 						if (support && /^tap|swipe/.test(eventname)) {
-							/tap/.test(eventname) && jQuery.kim.tap(elem, target.config.handle[eventhandle]) || /swipeLeft/.test(eventname) && jQuery.kim.swipeLeft(elem, target.config.handle[eventhandle]) || /swipeRight/.test(eventname) && jQuery.kim.swipeRight(elem, target.config.handle[eventhandle]);
+							/tap/.test(eventname) && jQuery.kim.tap(elem, target.config.handle[eventhandle]) || /swipe/.test(eventname) && jQuery.kim.swipe(elem, target.config.handle[eventhandle]);
 						} else {
 							jQuery(elem).on(eventname, function(e) {
 								/click/.test(eventname) && e.preventDefault();
@@ -368,6 +344,12 @@
 		}
 	};
 	kim.fn.init.prototype = kim.fn;
+
+	jQuery.each(["tap", "swipe"], function(i, name) {
+		kim[name] = function(elem, callback) {
+			_touch.call(this, elem, name, callback);
+		};
+	});
 
 	function activeElem(elem) {
 		var self = this;

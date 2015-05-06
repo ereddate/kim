@@ -14,10 +14,10 @@
 				</div>
 				<div ng-view="maina">
 					<div ng-control="list" ng-list="getlist_post(list_callback)">
-						<div ng-item="list_tmpl_{{id}}">
+						<div ng-item="list_tmpl_{{id}}" ng-swipe="swipetest">
 							<h1>{{title}}</h1>
 							<p>{{decoration}}</p>
-							<a href="#" ng-item="list_removeitem" ng-click="list_removeitem_click" data-id="{{id}}">删除</a> <a href="#" ng-item="list_upitem" ng-click="list_upitem_click" data-id="{{id}}">收起</a>
+							<a href="#" ng-tap="taptest" ng-item="list_removeitem" ng-click="list_removeitem_click" data-id="{{id}}">删除</a> <a href="#" ng-tap="taptest" ng-item="list_upitem" ng-click="list_upitem_click" data-id="{{id}}">收起</a>
 						</div>
 					</div>
 					<div ng-control="list_pagenum" ng-list="getnum_get"><a href="{{num}}" ng-item="pagenum_{{num}}" ng-click="pagenum_click">{{shownum}}</a></div>
@@ -113,14 +113,14 @@
 				return function(elem, target){
 					var parent = target.app["test"].item["list_tmpl_"+jQuery(this).attr("data-id")];
 					if (!jQuery(this).data("isshow")){
-						var h = parent.height();
+						var h = jQuery(parent).height();
 						jQuery(this).data("height", h).data("isshow", true);
-						parent.animate({
+						jQuery(parent).animate({
 							height: h/2
 						}, "slow");
 					}else{
 						jQuery(this).data("isshow", false)
-						parent.animate({
+						jQuery(parent).animate({
 							height: jQuery(this).data("height", h)
 						}, "slow");
 					}
@@ -240,6 +240,12 @@
 							init(this);
 						},
 						handle: {
+							taptest: function(offset, e, target){
+								console.log("tap")
+							},
+							swipetest: function(direction, offset, e, target){
+								console.log(direction)
+							},
 							list_removeitem_click: function(e, target){
 								e.preventDefault();
 								list_removeitem_click(this);
