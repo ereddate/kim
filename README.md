@@ -21,6 +21,11 @@
 					<span ng-item="selecterror"></span>
 				</div>
 			</div>
+			<div ng-view="waterfall">
+				<div ng-control="waterfall" ng-list="getData" ng-waterfall="waterfall_callback">
+					<div ng-item="waterfall_item" class="cell">{{code}}</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	<script src="kim.js"></script>
@@ -57,6 +62,33 @@
 						this.app["test"].item["gohomea"].click();
 					},
 					handle:{
+						waterfall_callback: function(options, callback){
+							jQuery.extend(options, {
+								column_width: 230,
+								column_space: 10,
+								getColumnItems: function(index, type, render) {
+									//获取列子元素
+									//type暂未用到
+									//index是添加数据次数，也就是翻了几页。这里可以对页数做一些控制...
+									if (index>=4) return;
+									... //获取数据，返回data
+									var tmpl = jQuery(this).data("tmpl"),
+										html = [];
+									jQuery.each(data, function(i, obj){
+										html.push(kim.tmpl(obj, tmpl));
+									});
+									//render参数为拼装后的DOM集
+									render(jQuery(html.join('')));
+								},
+								onRefresh: function() {
+
+								},
+								itemInit: function(elem) {
+
+								}
+							});
+							callback(options);
+						},
 						swipetest: function(direction, offset, e, target){
 							if (direction == "left"){
 								left...
@@ -130,6 +162,8 @@ ng-插件名
 	tmpl 数据模板 ng-tmpl="导入数据的方法名([导入后的回调])"
 
 		ng-filter="过滤表达式" 私有过滤属性
+
+	waterfall 瀑布流
 	
 #方法
 

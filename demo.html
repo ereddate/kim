@@ -4,6 +4,9 @@
 		<meta charset="utf-8" />
 		<style>
 			.on{color:red;text-decoration:none;}
+			.ng-control-waterfall{width:960px;}
+			.waterfall_column{float:left;}
+			.cell{width:230px;background:#efefef;text-align: center;}
 		</style>
 	</head>
 	<body>
@@ -22,6 +25,15 @@
 					</div>
 					<div ng-control="list_pagenum" ng-list="getnum_get"><a href="{{num}}" ng-item="pagenum_{{num}}" ng-click="pagenum_click">{{shownum}}</a></div>
 					1
+				</div>
+				<div ng-view="waterfall">
+					<div ng-control="waterfall" ng-list="getWaterFall_get" ng-waterfall="waterfall_callback">
+						<div ng-item="cell" class="cell">
+					      <div class="img_wrap"><a href="{{url}}" target="_blank" ng-item="waterfall_bigpic_{{index}}" ng-click="waterfall_bigpic_click"><img src="{{pictureUrl}}" /></a></div>
+					      <div class="pinp_logo"><a href="javascript:;" ng-item="waterfall_smallpic_{{index}}" ng-click="waterfall_attent_click"><span class="attent_button attent_obj" ng-item="waterfall_noattent_button_{{index}}">关 注</span><span class="attent_button attent_button_ok" style="display:none;" ng-item="waterfall_attent_button_{{index}}">已关注</span></a></div>
+					      <p class="pinp_txt">{{title}}</p>
+					    </div>
+					</div>
 				</div>
 				<div ng-view="footera">&copy;2015.</div>
 			</div>
@@ -64,6 +76,7 @@
 		<script src="kim.valid.js"></script>
 		<script src="kim.list.js"></script>
 		<script src="kim.tmpl.js"></script>
+		<script src="kim.waterfall.js"></script>
 		<script src="kim.define.js"></script>
 		<script>
 		;
@@ -95,6 +108,121 @@
 						return this;
 					}
 				});
+			});
+
+			define("getWaterFall_get", function(require, exports, module){
+				return function(render){
+					var data = [{
+						url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						index: 0,
+						pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						logoUrl: "#",
+						title: "title0"
+					}, {
+						url: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+						index: 7,
+						pictureUrl: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+						logoUrl: "#",
+						title: "title7"
+					}, {
+						url: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+						index: 7,
+						pictureUrl: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+						logoUrl: "#",
+						title: "title7"
+					}, {
+						url: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+						index: 1,
+						pictureUrl: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+						logoUrl: "#",
+						title: "title1"
+					}, {
+						url: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+						index: 7,
+						pictureUrl: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+						logoUrl: "#",
+						title: "title7"
+					}, {
+						url: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+						index: 3,
+						pictureUrl: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+						logoUrl: "#",
+						title: "title3"
+					}, {
+						url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						index: 4,
+						pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						logoUrl: "#",
+						title: "title4"
+					}, {
+						url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						index: 2,
+						pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						logoUrl: "#",
+						title: "title2"
+					}, {
+						url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						index: 2,
+						pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						logoUrl: "#",
+						title: "title2"
+					}, {
+						url: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+						index: 5,
+						pictureUrl: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+						logoUrl: "#",
+						title: "title5"
+					}, {
+						url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						index: 6,
+						pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						logoUrl: "#",
+						title: "title6"
+					}, {
+						url: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+						index: 7,
+						pictureUrl: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+						logoUrl: "#",
+						title: "title7"
+					}, {
+						url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						index: 2,
+						pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						logoUrl: "#",
+						title: "title2"
+					}, {
+						url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						index: 8,
+						pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						logoUrl: "#",
+						title: "title8"
+					}, {
+						url: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+						index: 9,
+						pictureUrl: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+						logoUrl: "#",
+						title: "title9"
+					}, {
+						url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						index: 2,
+						pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						logoUrl: "#",
+						title: "title2"
+					}, {
+						url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						index: 10,
+						pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						logoUrl: "#",
+						title: "title10"
+					}, {
+						url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						index: 2,
+						pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+						logoUrl: "#",
+						title: "title2"
+					}];
+					render(data);
+				}
 			});
 
 			define("init", function(require, exports, module) {
@@ -232,15 +360,132 @@
 					getnum_get = require("getnum_get");
 
 				var num = 1;
-				jQuery.kim.require.use(["getlist_post","gotab_click"], function(result){
+				jQuery.kim.require.use(["getlist_post","gotab_click","getWaterFall_get"], function(result){
 					var getlist_post = result["getlist_post"],
-						gotab_click = result["gotab_click"];
+						gotab_click = result["gotab_click"],
+						getWaterFall_get = result["getWaterFall_get"];
 
 					jQuery(".main").kim({
 						initialization: function() {
 							init(this);
 						},
 						handle: {
+							waterfall_callback: function(options, callback){
+								jQuery.extend(options, {
+									column_width: 230,
+									column_space: 10,
+									getColumnItems: function(index, type, render) {
+										if (index>=4) return;
+										var data = [{
+											url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											index: 0,
+											pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											logoUrl: "#",
+											title: "title0"
+										}, {
+											url: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+											index: 1,
+											pictureUrl: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+											logoUrl: "#",
+											title: "title1"
+										}, {
+											url: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+											index: 3,
+											pictureUrl: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+											logoUrl: "#",
+											title: "title3"
+										}, {
+											url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											index: 4,
+											pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											logoUrl: "#",
+											title: "title4"
+										}, {
+											url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											index: 2,
+											pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											logoUrl: "#",
+											title: "title2"
+										}, {
+											url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											index: 2,
+											pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											logoUrl: "#",
+											title: "title2"
+										}, {
+											url: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+											index: 5,
+											pictureUrl: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+											logoUrl: "#",
+											title: "title5"
+										}, {
+											url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											index: 6,
+											pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											logoUrl: "#",
+											title: "title6"
+										}, {
+											url: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+											index: 7,
+											pictureUrl: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+											logoUrl: "#",
+											title: "title7"
+										}, {
+											url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											index: 2,
+											pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											logoUrl: "#",
+											title: "title2"
+										}, {
+											url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											index: 8,
+											pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											logoUrl: "#",
+											title: "title8"
+										}, {
+											url: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+											index: 9,
+											pictureUrl: "http://y1.ifengimg.com/a/2015_18/0673940f393fd15.jpg",
+											logoUrl: "#",
+											title: "title9"
+										}, {
+											url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											index: 2,
+											pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											logoUrl: "#",
+											title: "title2"
+										}, {
+											url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											index: 10,
+											pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											logoUrl: "#",
+											title: "title10"
+										}, {
+											url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											index: 2,
+											pictureUrl: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
+											logoUrl: "#",
+											title: "title2"
+										}];
+										var tmpl = jQuery(this).data("tmpl"),
+											html = [];
+										jQuery.each(data, function(i, obj){
+											html.push(kim.tmpl(obj, tmpl));
+										});
+										render(jQuery(html.join('')));
+									},
+									onRefresh: function() {
+
+									},
+									itemInit: function(elem) {
+
+									}
+								});
+								callback(options);
+							},
+							getWaterFall_get: function(render, target){
+								getWaterFall_get(render);
+							},
 							taptest: function(offset, e, target){
 								console.log("tap")
 							},
@@ -282,8 +527,6 @@
 							},
 							list_callback: function(elem, target){
 								console.log(elem)
-								num+=1;
-								console.log(num)
 							},
 							gohome_click: function(e, target){
 								e.preventDefault();
