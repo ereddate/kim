@@ -164,6 +164,39 @@ ng-插件名
 		ng-filter="过滤表达式" 私有过滤属性
 
 	waterfall 瀑布流
+
+#ng-插件，如何快速自定义标签属性？
+
+	jQuery.kim.modelExtend({
+		
+		//name是ng-name
+		name: function(){
+			var self = this;
+			var args = arguments,
+				len = args.length,
+
+				//args[0] 是当前具备ng-name的标签
+				elem = args[0]; 
+
+			//args[1] 是ng-name="args[1]"
+			//arguments 是返回 args[1] 方法的参数
+			self.config.handle[args[1]] && self.config.handle[args[1]].call(self, [arguments, function(){
+
+				//插件代码
+				code ...
+				
+				//支持 ng-name="agrs[1](回调方法)", 支持多个回调顺序执行
+				var callbacks = jQuery.Callbacks();
+
+				jQuery.each(args, function(i, arg) {
+					if (i > 1 && i < len - 1) self.config.handle && callbacks.add(self.config.handle[arg]);
+				});
+				callbacks.fire(elem, self);
+				
+			}] self);
+			return this;
+		}
+	});
 	
 #方法
 

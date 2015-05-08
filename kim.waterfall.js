@@ -220,22 +220,19 @@
 			self.config.handle[args[1]] && self.config.handle[args[1]].call(self, {
 				column_width: 230,
 				column_space: 10,
-				createColumn: function(data, column_num) {},
+				createColumn: function(data, column_num) {
+					//循环创建列
+					var html = [];
+					for (var i = 0; i < column_num; i++) {
+						html.push('<div class="' + data.column_className + '" style="width:' + data.column_width + 'px; display:inline-block; *display:inline;zoom:1; margin-left:' + data.column_space / 2 + 'px;margin-right:' + data.column_space / 2 + 'px; vertical-align:top; overflow:hidden"></div>');
+					}
+					return html.join('');
+				},
 				getColumnItems: function(index, render) {},
 				onRefresh: function() {},
 				itemInit: function(elem) {}
 			}, function(ops) {
 				var options = ops;
-				jQuery.extend(options, {
-					createColumn: function(data, column_num) {
-						//循环创建列
-						var html = [];
-						for (var i = 0; i < column_num; i++) {
-							html.push('<div class="' + data.column_className + '" style="width:' + data.column_width + 'px; display:inline-block; *display:inline;zoom:1; margin-left:' + data.column_space / 2 + 'px;margin-right:' + data.column_space / 2 + 'px; vertical-align:top; overflow:hidden"></div>');
-						}
-						return html.join('');
-					},
-				});
 
 				//console.log(options)
 
