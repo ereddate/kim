@@ -186,12 +186,7 @@ ng-插件名
 				code ...
 				
 				//支持 ng-name="agrs[1](回调方法)", 支持多个回调顺序执行
-				var callbacks = jQuery.Callbacks();
-
-				jQuery.each(args, function(i, arg) {
-					if (i > 1 && i < len - 1) self.config.handle && callbacks.add(self.config.handle[arg]);
-				});
-				callbacks.fire(elem, self);
+				self.end(args);
 				
 			}] self);
 			return this;

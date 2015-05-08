@@ -24,12 +24,13 @@
 				var newitem = jQuery(html.join(''));
 				jQuery(elem).html(newitem).show();
 				//self.build(elem);
-				var callbacks = jQuery.Callbacks();
+				self.end(args);
+				/*var callbacks = jQuery.Callbacks();
 
 				jQuery.each(args, function(i, arg) {
 					if (i > 1 && i < len - 1) self.config.handle && callbacks.add(self.config.handle[arg]);
 				});
-				callbacks.fire(elem, self);
+				callbacks.fire(elem, self);*/
 			}, self);
 
 			return this;

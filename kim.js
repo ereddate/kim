@@ -281,6 +281,14 @@
 						jQuery.each(command[2].split(','), function(i, str) {
 							args.push(str);
 						});
+						target.end = function(args) {
+							var len = args.length;
+							var callbacks = jQuery.Callbacks();
+							jQuery.each(args, function(i, arg) {
+								if (i > 1 && i < len - 1) target.config.handle && callbacks.add(target.config.handle[arg]);
+							});
+							callbacks.fire(elem, target);
+						};
 						args.push(target);
 						target.model[name].apply(target, args);
 					}
