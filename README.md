@@ -6,14 +6,14 @@
 	<div ng-app="test" ng-show="show">
 		<div ng-page="home" ng-show="show">
 			<div ng-view="headera">
-				<div ng-control="nava" ng-list="getData(callback_name)" ng-filter="obj.id == 1" ng-swipe="swipetest">
+				<div ng-control="nava" ng-list="getData(callback_name)" ng-swipe="swipetest">
 					<div ng-item="list_tmpl_{{id}}">
-						<p>{{decoration}}</p>
+						<p>{{decoration | filter : 'a'}}</p>
 						<a href="#" ng-item="testclick" ng-click="test_click" data-id="{{id}}" ng-tap="taptest">删除</a>
 					</div>
 				</div>
 				<div ng-control="bbba" ng-tmpl="getData">
-					<p data-id="{{id}}">{{decoration}}</p>
+					<p data-id="{{id | test : 1}}">{{decoration}}</p>
 				</div>
 				<div ng-control="cccb">
 					<select ng-item="select" name="select" ng-list="getselect_get" ng-change="select_change" ng-valid="required:不能为空:selecterror"><option value="{{value}}">{{title}}</option></select>
@@ -41,6 +41,15 @@
 						return this;
 					}
 				});
+				
+				jQuery.kim.filterExtend({
+					test: function(data, name, filterCondition){
+						var val = data[name];
+						//过滤代码
+						...
+						return val;
+					}
+				})
 			}
 		});
 		
@@ -157,13 +166,40 @@ ng-插件名
 	
 	list 数据列表 ng-list="导入数据的方法名([导入后的回调])"
 
-		ng-filter="过滤表达式" 私有过滤属性
+		//ng-filter="过滤表达式" 私有过滤属性 2015-5-11 删除
 	
 	tmpl 数据模板 ng-tmpl="导入数据的方法名([导入后的回调])"
 
-		ng-filter="过滤表达式" 私有过滤属性
+		//ng-filter="过滤表达式" 私有过滤属性 2015-5-11 删除
 
 	waterfall 瀑布流
+	
+#模板数据过滤
+命令：
+	filter: 过滤字符串 data | filter : "a" 或 {name: "1"}
+	json：json转换为字符串 data | json
+	limitTo：限制数组长度或字符串长度 data | limitTo : 2
+	lowercase：全部转换为小写 data | lowercase
+	uppercase：全部转换为大写 data | uppercase
+	orderBy：排序，reverse倒序sort正序 data | orderBy : reverse
+	date：日期转换，默认yyyy-MM-dd data | date : yyyy-MM-dd
+	currency：货币处理 data | currency : '$'
+书写：
+	<div>{{data | 命令 : 过滤内容}}</div>
+	
+	//无过滤
+	<div>{{data}}</div>
+	
+#模板数据过滤扩展
+
+	jQuery.kim.filterExtend({
+		test: function(data, name, filterCondition){
+			var val = data[name];
+			//过滤代码
+			...
+			return val;
+		}
+	});
 
 #ng-插件，如何快速自定义标签属性？
 
@@ -196,6 +232,8 @@ ng-插件名
 #方法
 
 jQuery.kim.modelExtend({...}); 插件扩展
+
+jQuery.kim.filterExtend({...}); 模板数据过滤扩展
 
 jQuery.kim.require.use(["a", "b"], function(){...}); 引入依赖
 
