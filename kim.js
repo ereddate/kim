@@ -44,7 +44,12 @@
 		if (obj.toJSON) {
 			return obj.toJSON();
 		}
+		return _type(obj);
+	}
+
+	function _type(obj, bool) {
 		var type = _getConstructorName(obj).toLowerCase();
+		if (bool) return type;
 		switch (type) {
 			case 'string':
 				return '"' + _escapeChars(obj) + '"';
@@ -77,12 +82,151 @@
 		return val[0].toUpperCase() + val.substr(1);
 	}
 
+	function _tmplFilterVal(data, name, filterCondition) {
+		var val = data[name];
+		if (_type(filterCondition, true) == "function") {
+			return filterCondition(data, name);
+		} else if (_type(filterCondition, true) == "object") {
+			if (jQuery.isPlainObject(filterCondition)) {
+				jQuery.each(filterCondition, function(name, oval) {
+					var oreg = new RegExp(oval, "gi");
+					if (oreg.test(val)) {
+						return val.replace(oreg, "");
+					}
+				});
+			}
+		}
+		var strRegex = new RegExp(filterCondition, "gi");
+		return (val + "").replace(strRegex, "");
+	}
+
+	function _date(d, pattern) {
+		d = new Date.parse(d);
+		pattern = pattern || 'yyyy-MM-dd';
+		var y = d.getFullYear().toString(),
+			o = {
+				M: d.getMonth() + 1, //month
+				d: d.getDate(), //day
+				h: d.getHours(), //hour
+				m: d.getMinutes(), //minute
+				s: d.getSeconds() //second
+			};
+		pattern = pattern.replace(/(y+)/ig, function(a, b) {
+			return y.substr(4 - Math.min(4, b.length));
+		});
+		for (var i in o) {
+			pattern = pattern.replace(new RegExp('(' + i + '+)', 'g'), function(a, b) {
+				return (o[i] < 10 && b.length > 1) ? '0' + o[i] : o[i];
+			});
+		}
+		return pattern;
+	}
+
+	function _currency(val, symbol) {
+		var places, thousand, decimal;
+		places = 2;
+		symbol = symbol !== undefined ? symbol : "$";
+		thousand = ",";
+		decimal = ".";
+		var number = val,
+			negative = number < 0 ? "-" : "",
+			i = parseInt(number = Math.abs(+number || 0).toFixed(places), 10) + "",
+			j = (j = i.length) > 3 ? j % 3 : 0;
+		return symbol + negative + (j ? i.substr(0, j) + thousand : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousand) + (places ? decimal + Math.abs(number - i).toFixed(places).slice(2) : "");
+	}
+
+	var filter = {
+		"filter": function(data, name, filterCondition) {
+			return _tmplFilterVal(data, name, filterCondition);
+		},
+		"json": function(data, name, filterCondition) {
+			return _stringify(data[name]);
+		},
+		"limitTo": function(data, name, filterCondition) {
+			var val = data[name];
+			if (/array/.test(_type(val))) {
+				return val.slice(0, parseInt(filterCondition));
+			} else if (/string/.test(_type(val))) {
+				return val.substr(0, parseInt(filterCondition));
+			}
+		},
+		"lowercase": function(data, name, filterCondition) {
+			var val = data[name];
+			return val.toLowerCase();
+		},
+		"uppercase": function(data, name, filterCondition) {
+			var val = data[name];
+			return val.toUpperCase();
+		},
+		"orderBy": function(data, name, filterCondition) {
+			var val = data[name];
+			if (/array/.test(_type(val)) && /reverse|sort/.test(filterCondition.toLowerCase())) {
+				return val[filterCondition.toLowerCase()]();
+			}
+		},
+		"date": function(data, name, filterCondition) {
+			var val = data[name];
+			return _date(val);
+		},
+		"currency": function(data, name, filterCondition) {
+			var val = data[name];
+			return _currency(val);
+		}
+	};
+
 	function _tmpl(data, temp) {
 		if (data) {
 			if (typeof data == "function")(data = data());
+			//console.log(data)
 			jQuery.each(data, function(name, val) {
-				var regex = new RegExp("\{\{" + name + "\}\}", "gi");
-				temp = temp.replace(regex, (typeof val == "string" && val || typeof val == "function" && val() || _stringify(val)));
+				var regex = new RegExp("\\{\\{(" + name.toLowerCase() + "|\\s*(" + name.toLowerCase() + ")\\s*\\|\\s*([a-z]+)\\s*\\:\\s*(\\'*([^\\'])\\'*))\\}\\}", "gi");
+				//console.log(regex)
+				var command = regex.exec(temp);
+				//val = typeof val == "string" && val || typeof val == "function" && val() || _stringify(val);
+				//console.log(command)
+				if (command && typeof command[2] == "string" && command[2] == name) {
+					var filterCommand = command[3],
+						filterCondition = command[5];
+					jQuery.each(filter, function(i, func) {
+						if (filterCommand == i) {
+							val = func(data, name, filterCondition);
+							return false;
+						}
+					});
+					/*switch (filterCommand) {
+						case "filter":
+							val = (data, name, filterCondition);
+							break;
+						case "json":
+							val = _stringify(val);
+							break;
+						case "limitTo":
+							if (/array/.test(_type(val))) {
+								val = val.slice(0, parseInt(filterCondition));
+							} else if (/string/.test(_type(val))) {
+								val = val.substr(0, parseInt(filterCondition));
+							}
+							break;
+						case "lowercase":
+							val = val.toLowerCase();
+							break;
+						case "uppercase":
+							val = val.toUpperCase();
+							break;
+						case "orderBy":
+							if (/array/.test(_type(val)) && /reverse|sort/.test(filterCondition.toLowerCase())) {
+								val = val[filterCondition.toLowerCase()]();
+							}
+							break;
+						case "date":
+							val = _date(val);
+							break;
+						case "currency":
+							val = _currency(val);
+							break;
+					}*/
+				}
+				temp = temp.replace(regex, val);
 			});
 			return temp;
 		} else {
@@ -446,6 +590,7 @@
 	});
 
 	kim.fn.model = {};
+	kim.fn.filter = filter;
 
 	kim.tmpl = function(data, tmpl) {
 		return _tmpl(data, tmpl);
@@ -453,14 +598,23 @@
 
 	kim.modelExtend = function(args) {
 		if (typeof args == "undefined") return;
-		var bool = false;
 		jQuery.each(args, function(name, val) {
 			if (!(name in kim.fn.model)) {
 				kim.fn.model[name] = val;
 			}
 		});
 		return this;
-	}
+	};
+
+	kim.filterExtend = function(args) {
+		if (typeof args == "undefined") return;
+		jQuery.each(args, function(name, val) {
+			if (!(name in kim.fn.filter)) {
+				kim.fn.filter[name] = val;
+			}
+		});
+		return this;
+	};
 
 	jQuery.fn.kim = function(ops) {
 		return kim(this, ops);

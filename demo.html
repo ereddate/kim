@@ -18,7 +18,7 @@
 				<div ng-view="maina">
 					<div ng-control="list" ng-list="getlist_post(list_callback,list_callback,list_callback,list_callback)">
 						<div ng-item="list_tmpl_{{id}}" ng-swipe="swipetest">
-							<h1>{{title}}</h1>
+							<h1>{{title | filter : 'a'}}</h1>
 							<p>{{decoration}}</p>
 							<a href="#" ng-tap="taptest" ng-item="list_removeitem" ng-click="list_removeitem_click" data-id="{{id}}">删除</a> <a href="#" ng-tap="taptest" ng-item="list_upitem" ng-click="list_upitem_click" data-id="{{id}}">收起</a>
 						</div>
@@ -27,7 +27,7 @@
 					1
 				</div>
 				<div ng-view="waterfall">
-					<div ng-control="waterfall" ng-list="getWaterFall_get" ng-waterfall="waterfall_callback">
+					<div ng-control="waterfall" ng-list="getWaterFall_get" ng-repeat="" ng-waterfall="waterfall_callback">
 						<div ng-item="cell" class="cell">
 					      <div class="img_wrap"><a href="{{url}}" target="_blank" ng-item="waterfall_bigpic_{{index}}" ng-click="waterfall_bigpic_click"><img src="{{pictureUrl}}" /></a></div>
 					      <div class="pinp_logo"><a href="javascript:;" ng-item="waterfall_smallpic_{{index}}" ng-click="waterfall_attent_click"><span class="attent_button attent_obj" ng-item="waterfall_noattent_button_{{index}}">关 注</span><span class="attent_button attent_button_ok" style="display:none;" ng-item="waterfall_attent_button_{{index}}">已关注</span></a></div>
@@ -43,7 +43,7 @@
 				</div>
 				<div ng-view="mainb">
 					<div ng-control="form" ng-tmpl="getform_get">
-						<input type="text" value="{{test}}" name="test" ng-item="test_input" ng-keyup="test_keyup" />
+						<input type="text" value="{{test | test : 'a'}}" name="test" ng-item="test_input" ng-keyup="test_keyup" />
 						<p><span ng-item="test_result"></span></p>
 					</div>
 					2
@@ -56,7 +56,7 @@
 				</div>
 				<div ng-view="mainc">
 					<div ng-control="aaa">
-						<select ng-item="select" name="select" ng-list="getselect_get" ng-filter="obj.value == 2" ng-change="select_change" ng-valid="required:不能为空:selecterror"><option value="{{value}}">{{title}}</option></select>
+						<select ng-item="select" name="select" ng-list="getselect_get" ng-change="select_change" ng-valid="required:不能为空:selecterror"><option value="{{value}}">{{title}}</option></select>
 						<span ng-item="selectval"></span>
 						<span ng-item="selecterror"></span>
 						<input ng-item="inputvalid" name="inputvalid" ng-valid="required:不能为空:inputerror" value="" />
@@ -180,6 +180,13 @@
 						var self = this;
 						jQuery(elem).html("test");
 						return this;
+					}
+				});
+
+				jQuery.kim.filterExtend({
+					test: function(data, name, filterCondition){
+						console.log(name);
+						return data[name]
 					}
 				});
 
