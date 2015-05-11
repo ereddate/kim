@@ -173,18 +173,26 @@ ng-插件名
 		//ng-filter="过滤表达式" 私有过滤属性 2015-5-11 删除
 
 	waterfall 瀑布流
+
+#模板数据过滤，命令：
+
+filter: 过滤字符串 data | filter : "a" 或 {name: "1"}
 	
-#模板数据过滤
-命令：
-	filter: 过滤字符串 data | filter : "a" 或 {name: "1"}
-	json：json转换为字符串 data | json
-	limitTo：限制数组长度或字符串长度 data | limitTo : 2
-	lowercase：全部转换为小写 data | lowercase
-	uppercase：全部转换为大写 data | uppercase
-	orderBy：排序，reverse倒序sort正序 data | orderBy : reverse
-	date：日期转换，默认yyyy-MM-dd data | date : yyyy-MM-dd
-	currency：货币处理 data | currency : '$'
-书写：
+json：json转换为字符串 data | json
+	
+limitTo：限制数组长度或字符串长度 data | limitTo : 2
+	
+lowercase：全部转换为小写 data | lowercase
+	
+uppercase：全部转换为大写 data | uppercase
+	
+orderBy：排序，reverse倒序sort正序 data | orderBy : reverse
+	
+date：日期转换，默认yyyy-MM-dd data | date : yyyy-MM-dd
+	
+currency：货币处理 data | currency : '$'
+	
+#模板数据过滤，书写：
 	<div>{{data | 命令 : 过滤内容}}</div>
 	
 	//无过滤
