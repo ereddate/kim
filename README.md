@@ -88,7 +88,9 @@
 										html.push(kim.tmpl(obj, tmpl));
 									});
 									//render参数为拼装后的DOM集
-									render(jQuery(html.join('')));
+									render(jQuery(html.join('')), function(elem){
+										self.build(elem);
+									});
 								},
 								onRefresh: function() {
 
