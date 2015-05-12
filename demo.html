@@ -17,6 +17,7 @@
 					<div ng-control="nava"><a href="home" ng-item="gohomea" ng-click="gohome_click">home</a> <a href="product" ng-item="goproducta" ng-click="goproduct_click">product</a> <a href="service" ng-item="goservicea" ng-click="goservice_click">service</a></div>
 				</div>
 				<div ng-view="maina">
+					<img ng-item="aaab" src="" ng-src="http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg" />
 					<div ng-control="list" ng-list="getlist_post(list_callback,list_callback,list_callback,list_callback)">
 						<div ng-item="list_tmpl_{{id}}" ng-swipe="swipetest">
 							<h1>{{title | filter : 'a'}}</h1>
@@ -30,7 +31,7 @@
 				<div ng-view="waterfall">
 					<div ng-control="waterfall" ng-list="getWaterFall_get" ng-repeat="" ng-waterfall="waterfall_callback">
 						<div ng-item="cell" class="cell">
-					      <div class="img_wrap"><a href="{{url}}" target="_blank" ng-item="waterfall_bigpic_{{index}}" ng-click="waterfall_bigpic_click"><img src="{{pictureUrl}}" /></a></div>
+					      <div class="img_wrap"><a href="{{url}}" target="_blank" ng-item="waterfall_bigpic_{{index}}" ng-click="waterfall_bigpic_click"><img src="" ng-item="waterfall_item_img_{{index}}" ng-src="{{pictureUrl}}" /></a></div>
 					      <div class="pinp_logo"><a href="javascript:;" ng-item="waterfall_smallpic_{{index}}" ng-click="waterfall_attent_click"><span class="attent_button attent_obj" ng-item="waterfall_noattent_button_{{index}}">关 注</span><span class="attent_button attent_button_ok" style="display:none;" ng-item="waterfall_attent_button_{{index}}">已关注</span></a></div>
 					      <p class="pinp_txt">{{title}}</p>
 					    </div>
@@ -78,6 +79,7 @@
 		<script src="kim.list.js"></script>
 		<script src="kim.tmpl.js"></script>
 		<script src="kim.class.js"></script>
+		<script src="kim.imgsrc.js"></script>
 		<script src="kim.waterfall.js"></script>
 		<script src="kim.define.js"></script>
 		<script>
@@ -341,6 +343,7 @@
 
 			define("waterfall_callback", function(require, exports, module){
 				return function(options, callback){
+					var self = this;
 					jQuery.extend(options, {
 						column_width: 230,
 						column_space: 10,
@@ -351,7 +354,9 @@
 							jQuery.each(data, function(i, obj){
 								html.push(kim.tmpl(obj, tmpl));
 							});
-							render(jQuery(html.join('')));
+							render(jQuery(html.join('')), function(elem){
+								self.build(elem);
+							});
 						},
 						onRefresh: function() {
 
@@ -390,7 +395,7 @@
 						},
 						handle: {
 							waterfall_callback: function(options, callback){
-								waterfall_callback(options, callback);
+								waterfall_callback.call(this, options, callback);
 							},
 							getWaterFall_get: function(render, target){
 								getWaterFall_get(render);

@@ -6,6 +6,7 @@
 	<div ng-app="test" ng-show="show">
 		<div ng-page="home" ng-show="show">
 			<div ng-view="headera" ng-class="{true:'on', false:'off'}">
+				<img ng-item="img" ng-src="http://www.aaa.com/logo.jpg" src="http://www.aaa.com/blank.jpg" />
 				<div ng-control="nava" ng-list="getData(callback_name)" ng-swipe="swipetest">
 					<div ng-item="list_tmpl_{{id}}">
 						<p>{{decoration | filter : 'a'}}</p>
@@ -161,6 +162,8 @@ ng-[app|page|view|control|item]="name" 对象名称
 ng-show="show|hide" 是否显示
 
 ng-class="{状态1:'className', 状态2:'className'}" 按状态控制className，jQuery(selector).selected(状态);
+
+ng-src="真实的图片地址" 图片容错加载
 
 ng-插件名
 

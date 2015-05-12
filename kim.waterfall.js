@@ -139,7 +139,7 @@
 			}
 
 		});
-		if (callback) callback();
+		if (callback) callback(elements);
 	}
 
 	function public_render(elems, callback) { //ajax得到元素的渲染接口
