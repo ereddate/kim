@@ -5,7 +5,7 @@
 #引入及使用
 	<div ng-app="test" ng-show="show">
 		<div ng-page="home" ng-show="show">
-			<div ng-view="headera">
+			<div ng-view="headera" ng-class="{true:'on', false:'off'}">
 				<div ng-control="nava" ng-list="getData(callback_name)" ng-swipe="swipetest">
 					<div ng-item="list_tmpl_{{id}}">
 						<p>{{decoration | filter : 'a'}}</p>
@@ -68,7 +68,7 @@
 				jQuery.kim({
 					initialization: function(){
 						//初始页面
-						this.app["test"].item["gohomea"].click();
+						this.app["test"].item["gohomea"].click().selected(true);
 					},
 					handle:{
 						waterfall_callback: function(options, callback){
@@ -159,6 +159,8 @@ ng-item 元素
 ng-[app|page|view|control|item]="name" 对象名称
 
 ng-show="show|hide" 是否显示
+
+ng-class="{状态1:'className', 状态2:'className'}" 按状态控制className，jQuery(selector).selected(状态);
 
 ng-插件名
 
