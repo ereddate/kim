@@ -4,7 +4,8 @@
 	var events = ["load", "click", "change", "blur", "focus", "contextmenu", "formchange", "forminput", "input", "invalid", "reset", "select", "submit", "keyup", "keydown", "keypress", "drag", "dragend", "dragenter", "dragleave", "dragover", "dragstart", "drop", "mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel", "scroll", "dblclick", "error", "resize", "unload", "abort", "canplay", "canplaythrough", "durationchange", "emptied", "ended", "loadeddata", "loadedmetadata", "loadstart", "pause", "play", "playing", "progress", "ratechange", "readystatechange", "seeked", "seeking", "stalled", "suspend", "timeupdate", "volumechange", "waiting", "afterprint", "beforeprint", "beforeunload", "haschange", "message", "offline", "online", "pagehide", "pageshow", "popstate", "redo", "storage", "undo", "tap", "swipe"];
 	//, "gesturestart", "gestureend", "gesturechange"
 
-	var item = ["page", "view", "control", "item"];
+	var item = ["page", "view", "control", "item"],
+		prefix = "ng-";
 
 	function isArray(v) {
 		return typeof v != "undefined" && v.constructor == Array ? true : false;
@@ -182,7 +183,6 @@
 				var regex = new RegExp("\\{\\{(" + name.toLowerCase() + "|\\s*(" + name.toLowerCase() + ")\\s*\\|\\s*([a-z]+)\\s*\\:\\s*(\\'*([^\\'])\\'*))\\}\\}", "gi");
 				//console.log(regex)
 				var command = regex.exec(temp);
-				//val = typeof val == "string" && val || typeof val == "function" && val() || _stringify(val);
 				//console.log(command)
 				if (command && typeof command[2] == "string" && command[2] == name) {
 					var filterCommand = command[3],
@@ -193,38 +193,6 @@
 							return false;
 						}
 					});
-					/*switch (filterCommand) {
-						case "filter":
-							val = (data, name, filterCondition);
-							break;
-						case "json":
-							val = _stringify(val);
-							break;
-						case "limitTo":
-							if (/array/.test(_type(val))) {
-								val = val.slice(0, parseInt(filterCondition));
-							} else if (/string/.test(_type(val))) {
-								val = val.substr(0, parseInt(filterCondition));
-							}
-							break;
-						case "lowercase":
-							val = val.toLowerCase();
-							break;
-						case "uppercase":
-							val = val.toUpperCase();
-							break;
-						case "orderBy":
-							if (/array/.test(_type(val)) && /reverse|sort/.test(filterCondition.toLowerCase())) {
-								val = val[filterCondition.toLowerCase()]();
-							}
-							break;
-						case "date":
-							val = _date(val);
-							break;
-						case "currency":
-							val = _currency(val);
-							break;
-					}*/
 				}
 				temp = temp.replace(regex, val);
 			});
@@ -357,15 +325,16 @@
 		_initApp: function() {
 			var self = this,
 				elem = self.elem,
-				target = self.target;
-			if (typeof elem.attr("ng-app") != "undefined") {
+				target = self.target,
+				attr = elem.attr(prefix + "app");
+			if (typeof attr != "undefined") {
 				if (!target.app) target.app = {};
-				var name = (elem.attr("ng-app") != "" ? elem.attr("ng-app") : "app" + Math.random());
+				var name = (attr != "" ? attr : "app" + Math.random());
 				if (!target.app[name]) {
 					target.app[name] = {
 						parent: elem
 					};
-					elem.addClass("ng-app ng-app-" + name);
+					elem.addClass(prefix + "app " + prefix + "app-" + name);
 					model(elem, target)._initTmpl()._initShow()._add();
 				}
 			} else {
@@ -380,8 +349,9 @@
 				target = self.target,
 				elem = self.elem;
 			jQuery.each(events, function(i, eventname) {
-				if (elem && typeof jQuery(elem).attr("ng-" + eventname) != "undefined") {
-					var eventhandle = jQuery(elem).attr("ng-" + eventname);
+				var attr = jQuery(elem).attr(prefix + eventname);
+				if (elem && typeof attr != "undefined") {
+					var eventhandle = attr;
 					if (target.config.handle[eventhandle]) {
 						if (support && /^tap|swipe/.test(eventname)) {
 							/tap/.test(eventname) && jQuery.kim.tap(elem, target.config.handle[eventhandle]) || /swipe/.test(eventname) && jQuery.kim.swipe(elem, target.config.handle[eventhandle]);
@@ -400,7 +370,7 @@
 			var self = this,
 				elem = self.elem,
 				target = self.target,
-				show = jQuery(elem).attr("ng-show");
+				show = jQuery(elem).attr(prefix + "show");
 			typeof show != "undefined" && jQuery(elem)[show == "show" ? "show" : "hide"]();
 			return this;
 		},
@@ -409,8 +379,9 @@
 				elem = self.elem,
 				target = self.target;
 			jQuery.each(target.model, function(name, obj) {
-				if (typeof jQuery(elem).attr("ng-" + name) != "undefined") {
-					var command = jQuery(elem).attr("ng-" + name);
+				var attr = jQuery(elem).attr(prefix + name)
+				if (typeof attr != "undefined") {
+					var command = attr;
 					if (/\(/.test(command)) {
 						var regex = new RegExp("(" + command.replace(/\)/, ")\\\)").replace(/\(/, ")\\\((").replace(/(\_|\-)/gi, "\\$1"));
 						//console.log(regex)
@@ -456,10 +427,11 @@
 				elem = self.elem,
 				target = self.target;
 			jQuery.each(item, function(i, type) {
-				if (typeof elem.attr("ng-" + type) != "undefined" && !/\{\{/.test(elem.attr("ng-" + type))) {
-					var name = (elem.attr("ng-" + type) != "" ? elem.attr("ng-" + type) : type + Math.random());
-					elem.addClass("ng-" + type + " ng-" + type + "-" + name);
-					var app = elem.parents(".ng-app").attr("ng-app");
+				var attr = elem.attr(prefix + type);
+				if (typeof attr != "undefined" && !/\{\{/.test(attr)) {
+					var name = (attr != "" ? attr : type + Math.random());
+					elem.addClass(prefix + type + " " + prefix + type + "-" + name);
+					var app = elem.parents("." + prefix + "app").attr(prefix + "app");
 					if (target.app[app]) {
 						if (!target.app[app][type]) target.app[app][type] = {};
 						target.app[app][type][name] = elem;
@@ -557,7 +529,7 @@
 				} else {
 					var self = this;
 					jQuery.each(item, function(i, name) {
-						var obj = self.find("ng-" + name + "-" + elem);
+						var obj = self.find(prefix + name + "-" + elem);
 						if (obj.length > 0) return false;
 					});
 					return this;
@@ -580,8 +552,8 @@
 		getName: function(elem) {
 			var tagname = "";
 			jQuery.each(item, function(i, name) {
-				if (jQuery(elem).hasClass("ng-" + name)) {
-					tagname = jQuery(elem).attr("ng-" + name);
+				if (jQuery(elem).hasClass(prefix + name)) {
+					tagname = jQuery(elem).attr(prefix + name);
 					return false;
 				}
 			});
