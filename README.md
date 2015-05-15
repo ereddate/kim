@@ -246,9 +246,41 @@ currency：货币处理 data | currency : '$'
 	
 #方法
 
-jQuery.kim.modelExtend({...}); 插件扩展
+kim.fn
 
-jQuery.kim.filterExtend({...}); 模板数据过滤扩展
+	tap .tap(function(offset, e, target){...}) tap事件，返回当前对象
+
+	swipe .swipe(function(direction, offset, e, target){...}) swipe事件，返回当前对象
+
+	eq	.eq("ng-item-name") || .eq(0) 查找dom，返回当前对象
+
+	find .find("ng-item") 查找dom，返回当前对象
+
+	get .get("appname") || .get("ng-app-name") 获取dom，返回当前对象
+
+	query .query("#id") || .query(".classname") 选择器，返回当前对象
+
+	build .build(element) 解析dom，返回当前对象
+
+	tmpl .tmpl(数据, 模板) 生成模板，返回String
+
+	getName .getName(element) 获取dom内部名，返回String
+
+kim
+
+	query .query("#id") || .query(".classname") 选择器，返回jquery对象
+
+	tap .tap(element, function(offset, e, target){...}) tap事件，返回kim
+
+	swipe .swipe(element, function(direction, offset, e, target){...}) swipe事件，返回kim
+
+	tmpl .tmpl(数据, 模板) 生成模板，返回String
+
+	modelExtend .modelExtend({...}) 插件扩展，返回kim
+
+	filterExtend .filterExtend({...}) 模板数据过滤扩展，返回kim
+
+#依赖
 
 jQuery.kim.require.use(["a", "b"], function(){...}); 引入依赖
 

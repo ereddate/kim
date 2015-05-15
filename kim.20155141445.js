@@ -538,11 +538,6 @@
 			activeElem.call(this, elem);
 			return this;
 		},
-		query: function(selector){
-			var elem = jQuery(selector);
-			elem.length && activeElem.call(this, elem);
-			return this;
-		},
 		build: function(elem) {
 			var self = this,
 				target = elem || self;
@@ -568,10 +563,6 @@
 
 	kim.fn.model = {};
 	kim.fn.filter = filter;
-
-	kim.query = function(selector){
-		return jQuery(selector);
-	};
 
 	kim.tmpl = function(data, tmpl) {
 		return _tmpl(data, tmpl);
