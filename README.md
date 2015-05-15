@@ -198,6 +198,10 @@ orderBy：排序，reverse倒序sort正序 data | orderBy : reverse
 date：日期转换，默认yyyy-MM-dd data | date : yyyy-MM-dd
 	
 currency：货币处理 data | currency : '$'
+
+empty：为空时替换为指定值 data | empty : 'http://www.xxx.com/empty.jpg'
+
+passcard：银行卡号转换 data | passcard
 	
 #模板数据过滤，书写：
 	<div>{{data | 命令 : 过滤内容}}</div>

@@ -172,6 +172,15 @@
 		"currency": function(data, name, filterCondition) {
 			var val = data[name];
 			return _currency(val);
+		},
+		"empty": function(data, name, filterCondition) {
+			var val = data[name];
+			return (typeof val == "string" && jQuery.trim(val) == "" || val == null || typeof val == "undefined" || _type(val) == "object" && jQuery.isEmptyObject(val) || _type(val) == "array" && val.length == 0) && filterCondition;
+		},
+		"passcard": function(data, name, filterCondition) {
+			var val = data[name],
+				regex = /(\d{4})(\d{4})(\d{4})(\d{4})(\d{0,})/gi.exec(val);
+			return regex && regex.join(' ') || val;
 		}
 	};
 
