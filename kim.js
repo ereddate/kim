@@ -416,9 +416,34 @@
 				elem = self.elem,
 				target = self.target;
 			jQuery(elem).children().each(function(i, obj) {
-				model(jQuery(obj), target)._initItem(function(obj) {
-					model(obj, target)._add();
-				});
+				model(jQuery(obj), target)._initItem();
+			});
+			return this;
+		},
+		_storage: function(type) {
+			var self = this,
+				elem = self.elem,
+				target = self.target,
+				attr = elem.attr(prefix + type),
+				name = (attr != "" ? attr : type + Math.random()),
+				app = elem.addClass(prefix + type + " " + prefix + type + "-" + name).parents("." + prefix + "app").attr(prefix + "app");
+			if (target.app[app]) {
+				if (!target.app[app][type]) target.app[app][type] = {};
+				target.app[app][type][name] = elem;
+			}
+			return this;
+		},
+		_initChild: function() {
+			var self = this,
+				elem = self.elem,
+				target = self.target;
+			jQuery.each(item, function(i, type) {
+				var elems = elem.find("[" + prefix + type + "]");
+				if (elems.length > 0) {
+					jQuery.each(elems, function(i, obj) {
+						model(jQuery(obj), target)._storage(type)._initShow()._initTmpl()._initHandle();
+					});
+				}
 			});
 			return this;
 		},
@@ -428,18 +453,11 @@
 				target = self.target;
 			jQuery.each(item, function(i, type) {
 				var attr = elem.attr(prefix + type);
-				if (typeof attr != "undefined" && !/\{\{/.test(attr)) {
-					var name = (attr != "" ? attr : type + Math.random());
-					elem.addClass(prefix + type + " " + prefix + type + "-" + name);
-					var app = elem.parents("." + prefix + "app").attr(prefix + "app");
-					if (target.app[app]) {
-						if (!target.app[app][type]) target.app[app][type] = {};
-						target.app[app][type][name] = elem;
-					}
-					model(elem, target)._initShow()._initTmpl()._initHandle();
+				if (typeof attr != "undefined") {
+					model(jQuery(elem), target)._storage(type)._initShow()._initTmpl()._initHandle();
 				}
 			});
-			end(elem);
+			self._initChild();
 			return this;
 		}
 	};
@@ -538,7 +556,7 @@
 			activeElem.call(this, elem);
 			return this;
 		},
-		query: function(selector){
+		query: function(selector) {
 			var elem = jQuery(selector);
 			elem.length && activeElem.call(this, elem);
 			return this;
@@ -569,7 +587,7 @@
 	kim.fn.model = {};
 	kim.fn.filter = filter;
 
-	kim.query = function(selector){
+	kim.query = function(selector) {
 		return jQuery(selector);
 	};
 

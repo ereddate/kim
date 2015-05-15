@@ -198,11 +198,13 @@
 					toggle: function(app, type, val) {
 						var self = this,
 							elem;
-						jQuery.each(self.app[app][type], function(name, obj) {
-							if (name == val)(elem = obj, jQuery(obj).show().attr("ng-show", "show"));
-							else jQuery(obj).hide().attr("ng-show", "hide");
+						jQuery.each(self.app[app][type], function(i, obj){
+							jQuery(obj).hide().attr("ng-show", "hide");
 						});
-						self.get(elem);
+						self.app[app][type][val] && (elem = self.app[app][type][val], jQuery(elem).show().attr("ng-show", "show"));
+						if (elem){
+							self.get(elem);
+						}
 						return this;
 					},
 					toggleClass: function(val, bool) {
