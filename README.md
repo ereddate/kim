@@ -280,6 +280,12 @@ kim
 
 	filterExtend .filterExtend({...}) 模板数据过滤扩展，返回kim
 
+#DOM的操作
+
+	.get(name)  .find(name)  .query(selector)  eq(number|name)  或者像kim提供的demo.html里写的那样 target.app[name].controls[name].html(); ,也可以用jQuery(selector)的方法获取。
+
+	因为kim是基于jQuery开发的，其他的dom操作还是和jQuery一样的。
+
 #依赖
 
 jQuery.kim.require.use(["a", "b"], function(){...}); 引入依赖
