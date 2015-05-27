@@ -3,7 +3,7 @@
 依托jQuery的依赖注入型的前端模板开发框架，适用于中小型移动端网站开发。核心：语义化标签、依赖注入、数据绑定等等。
 	
 #引入及使用
-	<div ng-app="test" ng-show="show">
+	<div ng-app="test" ng-show="show" ng-route="routefunc">
 		<div ng-page="home" ng-show="show">
 			<div ng-view="headera" ng-class="{true:'on', false:'off'}">
 				<img ng-item="img" ng-src="http://www.aaa.com/logo.jpg" src="http://www.aaa.com/blank.jpg" />
@@ -180,6 +180,8 @@ ng-插件名
 		//ng-filter="过滤表达式" 私有过滤属性 2015-5-11 删除
 
 	waterfall 瀑布流
+
+	route 导航，目前只导航ng-app ng-page，会与ng-show ng-click产生冲突，尽量不要一起使用
 
 #模板数据过滤，命令：
 

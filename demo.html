@@ -11,12 +11,12 @@
 		</style>
 	</head>
 	<body>
-		<div ng-app="test" ng-show="show" class="main">
-			<div ng-page="home" ng-show="show">
+		<div ng-app="test" class="main" ng-route="approute">
+			<div ng-page="home">
 				<div ng-view="headera" ng-class="{true:'son',false:''}">
-					<div ng-control="nava"><a href="home" ng-item="gohomea" ng-click="gohome_click">home</a> <a href="product" ng-item="goproducta" ng-click="goproduct_click">product</a> <a href="service" ng-item="goservicea" ng-click="goservice_click">service</a></div>
+					<div ng-control="nava"><a href="#home" ng-item="gohomea" ng-click="gohome_click">home</a> <a href="#product" ng-item="goproducta" ng-click="goproduct_click">product</a> <a href="#service" ng-item="goservicea" ng-click="goservice_click">service</a></div>
 				</div>
-				<div ng-view="maina">
+				<div ng-view="maina" ng-show="show">
 					<img ng-item="aaab" src="" ng-src="http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg" />
 					<div ng-control="list" ng-list="getlist_post(list_callback,list_callback,list_callback,list_callback)">
 						<div ng-item="list_tmpl_{{id}}" ng-swipe="swipetest">
@@ -39,9 +39,9 @@
 				</div>
 				<div ng-view="footera">&copy;2015.</div>
 			</div>
-			<div ng-page="product" ng-show="hide">
+			<div ng-page="product">
 				<div ng-view="headerb">
-					<div ng-control="navb"><a href="home" ng-item="gohomeb" ng-click="gohome_click">home</a> <a href="product" ng-item="goproductb" ng-click="goproduct_click">product</a> <a href="service" ng-item="goserviceb" ng-click="goservice_click">service</a></div>
+					<div ng-control="navb"><a href="#home" ng-item="gohomeb" ng-click="gohome_click">home</a> <a href="#product" ng-item="goproductb" ng-click="goproduct_click">product</a> <a href="#service" ng-item="goserviceb" ng-click="goservice_click">service</a></div>
 				</div>
 				<div ng-view="mainb">
 					<div ng-control="form" ng-tmpl="getform_get">
@@ -52,9 +52,9 @@
 				</div>
 				<div ng-view="footerb">&copy;2015.</div>
 			</div>
-			<div ng-page="service" ng-show="hide">
+			<div ng-page="service">
 				<div ng-view="headerc">
-					<div ng-control="navc"><a href="home" ng-item="gohomec" ng-click="gohome_click">home</a> <a href="product" ng-item="goproductc" ng-click="goproduct_click">product</a> <a href="service" ng-item="goservicec" ng-click="goservice_click">service</a></div>
+					<div ng-control="navc"><a href="#home" ng-item="gohomec" ng-click="gohome_click">home</a> <a href="#product" ng-item="goproductc" ng-click="goproduct_click">product</a> <a href="#service" ng-item="goservicec" ng-click="goservice_click">service</a></div>
 				</div>
 				<div ng-view="mainc">
 					<div ng-control="aaa">
@@ -75,6 +75,7 @@
 
 		<script src="jquery.js"></script>
 		<script src="kim.js"></script>
+		<script src="kim.route.js"></script>
 		<script src="kim.valid.js"></script>
 		<script src="kim.list.js"></script>
 		<script src="kim.tmpl.js"></script>
@@ -392,9 +393,12 @@
 					jQuery(".main").kim({
 						initialization: function() {
 							init(this);
-							this.app["test"].view["headera"].selected(true);
+							//this.app["test"].view["headera"].selected(true);
 						},
 						handle: {
+							approute: function(elem, id){
+								alert(id)
+							},
 							waterfall_callback: function(options, callback){
 								waterfall_callback.call(this, options, callback);
 							},
@@ -443,18 +447,18 @@
 							list_callback: function(elem, target){
 								console.log(elem)
 							},
-							gohome_click: function(e, target){
-								e.preventDefault();
-								gotab_click(this, target, "home", "gohomea");
-							},
-							goproduct_click: function(e, target){
-								e.preventDefault();
-								gotab_click(this, target, "product", "goproductb");
-							},
-							goservice_click: function(e, target){
-								e.preventDefault();
-								gotab_click(this, target, "service", "goservicec");
-							}
+							//gohome_click: function(e, target){
+								//e.preventDefault();
+								//gotab_click(this, target, "home", "gohomea");
+							//},
+							//goproduct_click: function(e, target){
+								//e.preventDefault();
+								//gotab_click(this, target, "product", "goproductb");
+							//},
+							//goservice_click: function(e, target){
+								//e.preventDefault();
+								//gotab_click(this, target, "service", "goservicec");
+							//}
 						}
 					});
 				});
