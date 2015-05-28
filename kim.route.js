@@ -9,6 +9,14 @@
 
 			var finds = ["ng-app", "ng-page"];
 
+			var location = window.location;
+
+			function _getHash() {
+				var match = location.href.match(/(.*)#(.*)$/);
+				//console.log(match)
+				return match ? match[2] : '';
+			}
+
 			function _find(n, id) {
 				var active = jQuery("[" + finds[n] + "=" + id + "]");
 				if (active.length > 0) {
@@ -28,8 +36,7 @@
 				}
 			}
 
-			var location = window.location,
-				id = location.hash.replace("#", "");
+			var id = _getHash();
 			if (id == "") {
 				jQuery("[ng-app]").hide().attr("ng-show", "hide").eq(0).show().attr("ng-show", "show").find("[ng-page]").hide().attr("ng-show", "hide").eq(0).show().attr("ng-show", "show");
 				_hashActiveInit(jQuery("[ng-app]").eq(0), id);
@@ -38,7 +45,7 @@
 			}
 
 			jQuery(window).off("hashchange").on("hashchange", function() {
-				var id = location.hash.replace("#", "");
+				var id = _getHash();
 				_find(0, id);
 			});
 
