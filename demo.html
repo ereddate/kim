@@ -395,15 +395,17 @@
 							init(this);
 							//this.app["test"].view["headera"].selected(true);
 						},
-						root: ".",
-						routeConfig:{
-							"/list": {
-								guide: "/bbb/list.html",
-								control: "nava"
-							},
-							"/list:id": {
-								guide: "/ccc/list.html",
-								control: "navb"
+						route:{
+							root: ".",
+							config:{
+								"/list": {
+									guide: "/bbb/list.html",
+									control: "nava"
+								},
+								"/list:id": {
+									guide: "/ccc/list.html",
+									control: "navb"
+								}
 							}
 						},
 						handle: {

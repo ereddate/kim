@@ -44,17 +44,17 @@
 				_find(0, id);
 			}
 
-			jQuery.each(self.config.routeConfig, function(name, obj) {
+			jQuery.each(self.config.route.config, function(name, obj) {
 				kim.query(obj.control).find("a").on("click", function(e) {
 					var reg = new RegExp(name.replace(/\:/, "#"), "gi"),
 						href = jQuery(this).attr("href"),
 						isReg = reg.test(href.replace(/(#)(.*)/gi, "$1id"));
 					if (/#.*/.test(href) && isReg) {
 						e.preventDefault();
-						location.href = self.config.root + obj.guide + "#" + _getHash(href);
+						location.href = self.config.route.root + obj.guide + "#" + _getHash(href);
 					} else if (isReg) {
 						e.preventDefault();
-						location.href = self.config.root + obj.guide;
+						location.href = self.config.route.root + obj.guide;
 					}
 				});
 			});
