@@ -181,7 +181,7 @@ ng-插件名
 
 	waterfall 瀑布流
 
-	route 导航，目前只导航ng-app ng-page，会与ng-show ng-click产生冲突，尽量不要一起使用
+	route 路由，目前只导航ng-app ng-page，会与ng-show ng-click产生冲突，尽量不要一起使用
 
 #模板数据过滤，命令：
 
@@ -221,6 +221,35 @@ passcard：银行卡号转换 data | passcard
 			return val;
 		}
 	});
+
+#route路由
+
+ng-route="路由初始方法"，目前只对目标内的A标签服务。
+
+	<div ng-route="routeInit"><a href="/list">导航</a></div>
+	<script>
+	jQuery(".main").kim({
+		...,
+		route:{
+			root: ".", //默认路径
+			config:{ //路由对应的地址 :id 相当于 #anchor
+				"/list": {
+					guide: "/bbb/list.html", //导向地址
+					control: "nava" //目标控件
+				},
+				"/list:id": {
+					guide: "/ccc/list.html",
+					control: "navb"
+				}
+			}
+		},
+		handle:{
+			routeInit: function(elem, id){
+				...
+			}
+		}
+		...
+	</script>
 
 #ng-插件，如何快速自定义标签属性？
 
