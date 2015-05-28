@@ -525,6 +525,18 @@
 		self.length = len;
 	}
 
+	function _find(name) {
+		var elem;
+		jQuery.each(item, function(i, key) {
+			var obj = jQuery("[ng-" + key + "=" + name + "]");
+			if (obj.length > 0) {
+				elem = obj;
+				return false;
+			}
+		});
+		return elem;
+	}
+
 	jQuery.extend(kim.fn, {
 		tap: function(callback) {
 			kim.tap(this, callback);
@@ -546,7 +558,11 @@
 		},
 		find: function(val) {
 			var self = this;
-			activeElem.call(self, jQuery(self).find("." + val.replace(/\./gi, "")));
+			var obj = jQuery(self).find("." + val.replace(/\./gi, ""));
+			if (obj.length == 0) {
+				obj = _find(val);
+			}
+			activeElem.call(self, obj);
 			return this;
 		},
 		get: function(elem) {
@@ -597,7 +613,9 @@
 	kim.fn.filter = filter;
 
 	kim.query = function(selector) {
-		return jQuery(selector);
+		var obj = jQuery(selector);
+		if (obj.length == 0) obj = _find(selector);
+		return obj;
 	};
 
 	kim.tmpl = function(data, tmpl) {
@@ -623,6 +641,8 @@
 		});
 		return this;
 	};
+
+	kim.items = item;
 
 	jQuery.fn.kim = function(ops) {
 		return kim(this, ops);

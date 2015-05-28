@@ -14,7 +14,7 @@
 		<div ng-app="test" class="main" ng-route="approute">
 			<div ng-page="home">
 				<div ng-view="headera" ng-class="{true:'son',false:''}">
-					<div ng-control="nava"><a href="#home" ng-item="gohomea" ng-click="gohome_click">home</a> <a href="#product" ng-item="goproducta" ng-click="goproduct_click">product</a> <a href="#service" ng-item="goservicea" ng-click="goservice_click">service</a></div>
+					<div ng-control="nava"><a href="/list" ng-item="gohomea">home</a> <a href="#product" ng-item="goproducta" ng-click="goproduct_click">product</a> <a href="#service" ng-item="goservicea" ng-click="goservice_click">service</a></div>
 				</div>
 				<div ng-view="maina" ng-show="show">
 					<img ng-item="aaab" src="" ng-src="http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg" />
@@ -41,7 +41,7 @@
 			</div>
 			<div ng-page="product">
 				<div ng-view="headerb">
-					<div ng-control="navb"><a href="#home" ng-item="gohomeb" ng-click="gohome_click">home</a> <a href="#product" ng-item="goproductb" ng-click="goproduct_click">product</a> <a href="#service" ng-item="goserviceb" ng-click="goservice_click">service</a></div>
+					<div ng-control="navb"><a href="#home" ng-item="gohomeb">home</a> <a href="/list#1" ng-item="goproductb">product</a> <a href="#service" ng-item="goserviceb" ng-click="goservice_click">service</a></div>
 				</div>
 				<div ng-view="mainb">
 					<div ng-control="form" ng-tmpl="getform_get">
@@ -54,7 +54,7 @@
 			</div>
 			<div ng-page="service">
 				<div ng-view="headerc">
-					<div ng-control="navc"><a href="#home" ng-item="gohomec" ng-click="gohome_click">home</a> <a href="#product" ng-item="goproductc" ng-click="goproduct_click">product</a> <a href="#service" ng-item="goservicec" ng-click="goservice_click">service</a></div>
+					<div ng-control="navc"><a href="#home" ng-item="gohomec">home</a> <a href="#product" ng-item="goproductc" ng-click="goproduct_click">product</a> <a href="#service" ng-item="goservicec" ng-click="goservice_click">service</a></div>
 				</div>
 				<div ng-view="mainc">
 					<div ng-control="aaa">
@@ -223,7 +223,7 @@
 
 			define("init", function(require, exports, module) {
 				return function(target){
-					target.app["test"].item["gohomea"].click();
+					//target.app["test"].item["gohomea"].click();
 				}
 			});
 
@@ -394,6 +394,17 @@
 						initialization: function() {
 							init(this);
 							//this.app["test"].view["headera"].selected(true);
+						},
+						root: ".",
+						routeConfig:{
+							"/list": {
+								guide: "/bbb/list.html",
+								control: "nava"
+							},
+							"/list:id": {
+								guide: "/ccc/list.html",
+								control: "navb"
+							}
 						},
 						handle: {
 							approute: function(elem, id){

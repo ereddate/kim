@@ -11,8 +11,8 @@
 
 			var location = window.location;
 
-			function _getHash() {
-				var match = location.href.match(/(.*)#(.*)$/);
+			function _getHash(url) {
+				var match = (url || location.href).match(/(.*)#(.*)$/);
 				//console.log(match)
 				return match ? match[2] : '';
 			}
@@ -43,6 +43,21 @@
 			} else {
 				_find(0, id);
 			}
+
+			jQuery.each(self.config.routeConfig, function(name, obj) {
+				kim.query(obj.control).find("a").on("click", function(e) {
+					var reg = new RegExp(name.replace(/\:/, "#"), "gi"),
+						href = jQuery(this).attr("href"),
+						isReg = reg.test(href.replace(/(#)(.*)/gi, "$1id"));
+					if (/#.*/.test(href) && isReg) {
+						e.preventDefault();
+						location.href = self.config.root + obj.guide + "#" + _getHash(href);
+					} else if (isReg) {
+						e.preventDefault();
+						location.href = self.config.root + obj.guide;
+					}
+				});
+			});
 
 			jQuery(window).off("hashchange").on("hashchange", function() {
 				var id = _getHash();
