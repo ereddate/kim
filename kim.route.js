@@ -40,32 +40,44 @@
 			if (id == "") {
 				jQuery("[ng-app]").hide().attr("ng-show", "hide").eq(0).show().attr("ng-show", "show").find("[ng-page]").hide().attr("ng-show", "hide").eq(0).show().attr("ng-show", "show");
 				_hashActiveInit(jQuery("[ng-app]").eq(0), id);
-			} else {
+			} else if (!/^\//.test(id)) {
 				_find(0, id);
 			}
+
+			var root = self.config.route.root || "./";
 
 			jQuery.each(self.config.route.config, function(name, obj) {
 				kim.query(obj.control).find("a").on("click", function(e) {
 					var reg = new RegExp(name.replace(/\:/, "#"), "gi"),
 						href = jQuery(this).attr("href"),
-						isReg = reg.test(href.replace(/(#)(.*)/gi, "$1id"));
+						isReg = reg.test((!/^#.*/.test(href) && href.replace(/(#)(.*)/gi, "$1id") || href));
 					if (/#.*/.test(href) && isReg) {
 						e.preventDefault();
-						location.href = self.config.route.root + obj.guide + "#" + _getHash(href);
+						var hash = _getHash(href);
+						if (!/^\//.test(hash)) {
+							location.href = root + obj.guide + "#" + hash;
+							return;
+						} else if (isReg && !/^\//.test(obj.guide)) {
+							_hashActiveInit(obj.guide, this);
+							return;
+						} else {
+							location.href = href;
+							return;
+						}
 					} else if (isReg) {
 						e.preventDefault();
-						location.href = self.config.route.root + obj.guide;
+						location.href = root + obj.guide;
 					}
 				});
 			});
 
 			jQuery(window).off("hashchange").on("hashchange", function() {
 				var id = _getHash();
-				_find(0, id);
+				!/^\//.test(id) && _find(0, id);
 			});
 
 			function _hashActiveInit(obj, id) {
-				var name = jQuery(elem).attr("ng-route");
+				var name = typeof obj == "string" && obj || jQuery(elem).attr("ng-route");
 				self.config.handle[name] && self.config.handle[name].call(self, obj, id, self);
 			}
 

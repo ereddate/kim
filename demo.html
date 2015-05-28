@@ -54,7 +54,7 @@
 			</div>
 			<div ng-page="service">
 				<div ng-view="headerc">
-					<div ng-control="navc"><a href="#home" ng-item="gohomec">home</a> <a href="#product" ng-item="goproductc" ng-click="goproduct_click">product</a> <a href="#service" ng-item="goservicec" ng-click="goservice_click">service</a></div>
+					<div ng-control="navc"><a href="#home" ng-item="gohomec">home</a> <a href="#product" ng-item="goproductc" ng-click="goproduct_click">product</a> <a href="#/117-a/b/c/open" ng-item="goservicec" ng-click="goservice_click">service</a></div>
 				</div>
 				<div ng-view="mainc">
 					<div ng-control="aaa">
@@ -405,10 +405,21 @@
 								"/list:id": {
 									guide: "/ccc/list.html",
 									control: "navb"
+								},
+								":/bba/open":{
+									guide: "open",
+									control: "navc"
+								},
+								"^(.*)\/open$":{
+									guide: "open",
+									control: "navc"
 								}
 							}
 						},
 						handle: {
+							open: function(func, elem){
+								alert(func);
+							},
 							approute: function(elem, id){
 								alert(id)
 							},
