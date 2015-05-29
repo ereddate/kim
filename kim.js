@@ -7,10 +7,6 @@
 	var item = ["page", "view", "control", "item"],
 		prefix = "ng-";
 
-	function isArray(v) {
-		return typeof v != "undefined" && v.constructor == Array ? true : false;
-	};
-
 	function _getConstructorName(o) {
 		//加o.constructor是因为IE下的window和document
 		if (o != null && o.constructor != null) {
@@ -85,9 +81,9 @@
 
 	function _tmplFilterVal(data, name, filterCondition) {
 		var val = data[name];
-		if (_type(filterCondition, true) == "function") {
+		if (kim.isFunction(filterCondition)) {
 			return filterCondition(data, name);
-		} else if (_type(filterCondition, true) == "object") {
+		} else if (kim.isObject(filterCondition)) {
 			if (jQuery.isPlainObject(filterCondition)) {
 				jQuery.each(filterCondition, function(name, oval) {
 					var oreg = new RegExp(oval, "gi");
@@ -145,9 +141,9 @@
 		},
 		"limitTo": function(data, name, filterCondition) {
 			var val = data[name];
-			if (/array/.test(_type(val))) {
+			if (kim.isArray(val)) {
 				return val.slice(0, parseInt(filterCondition));
-			} else if (/string/.test(_type(val))) {
+			} else if (kim.isString(val)) {
 				return val.substr(0, parseInt(filterCondition));
 			}
 		},
@@ -161,7 +157,7 @@
 		},
 		"orderBy": function(data, name, filterCondition) {
 			var val = data[name];
-			if (/array/.test(_type(val)) && /reverse|sort/.test(filterCondition.toLowerCase())) {
+			if (kim.isArray(val) && /reverse|sort/.test(filterCondition.toLowerCase())) {
 				return val[filterCondition.toLowerCase()]();
 			}
 		},
@@ -175,7 +171,7 @@
 		},
 		"empty": function(data, name, filterCondition) {
 			var val = data[name];
-			return (typeof val == "string" && jQuery.trim(val) == "" || val == null || typeof val == "undefined" || _type(val) == "object" && jQuery.isEmptyObject(val) || _type(val) == "array" && val.length == 0) && filterCondition;
+			return (typeof val == "string" && jQuery.trim(val) == "" || val == null || typeof val == "undefined" || kim.isObject(val) && jQuery.isEmptyObject(val) || kim.isArray(val) && val.length == 0) && filterCondition;
 		},
 		"passcard": function(data, name, filterCondition) {
 			var val = data[name],
@@ -400,7 +396,7 @@
 					if (typeof command == "string") {
 						target.model[name].call(target, elem, command);
 						return true;
-					} else if (command && isArray(command) && command.length > 0) {
+					} else if (command && kim.isArray(command) && command.length > 0) {
 						var args = [elem, command[1]];
 						jQuery.each(command[2].split(','), function(i, str) {
 							args.push(str);
@@ -643,6 +639,12 @@
 	};
 
 	kim.items = item;
+
+	jQuery.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error', "Boolean", "Array", "Object"], function(i, name) {
+		kim["is" + name] = function(obj) {
+			return _getConstructorName(obj).toLowerCase() === name.toLowerCase();
+		};
+	});
 
 	jQuery.fn.kim = function(ops) {
 		return kim(this, ops);
