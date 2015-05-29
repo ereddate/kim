@@ -266,15 +266,7 @@ ng-route="路由初始方法"，目前只对目标内的A标签服务。
 
 			//args[1] 是ng-name="args[1]"
 			//arguments 是返回 args[1] 方法的参数
-			self.config.handle[args[1]] && self.config.handle[args[1]].call(self, [arguments, function(){
-
-				//插件代码
-				code ...
-				
-				//支持 ng-name="agrs[1](回调方法)", 支持多个回调顺序执行
-				self.end(args);
-				
-			}] self);
+			code ...
 			return this;
 		}
 	});
@@ -314,6 +306,8 @@ kim
 	modelExtend .modelExtend({...}) 插件扩展，返回kim
 
 	filterExtend .filterExtend({...}) 模板数据过滤扩展，返回kim
+	
+	isArguments(object)或is['Function', 'String', 'Number', 'Date', 'RegExp', 'Error', "Boolean", "Array", "Object"] 类型判断，返回true或false
 
 #DOM的操作
 
