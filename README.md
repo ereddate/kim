@@ -241,12 +241,15 @@ ng-route="路由初始方法"，目前只对目标内的A标签服务。
 					guide: "/ccc/list.html",
 					control: "navb"
 				}
+			},
+			handle:{
+				routeInit: function(elem, id){
+					...
+				}	
 			}
 		},
 		handle:{
-			routeInit: function(elem, id){
-				...
-			}
+			...	
 		}
 		...
 	</script>
