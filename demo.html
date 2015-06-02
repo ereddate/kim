@@ -371,6 +371,38 @@
 				}
 			});
 
+			define("routeConfig", function(require, exports, module){
+				return {
+							root: ".",
+							config:{
+								"/list": {
+									guide: "/bbb/list.html",
+									control: "nava"
+								},
+								"/list:id": {
+									guide: "/ccc/list.html",
+									control: "navb"
+								},
+								":/bba/open":{
+									guide: "open",
+									control: "navc"
+								},
+								"^(.*)\/open$":{
+									guide: "open",
+									control: "navc"
+								}
+							},
+							handle: {
+								open: function(func, elem) {
+									alert(func);
+								},
+								approute: function(elem, id) {
+									alert(id)
+								}
+							}
+						};
+			});
+
 			define(function(require, exports, module) {
 				var init = require("init"),
 					list_removeitem_click = require("list_removeitem_click"),
@@ -395,34 +427,8 @@
 							init(this);
 							//this.app["test"].view["headera"].selected(true);
 						},
-						route:{
-							root: ".",
-							config:{
-								"/list": {
-									guide: "/bbb/list.html",
-									control: "nava"
-								},
-								"/list:id": {
-									guide: "/ccc/list.html",
-									control: "navb"
-								},
-								":/bba/open":{
-									guide: "open",
-									control: "navc"
-								},
-								"^(.*)\/open$":{
-									guide: "open",
-									control: "navc"
-								}
-							}
-						},
+						route: require("routeConfig"),
 						handle: {
-							open: function(func, elem){
-								alert(func);
-							},
-							approute: function(elem, id){
-								alert(id)
-							},
 							waterfall_callback: function(options, callback){
 								waterfall_callback.call(this, options, callback);
 							},

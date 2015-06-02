@@ -78,7 +78,7 @@
 
 			function _hashActiveInit(obj, id) {
 				var name = typeof obj == "string" && obj || jQuery(elem).attr("ng-route");
-				self.config.handle[name] && self.config.handle[name].call(self, obj, id, self);
+				self.config.route.handle[name] && self.config.route.handle[name].call(self, obj, id, self);
 			}
 
 		}
