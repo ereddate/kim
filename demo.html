@@ -57,15 +57,18 @@
 					<div ng-control="navc"><a href="#home" ng-item="gohomec">home</a> <a href="#product" ng-item="goproductc" ng-click="goproduct_click">product</a> <a href="#/117-a/b/c/open" ng-item="goservicec" ng-click="goservice_click">service</a></div>
 				</div>
 				<div ng-view="mainc">
-					<div ng-control="aaa">
-						<select ng-item="select" name="select" ng-list="getselect_get" ng-change="select_change" ng-valid="required:不能为空:selecterror"><option value="{{value}}">{{title}}</option></select>
-						<span ng-item="selectval"></span>
-						<span ng-item="selecterror"></span>
-						<input ng-item="inputvalid" name="inputvalid" ng-valid="required:不能为空:inputerror" value="" />
-						<span ng-item="inputerror"></span>
-						<input ng-item="inputvalid_a" name="inputvalid_a" ng-valid="required:不能为空:input_aerror" value="" />
-						<span ng-item="input_aerror"></span>
-						<div ng-item="modeltest" ng-test=""></div>
+					<div>
+						<form ng-control="ngform" action="/post" method="post" ng-form="ngform">
+							<select ng-item="select" name="select" ng-list="getselect_get" ng-change="select_change" ng-valid="required:不能为空:selecterror"><option value="{{value}}">{{title}}</option></select>
+							<span ng-item="selectval"></span>
+							<span ng-item="selecterror"></span>
+							<input ng-item="inputvalid" name="inputvalid" ng-valid="required:不能为空:inputerror" value="" />
+							<span ng-item="inputerror"></span>
+							<input ng-item="inputvalid_a" name="inputvalid_a" ng-valid="required:不能为空:input_aerror" value="" />
+							<span ng-item="input_aerror"></span>
+							<div ng-item="modeltest" ng-test=""></div>
+							<button ng-item="formsubmit" type="submit">提交</button>
+						</form>
 					</div>
 					3
 				</div>
@@ -77,6 +80,7 @@
 		<script src="kim.js"></script>
 		<script src="kim.route.js"></script>
 		<script src="kim.valid.js"></script>
+		<script src="kim.form.js"></script>
 		<script src="kim.list.js"></script>
 		<script src="kim.tmpl.js"></script>
 		<script src="kim.class.js"></script>
@@ -428,6 +432,11 @@
 							//this.app["test"].view["headera"].selected(true);
 						},
 						route: require("routeConfig"),
+						form: {
+							ngform: {
+								"/post": "aaa"
+							}
+						},
 						handle: {
 							waterfall_callback: function(options, callback){
 								waterfall_callback.call(this, options, callback);

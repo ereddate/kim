@@ -10,6 +10,7 @@
 			var finds = ["ng-app", "ng-page"];
 
 			var location = window.location;
+				//history = window.history;
 
 			function _getHash(url) {
 				var match = (url || location.href).match(/(.*)#(.*)$/);
@@ -49,13 +50,14 @@
 			jQuery.each(self.config.route.config, function(name, obj) {
 				kim.query(obj.control).find("a").on("click", function(e) {
 					var reg = new RegExp(name.replace(/\:/, "#"), "gi"),
-						href = jQuery(this).attr("href"),
+						href = jQuery(this).attr("href"), url,
 						isReg = reg.test((!/^#.*/.test(href) && href.replace(/(#)(.*)/gi, "$1id") || href));
 					if (/#.*/.test(href) && isReg) {
 						e.preventDefault();
 						var hash = _getHash(href);
 						if (!/^\//.test(hash)) {
-							location.href = root + obj.guide + "#" + hash;
+							url = root + obj.guide + "#" + hash;
+							location.href = url;
 							return;
 						} else if (isReg && !/^\//.test(obj.guide)) {
 							_hashActiveInit(obj.guide, this);

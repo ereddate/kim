@@ -136,10 +136,12 @@
 							callback = ops[2];
 						if (typeof val == "undefined") {
 							func.call(self, elem, tip, "输入内容不能为空", callback);
+							jQuery(elem).data("result", false);
 							return false;
 						}
 						if (jQuery.kim.validType && (type in jQuery.kim.validType)) {
 							var bool = jQuery.kim.validType[type].call(self, elem, val, tip, callback);
+							jQuery(elem).data("result", bool);
 							if (bool) {
 								done.call(self, elem, callback);
 							}
