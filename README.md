@@ -16,11 +16,12 @@
 				<div ng-control="bbba" ng-tmpl="getData">
 					<p data-id="{{id | test : 1}}">{{decoration}}</p>
 				</div>
-				<div ng-control="cccb">
+				<form ng-control="ngform" ng-form="ngform" action="/post" method="post">
 					<select ng-item="select" name="select" ng-list="getselect_get" ng-change="select_change" ng-valid="required:不能为空:selecterror"><option value="{{value}}">{{title}}</option></select>
 					<span ng-item="selectval"></span>
 					<span ng-item="selecterror"></span>
-				</div>
+					<button type="submit" ng-item="formsubmit">提交</button>
+				</form>
 			</div>
 			<div ng-view="waterfall">
 				<div ng-control="waterfall" ng-list="getData" ng-waterfall="waterfall_callback">
@@ -70,6 +71,11 @@
 					initialization: function(){
 						//初始页面
 						this.app["test"].item["gohomea"].click().selected(true);
+					},
+					form:{
+						ngform:{
+							"/post": "aaa"
+						}
 					},
 					handle:{
 						waterfall_callback: function(options, callback){
@@ -182,6 +188,8 @@ ng-插件名
 	waterfall 瀑布流
 
 	route 路由，目前只导航ng-app ng-page，会与ng-show ng-click产生冲突，尽量不要一起使用
+	
+	form form是valid的延伸，只提供form提交不提供ajax提交，详细使用请查看demo.html
 
 #模板数据过滤，命令：
 
