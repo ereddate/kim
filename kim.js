@@ -339,7 +339,12 @@
 					target.app[name] = {
 						parent: elem
 					};
-					elem.addClass(prefix + "app " + prefix + "app-" + name);
+					var className = prefix + "app " + prefix + "app-" + name;
+					elem.addClass(className).data("ngName", {
+						name: name,
+						className: className,
+						type: "app"
+					});
 					model(elem, target)._initTmpl()._initShow()._add();
 				}
 			} else {
@@ -431,7 +436,12 @@
 				target = self.target,
 				attr = elem.attr(prefix + type),
 				name = (attr != "" ? attr : type + Math.random()),
-				app = elem.addClass(prefix + type + " " + prefix + type + "-" + name).parents("." + prefix + "app").attr(prefix + "app");
+				className = prefix + type + " " + prefix + type + "-" + name,
+				app = elem.addClass(className).data("ngName", {
+					name: name,
+					className: className,
+					type: type
+				}).parents("." + prefix + "app").attr(prefix + "app");
 			if (target.app[app]) {
 				if (!target.app[app][type]) target.app[app][type] = {};
 				target.app[app][type][name] = elem;
@@ -595,12 +605,14 @@
 		},
 		getName: function(elem) {
 			var tagname = "";
-			jQuery.each(item, function(i, name) {
-				if (jQuery(elem).hasClass(prefix + name)) {
-					tagname = jQuery(elem).attr(prefix + name);
-					return false;
-				}
-			});
+			tagname = jQuery(elem).data("ngName");
+			if (!tagname || tagname == "")
+				jQuery.each(item, function(i, name) {
+					if (jQuery(elem).hasClass(prefix + name)) {
+						tagname = jQuery(elem).attr(prefix + name);
+						return false;
+					}
+				});
 			return tagname;
 		}
 	});

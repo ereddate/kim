@@ -19,10 +19,11 @@
 				<div ng-view="maina" ng-show="show">
 					<img ng-item="aaab" src="" ng-src="http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg" />
 					<div ng-control="list" ng-list="getlist_post(list_callback,list_callback,list_callback,list_callback)">
-						<div ng-item="list_tmpl_{{id}}" ng-swipe="swipetest">
-							<h1>{{title | filter : 'a'}}</h1>
-							<p>{{decoration}}</p>
-							<a href="#" ng-tap="taptest" ng-item="list_removeitem" ng-click="list_removeitem_click" data-id="{{id}}">删除</a> <a href="#" ng-tap="taptest" ng-item="list_upitem" ng-click="list_upitem_click" data-id="{{id}}">收起</a>
+						<span>不是模板</span>
+						<div ng-item="list_tmpl_{{id}}" ng-swipe="swipetest" ng-repeat="item in items">
+							<h1>{{item.title | filter : 'a'}}</h1>
+							<p>{{item.decoration}}</p>
+							<a href="#" ng-tap="taptest" ng-item="list_removeitem" ng-click="list_removeitem_click" data-id="{{item.id}}">删除</a> <a href="#" ng-tap="taptest" ng-item="list_upitem" ng-click="list_upitem_click" data-id="{{item.id}}">收起</a>
 						</div>
 					</div>
 					<div ng-control="list_pagenum" ng-list="getnum_get"><a href="{{num}}" ng-item="pagenum_{{num}}" ng-click="pagenum_click">{{shownum}}</a></div>
@@ -426,7 +427,7 @@
 						gotab_click = result["gotab_click"],
 						getWaterFall_get = result["getWaterFall_get"];
 
-					jQuery(".main").kim({
+					var a = jQuery(".main").kim({
 						initialization: function() {
 							init(this);
 							//this.app["test"].view["headera"].selected(true);
@@ -500,6 +501,7 @@
 							//}
 						}
 					});
+					console.log(a)
 				});
 			});
 
