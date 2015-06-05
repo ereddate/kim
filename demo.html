@@ -18,23 +18,23 @@
 				</div>
 				<div ng-view="maina" ng-show="show">
 					<img ng-item="aaab" src="" ng-src="http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg" />
-					<div ng-control="list" ng-list="getlist_post(list_callback,list_callback,list_callback,list_callback)">
+					<div ng-control="list" ng-tmpl="getlist_post(list_callback,list_callback,list_callback,list_callback)">
 						<span>不是模板</span>
-						<div ng-item="list_tmpl_{{id}}" ng-swipe="swipetest" ng-repeat="item in items">
-							<h1>{{item.title | filter : 'a'}}</h1>
-							<p>{{item.decoration}}</p>
+						<div ng-item="list_tmpl_{{$index}}" ng-swipe="swipetest" ng-repeat="item in items">
+							<h1>{{item.title | filter : 'a'}}{{item.id * item.id * item.id}}</h1>
+							<p>{{item.decoration}}{{item.id * item.id + item.id | currency : '$'}}</p>
 							<a href="#" ng-tap="taptest" ng-item="list_removeitem" ng-click="list_removeitem_click" data-id="{{item.id}}">删除</a> <a href="#" ng-tap="taptest" ng-item="list_upitem" ng-click="list_upitem_click" data-id="{{item.id}}">收起</a>
 						</div>
 					</div>
-					<div ng-control="list_pagenum" ng-list="getnum_get"><a href="{{num}}" ng-item="pagenum_{{num}}" ng-click="pagenum_click">{{shownum}}</a></div>
+					<div ng-control="list_pagenum" ng-tmpl="getnum_get" ng-repeat="item in items"><a href="{{item.num}}" ng-item="pagenum_{{item.num}}" ng-click="pagenum_click">{{item.shownum}}</a></div>
 					1
 				</div>
 				<div ng-view="waterfall">
-					<div ng-control="waterfall" ng-list="getWaterFall_get" ng-repeat="" ng-waterfall="waterfall_callback">
-						<div ng-item="cell" class="cell">
-					      <div class="img_wrap"><a href="{{url}}" target="_blank" ng-item="waterfall_bigpic_{{index}}" ng-click="waterfall_bigpic_click"><img src="" ng-item="waterfall_item_img_{{index}}" ng-src="{{pictureUrl}}" /></a></div>
-					      <div class="pinp_logo"><a href="javascript:;" ng-item="waterfall_smallpic_{{index}}" ng-click="waterfall_attent_click"><span class="attent_button attent_obj" ng-item="waterfall_noattent_button_{{index}}">关 注</span><span class="attent_button attent_button_ok" style="display:none;" ng-item="waterfall_attent_button_{{index}}">已关注</span></a></div>
-					      <p class="pinp_txt">{{title}}</p>
+					<div ng-control="waterfall" ng-tmpl="getWaterFall_get" ng-waterfall="waterfall_callback">
+						<div ng-item="cell" class="cell" ng-repeat="item in items">
+					      <div class="img_wrap"><a href="{{item.url}}" target="_blank" ng-item="waterfall_bigpic_{{item.index}}" ng-click="waterfall_bigpic_click"><img src="" ng-item="waterfall_item_img_{{item.index}}" ng-src="{{item.pictureUrl}}" /></a></div>
+					      <div class="pinp_logo"><a href="javascript:;" ng-item="waterfall_smallpic_{{item.index}}" ng-click="waterfall_attent_click"><span class="attent_button attent_obj" ng-item="waterfall_noattent_button_{{item.index}}">关 注</span><span class="attent_button attent_button_ok" style="display:none;" ng-item="waterfall_attent_button_{{item.index}}">已关注</span></a></div>
+					      <p class="pinp_txt">{{item.title}}</p>
 					    </div>
 					</div>
 				</div>
@@ -46,7 +46,7 @@
 				</div>
 				<div ng-view="mainb">
 					<div ng-control="form" ng-tmpl="getform_get">
-						<input type="text" value="{{test | test : 'a'}}" name="test" ng-item="test_input" ng-keyup="test_keyup" />
+						<input type="text" value="{{testval | test : 'a'}}" name="test" ng-item="test_input" ng-keyup="test_keyup" />
 						<p><span ng-item="test_result"></span></p>
 					</div>
 					2
@@ -60,7 +60,7 @@
 				<div ng-view="mainc">
 					<div>
 						<form ng-control="ngform" action="/post" method="post" ng-form="ngform">
-							<select ng-item="select" name="select" ng-list="getselect_get" ng-change="select_change" ng-valid="required:不能为空:selecterror"><option value="{{value}}">{{title}}</option></select>
+							<select ng-item="select" name="select" ng-tmpl="getselect_get" ng-change="select_change" ng-valid="required:不能为空:selecterror"><option value="{{item.value}}" ng-repeat="item in items">{{item.title}}</option></select>
 							<span ng-item="selectval"></span>
 							<span ng-item="selecterror"></span>
 							<input ng-item="inputvalid" name="inputvalid" ng-valid="required:不能为空:inputerror" value="" />
@@ -82,7 +82,7 @@
 		<script src="kim.route.js"></script>
 		<script src="kim.valid.js"></script>
 		<script src="kim.form.js"></script>
-		<script src="kim.list.js"></script>
+		<!--script src="kim.list.js"></script-->
 		<script src="kim.tmpl.js"></script>
 		<script src="kim.class.js"></script>
 		<script src="kim.imgsrc.js"></script>
@@ -193,9 +193,9 @@
 				});
 
 				jQuery.kim.filterExtend({
-					test: function(data, name, filterCondition){
-						console.log(name);
-						return data[name]
+					test: function(val, filterCondition){
+						console.log(val);
+						return val;
 					}
 				});
 
@@ -298,9 +298,9 @@
 
 			define("getform_get", function(require, exports, module){
 				return function(render){
-					var data = {
-						test: "input data"
-					};
+					var data = [{
+						testval: "input data"
+					}];
 					render(data);
 				}
 			});
@@ -357,8 +357,10 @@
 						getColumnItems: function(index, type, render) {
 							if (index>=4) return;
 							var tmpl = jQuery(this).data("tmpl"),
-								html = [];
+								html = [],
+								elem = this;
 							jQuery.each(data, function(i, obj){
+								obj = jQuery.kim.tmplFixData(elem, tmpl, obj);
 								html.push(kim.tmpl(obj, tmpl));
 							});
 							render(jQuery(html.join('')), function(elem){

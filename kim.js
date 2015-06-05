@@ -44,6 +44,8 @@
 		return _type(obj);
 	}
 
+
+
 	function _type(obj, bool) {
 		var type = _getConstructorName(obj).toLowerCase();
 		if (bool) return type;
@@ -79,10 +81,9 @@
 		return val[0].toUpperCase() + val.substr(1);
 	}
 
-	function _tmplFilterVal(data, name, filterCondition) {
-		var val = data[name];
+	function _tmplFilterVal(val, filterCondition) {
 		if (kim.isFunction(filterCondition)) {
-			return filterCondition(data, name);
+			return filterCondition(val);
 		} else if (kim.isObject(filterCondition)) {
 			if (jQuery.isPlainObject(filterCondition)) {
 				jQuery.each(filterCondition, function(name, oval) {
@@ -133,75 +134,116 @@
 	}
 
 	var filter = {
-		"filter": function(data, name, filterCondition) {
-			return _tmplFilterVal(data, name, filterCondition);
+		"filter": function(val, filterCondition) {
+			return _tmplFilterVal(val.replace(/(^\")|(\"$)/gi,""), filterCondition);
 		},
-		"json": function(data, name, filterCondition) {
-			return _stringify(data[name]);
+		"json": function(val, filterCondition) {
+			return _stringify(val);
 		},
-		"limitTo": function(data, name, filterCondition) {
-			var val = data[name];
+		"limitTo": function(val, filterCondition) {
 			if (kim.isArray(val)) {
 				return val.slice(0, parseInt(filterCondition));
 			} else if (kim.isString(val)) {
 				return val.substr(0, parseInt(filterCondition));
 			}
 		},
-		"lowercase": function(data, name, filterCondition) {
-			var val = data[name];
+		"lowercase": function(val, filterCondition) {
 			return val.toLowerCase();
 		},
-		"uppercase": function(data, name, filterCondition) {
-			var val = data[name];
+		"uppercase": function(val, filterCondition) {
 			return val.toUpperCase();
 		},
-		"orderBy": function(data, name, filterCondition) {
-			var val = data[name];
+		"orderBy": function(val, filterCondition) {
 			if (kim.isArray(val) && /reverse|sort/.test(filterCondition.toLowerCase())) {
 				return val[filterCondition.toLowerCase()]();
 			}
 		},
-		"date": function(data, name, filterCondition) {
-			var val = data[name];
+		"date": function(val, filterCondition) {
 			return _date(val);
 		},
-		"currency": function(data, name, filterCondition) {
-			var val = data[name];
+		"currency": function(val, filterCondition) {
 			return _currency(val);
 		},
-		"empty": function(data, name, filterCondition) {
-			var val = data[name];
+		"empty": function(val, filterCondition) {
 			return (typeof val == "string" && jQuery.trim(val) == "" || val == null || typeof val == "undefined" || kim.isObject(val) && jQuery.isEmptyObject(val) || kim.isArray(val) && val.length == 0) && filterCondition;
 		},
-		"passcard": function(data, name, filterCondition) {
-			var val = data[name],
-				regex = /(\d{4})(\d{4})(\d{4})(\d{4})(\d{0,})/gi.exec(val);
+		"passcard": function(val, filterCondition) {
+			var regex = /(\d{4})(\d{4})(\d{4})(\d{4})(\d{0,})/gi.exec(val);
 			return regex && regex.join(' ') || val;
 		}
 	};
 
+	var tmplCommand = /\{\{(\$*[a-zA-Z0-9\.\_]*|\s*\$*([a-zA-Z0-9\.\_]*)\s*\|\s*([a-z]+)\s*\:\s*(\'*([^\'])\'*))\}\}/,
+		tmplDefault = /\{\{([\s\S]*)\}\}/;
+
 	function _tmpl(data, temp) {
-		if (data) {
+		if (data && temp) {
 			if (typeof data == "function")(data = data());
+			//console.log(temp.split('{{').length)
+			var split = temp.split('{{'),
+				len = split.length,
+				html = [];
+			html.push(split[0]);
 			//console.log(data)
-			jQuery.each(data, function(name, val) {
-				var regex = new RegExp("\\{\\{(" + name.toLowerCase() + "|\\s*(" + name.toLowerCase() + ")\\s*\\|\\s*([a-z]+)\\s*\\:\\s*(\\'*([^\\'])\\'*))\\}\\}", "gi");
-				//console.log(regex)
-				var command = regex.exec(temp);
-				//console.log(command)
-				if (command && typeof command[2] == "string" && command[2] == name) {
-					var filterCommand = command[3],
-						filterCondition = command[5];
-					jQuery.each(filter, function(i, func) {
-						if (filterCommand == i) {
-							val = func(data, name, filterCondition);
-							return false;
-						}
+			jQuery.each(split, function(i, sub) {
+				if (i > 0) {
+					var str = "{{" + sub;
+					jQuery.each(data, function(name, val) {
+						var regex = new RegExp("\\s*" + name.replace(/\./gi, "\\.").replace(/\*/gi, "\\*").replace(/\s/gi, "\\s*"), "gi");
+						//console.log(regex)
+						str = str.replace(regex, val);
 					});
+					var obj = str;
+					//console.log(str);
+					var command = tmplCommand.exec(obj);
+					//console.log(command)
+					if (command) {
+						var str = command[1],
+							strA = str.split(' | '),
+							val = "";
+						//console.log(strA)
+						if (strA.length > 1) {
+							var filterCommand = command[3],
+								filterCondition = command[5];
+							if (filterCommand in filter) {
+								val = filter[filterCommand](strA[0].replace("{{", ""), filterCondition);
+								if (val) {
+									obj = obj.replace(command[0], val);
+									html.push(obj);
+								}
+							}
+							return true;
+						} else {
+							obj = obj.replace(command[0], command[1]);
+						}
+						//console.log(val)
+					} else {
+						command = tmplDefault.exec(obj);
+						//console.log(command)
+						var str = command[1],
+							strb = str.split(' | '),
+							sval = "";
+						if (strb.length > 1) {
+							var filterCommand = strb[1].split(' : ')[0],
+								filterCondition = strb[1].split(' : ')[1].replace(/\'/gi, "");
+							if (filterCommand in filter) {
+								sval = filter[filterCommand](/\s*\*\s*/.test(strb[0]) ? new Function("return " + strb[0].replace("{{", ""))() : strb[0].replace("{{", ""), filterCondition);
+								if (sval) {
+									obj = obj.replace(command[0], sval);
+									html.push(obj);
+								}
+							}
+							return true;
+						} else {
+							obj = obj.replace(command[0], new Function("return " + command[1])());
+						}
+					}
+
+					html.push(obj);
 				}
-				temp = temp.replace(regex, val);
 			});
-			return temp;
+			//console.log(html.join(''))
+			return html.join('');
 		} else {
 			return "";
 		}
@@ -651,6 +693,8 @@
 	};
 
 	kim.items = item;
+
+	kim.stringify = _stringify;
 
 	jQuery.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error', "Boolean", "Array", "Object"], function(i, name) {
 		kim["is" + name] = function(obj) {
