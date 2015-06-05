@@ -7,7 +7,7 @@
 		<div ng-page="home" ng-show="show">
 			<div ng-view="headera" ng-class="{true:'on', false:'off'}">
 				<img ng-item="img" ng-src="http://www.aaa.com/logo.jpg" src="http://www.aaa.com/blank.jpg" />
-				<div ng-control="nava" ng-list="getData(callback_name)" ng-swipe="swipetest">
+				<div ng-control="nava" ng-tmpl="getData(callback_name)" ng-swipe="swipetest">
 					<div ng-item="list_tmpl_{{id}}" ng-repeat="item in items">
 						<p>{{item.decoration | filter : 'a'}}</p>
 						<a href="#" ng-item="testclick" ng-click="test_click" data-id="{{item.id}}" ng-tap="taptest">删除</a>
@@ -24,7 +24,7 @@
 				</form>
 			</div>
 			<div ng-view="waterfall">
-				<div ng-control="waterfall" ng-list="getData" ng-waterfall="waterfall_callback">
+				<div ng-control="waterfall" ng-tmpl="getData" ng-waterfall="waterfall_callback">
 					<div ng-item="waterfall_item" class="cell">{{code}}</div>
 				</div>
 			</div>
@@ -177,20 +177,15 @@ ng-插件名
 
 	valid 表单测证 ng-valid="验证类型:错误提示:提示元素或回调"
 	
-	list 数据列表 ng-list="导入数据的方法名([导入后的回调])"
-	
-		ng-repeat 表示具有此属性的标签为模板，未加此属性具有ng-list属性的标签内HTML为模板。
-		
-		ng-repeat="数据 in 数据集"，例如下：
-		<div ng-item="name" ng-repeat="item in items">
-			<span>{{item.id}}</span>
-		</div>
-
-		//ng-filter="过滤表达式" 私有过滤属性 2015-5-11 删除
-	
 	tmpl 数据模板 ng-tmpl="导入数据的方法名([导入后的回调])"
-
-		//ng-filter="过滤表达式" 私有过滤属性 2015-5-11 删除
+	
+			ng-repeat 表示具有此属性的标签为模板，未加此属性具有ng-list属性的标签内HTML为模板。
+			ng-repeat="数据 in 数据集"，例如下：
+			<div ng-control="name" ng-tmpl="callback">
+				<div ng-item="name" ng-repeat="item in items">
+					<span>{{item.id}}{{item.a + item.b | currency : '$'}}</span>
+				</div>
+			</div>
 
 	waterfall 瀑布流
 
