@@ -17,7 +17,7 @@
 					<p data-id="{{id | test : 1}}">{{decoration}}</p>
 				</div>
 				<form ng-control="ngform" ng-form="ngform" action="/post" method="post">
-					<select ng-item="select" name="select" ng-list="getselect_get" ng-change="select_change" ng-valid="required:不能为空:selecterror"><option value="{{value}}">{{title}}</option></select>
+					<select ng-item="select" name="select" ng-tmpl="getselect_get" ng-change="select_change" ng-valid="required:不能为空:selecterror"><option value="{{value}}">{{title}}</option></select>
 					<span ng-item="selectval"></span>
 					<span ng-item="selecterror"></span>
 					<button type="submit" ng-item="formsubmit">提交</button>
@@ -179,7 +179,7 @@ ng-插件名
 	
 	tmpl 数据模板 ng-tmpl="导入数据的方法名([导入后的回调])"
 	
-			ng-repeat 表示具有此属性的标签为模板，未加此属性具有ng-list属性的标签内HTML为模板。
+			ng-repeat 表示具有此属性的标签为模板，未加此属性具有ng-tmpl属性的标签内HTML为模板。
 			ng-repeat="数据 in 数据集"，例如下：
 			<div ng-control="name" ng-tmpl="callback">
 				<div ng-item="name" ng-repeat="item in items">
