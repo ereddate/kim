@@ -135,7 +135,7 @@
 
 	var filter = {
 		"filter": function(val, filterCondition) {
-			return _tmplFilterVal(val.replace(/(^\")|(\"$)/gi,""), filterCondition);
+			return _tmplFilterVal(val.replace(/(^\")|(\"$)/gi, ""), filterCondition);
 		},
 		"json": function(val, filterCondition) {
 			return _stringify(val);
@@ -180,6 +180,11 @@
 		if (data && temp) {
 			if (typeof data == "function")(data = data());
 			//console.log(temp.split('{{').length)
+			jQuery.each(data, function(name, val) {
+				var regex = new RegExp("\\s*" + name.replace(/\./gi, "\\.").replace(/\*/gi, "\\*").replace(/\s/gi, "\\s*"), "gi");
+				//console.log(regex)
+				temp = temp.replace(regex, val);
+			});
 			var split = temp.split('{{'),
 				len = split.length,
 				html = [];
@@ -188,55 +193,28 @@
 			jQuery.each(split, function(i, sub) {
 				if (i > 0) {
 					var str = "{{" + sub;
-					jQuery.each(data, function(name, val) {
-						var regex = new RegExp("\\s*" + name.replace(/\./gi, "\\.").replace(/\*/gi, "\\*").replace(/\s/gi, "\\s*"), "gi");
-						//console.log(regex)
-						str = str.replace(regex, val);
-					});
-					var obj = str;
-					//console.log(str);
-					var command = tmplCommand.exec(obj);
+					var obj = str,
+						command = tmplCommand.exec(obj),
+						isNull = false;
 					//console.log(command)
-					if (command) {
-						var str = command[1],
-							strA = str.split(' | '),
-							val = "";
-						//console.log(strA)
-						if (strA.length > 1) {
-							var filterCommand = command[3],
-								filterCondition = command[5];
-							if (filterCommand in filter) {
-								val = filter[filterCommand](strA[0].replace("{{", ""), filterCondition);
-								if (val) {
-									obj = obj.replace(command[0], val);
-									html.push(obj);
-								}
+					command = !command ? (isNull = true, tmplDefault.exec(obj)) : command;
+					var str = command[1],
+						strA = str.split(' | '),
+						val = "";
+
+					if (strA.length > 1) {
+						var filterCommand = !isNull ? command[3] : strA[1].split(' : ')[0],
+							filterCondition = !isNull ? command[5] : strA[1].split(' : ')[1].replace(/\'/gi, "");
+						if (filterCommand in filter) {
+							val = !isNull ? filter[filterCommand](strA[0].replace("{{", ""), filterCondition) : filter[filterCommand](/\s*\*\s*/.test(strA[0]) ? new Function("return " + strA[0].replace("{{", ""))() : strA[0].replace("{{", ""), filterCondition);
+							if (val) {
+								obj = obj.replace(command[0], val);
+								html.push(obj);
 							}
-							return true;
-						} else {
-							obj = obj.replace(command[0], command[1]);
 						}
-						//console.log(val)
+						return true;
 					} else {
-						command = tmplDefault.exec(obj);
-						//console.log(command)
-						var str = command[1],
-							strb = str.split(' | '),
-							sval = "";
-						if (strb.length > 1) {
-							var filterCommand = strb[1].split(' : ')[0],
-								filterCondition = strb[1].split(' : ')[1].replace(/\'/gi, "");
-							if (filterCommand in filter) {
-								sval = filter[filterCommand](/\s*\*\s*/.test(strb[0]) ? new Function("return " + strb[0].replace("{{", ""))() : strb[0].replace("{{", ""), filterCondition);
-								if (sval) {
-									obj = obj.replace(command[0], sval);
-									html.push(obj);
-								}
-							}
-							return true;
-						} else {
-							obj = obj.replace(command[0], new Function("return " + command[1])());
-						}
+						obj = !isNull ? obj.replace(command[0], command[1]) : obj.replace(command[0], new Function("return " + command[1])());
 					}
 
 					html.push(obj);
