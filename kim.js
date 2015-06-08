@@ -173,7 +173,7 @@
 		}
 	};
 
-	var tmplCommand = /\{\{(\$*[a-zA-Z0-9\.\_]*|\s*\$*([a-zA-Z0-9\.\_]*)\s*\|\s*([a-z]+)\s*\:\s*(\'*([^\'])\'*))\}\}/,
+	var tmplCommand = /\{\{(\$*[\w\.]*|\s*\$*([\w\.]*)\s*\|\s*([a-z]+)\s*\:\s*(\'*([^\'])\'*))\}\}/,
 		tmplDefault = /\{\{([\s\S]*)\}\}/;
 
 	function _tmpl(data, temp) {
@@ -183,10 +183,10 @@
 			jQuery.each(data, function(name, val) {
 				var regex = new RegExp("\\s*" + name.replace(/\./gi, "\\.").replace(/\*/gi, "\\*").replace(/\s/gi, "\\s*"), "gi");
 				//console.log(regex)
-				temp = temp.replace(regex, val);
+				temp = temp.replace(regex, typeof val == "string" ? val : _stringify(val));
 			});
 			var split = temp.split('{{'),
-				len = split.length,
+				//len = split.length,
 				html = [];
 			html.push(split[0]);
 			//console.log(data)
