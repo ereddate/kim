@@ -173,25 +173,25 @@ ng-class="{状态1:'className', 状态2:'className'}" 按状态控制className�
 
 ng-src="真实的图片地址" 图片容错加载
 
+ng-valid 表单测证 ng-valid="验证类型:错误提示:提示元素或回调"
+
+ng-tmpl 数据模板 ng-tmpl="导入数据的方法名([导入后的回调])"
+	
+	ng-repeat 表示具有此属性的标签为模板，未加此属性具有ng-tmpl属性的标签内HTML为模板。
+	ng-repeat="数据 in 数据集"，例如下：
+	<div ng-control="name" ng-tmpl="callback">
+		<div ng-item="name" ng-repeat="item in items">
+			<span>{{item.id}}{{item.a + item.b | currency : '$'}}</span>
+		</div>
+	</div>
+	
+ng-route 路由，目前只导航ng-app ng-page，会与ng-show ng-click产生冲突，尽量不要一起使用
+
+ng-form form是valid的延伸，只提供form提交不提供ajax提交，详细使用请查看demo.html
+
 ng-插件名
 
-	valid 表单测证 ng-valid="验证类型:错误提示:提示元素或回调"
-	
-	tmpl 数据模板 ng-tmpl="导入数据的方法名([导入后的回调])"
-	
-			ng-repeat 表示具有此属性的标签为模板，未加此属性具有ng-tmpl属性的标签内HTML为模板。
-			ng-repeat="数据 in 数据集"，例如下：
-			<div ng-control="name" ng-tmpl="callback">
-				<div ng-item="name" ng-repeat="item in items">
-					<span>{{item.id}}{{item.a + item.b | currency : '$'}}</span>
-				</div>
-			</div>
-
 	waterfall 瀑布流
-
-	route 路由，目前只导航ng-app ng-page，会与ng-show ng-click产生冲突，尽量不要一起使用
-	
-	form form是valid的延伸，只提供form提交不提供ajax提交，详细使用请查看demo.html
 
 #模板数据过滤，命令：
 
