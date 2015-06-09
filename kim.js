@@ -173,7 +173,7 @@
 		}
 	};
 
-	var tmplCommand = /\{\{(\$*[\w\.]*|\s*\$*([\w\.]*)\s*\|\s*([a-z]+)\s*\:\s*(\'*([^\'])\'*))\}\}/,
+	var tmplCommand = /\{\{(\$*[\w\.]*|\s*\$*([\w\.]*)\s*\|\s*([\w\.]+)\s*\:\s*(\'*([^\'])\'*))\}\}/,
 		tmplDefault = /\{\{([\s\S]*)\}\}/;
 
 	function _tmpl(data, temp) {
@@ -196,8 +196,8 @@
 					var obj = str,
 						command = tmplCommand.exec(obj),
 						isNull = false;
-					//console.log(command)
 					command = !command ? (isNull = true, tmplDefault.exec(obj)) : command;
+					//console.log(command)
 					var str = command[1],
 						strA = str.split(' | '),
 						val = "";
