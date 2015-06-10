@@ -44,7 +44,33 @@
 		return _type(obj);
 	}
 
+	function _isElement(el) {
+		return !!(el && el.nodeType == 1);
+	};
 
+	function _has(obj, name) {
+		if (_isElement(obj)) {
+			var attr = jQuery.trim(jQuery(obj).attr(name));
+			return attr != "" && typeof attr != "undefined";
+		} else if (jQuery.isPlainObject(obj)) {
+			return name in obj;
+		} else if (kim.isArray(obj)) {
+			return jQuery.inArray(name, obj) > 0 ? true : false;
+		} else if (kim.isString(obj)) {
+			return (new RegExp(name, "gi")).test(obj);
+		}
+	}
+
+	jQuery.fn._has = function(name) {
+		var args = arguments,
+			len = args.length;
+		if (len == 1) {
+			return _has(this[0], args[0]);
+		}
+		if (len == 2) {
+			return _has(args[0], args[1]);
+		}
+	};
 
 	function _type(obj, bool) {
 		var type = _getConstructorName(obj).toLowerCase();
@@ -351,10 +377,10 @@
 			var self = this,
 				elem = self.elem,
 				target = self.target,
-				attr = elem.attr(prefix + "app");
-			if (typeof attr != "undefined") {
+				attr = elem._has(prefix + "app");
+			if (attr) {
 				if (!target.app) target.app = {};
-				var name = (attr != "" ? attr : "app" + Math.random());
+				var name = (attr ? elem.attr(prefix + "app") : "app" + Math.random());
 				if (!target.app[name]) {
 					target.app[name] = {
 						parent: elem
@@ -379,9 +405,9 @@
 				target = self.target,
 				elem = self.elem;
 			jQuery.each(events, function(i, eventname) {
-				var attr = jQuery(elem).attr(prefix + eventname);
-				if (elem && typeof attr != "undefined") {
-					var eventhandle = attr;
+				var attr = jQuery(elem)._has(prefix + eventname);
+				if (elem && attr) {
+					var eventhandle = jQuery(elem).attr(prefix + eventname);
 					if (target.config.handle[eventhandle]) {
 						if (support && /^tap|swipe/.test(eventname)) {
 							/tap/.test(eventname) && jQuery.kim.tap(elem, target.config.handle[eventhandle]) || /swipe/.test(eventname) && jQuery.kim.swipe(elem, target.config.handle[eventhandle]);
@@ -400,8 +426,8 @@
 			var self = this,
 				elem = self.elem,
 				target = self.target,
-				show = jQuery(elem).attr(prefix + "show");
-			typeof show != "undefined" && jQuery(elem)[show == "show" ? "show" : "hide"]();
+				show = jQuery(elem)._has(prefix + "show");
+			show && jQuery(elem)[jQuery(elem).attr(prefix + "show") == "show" ? "show" : "hide"]();
 			return this;
 		},
 		_initTmpl: function(elem) {
@@ -409,9 +435,9 @@
 				elem = self.elem,
 				target = self.target;
 			jQuery.each(target.model, function(name, obj) {
-				var attr = jQuery(elem).attr(prefix + name)
-				if (typeof attr != "undefined") {
-					var command = attr;
+				var attr = jQuery(elem)._has(prefix + name)
+				if (attr) {
+					var command = jQuery(elem).attr(prefix + name);
 					if (/\(/.test(command)) {
 						var regex = new RegExp("(" + command.replace(/\)/, ")\\\)").replace(/\(/, ")\\\((").replace(/(\_|\-)/gi, "\\$1"));
 						//console.log(regex)
@@ -454,8 +480,8 @@
 			var self = this,
 				elem = self.elem,
 				target = self.target,
-				attr = elem.attr(prefix + type),
-				name = (attr != "" ? attr : type + Math.random()),
+				attr = elem._has(prefix + type),
+				name = (attr ? elem.attr(prefix + type) : type + Math.random()),
 				className = prefix + type + " " + prefix + type + "-" + name,
 				app = elem.addClass(className).data("ngName", {
 					name: name,
@@ -487,8 +513,8 @@
 				elem = self.elem,
 				target = self.target;
 			jQuery.each(item, function(i, type) {
-				var attr = elem.attr(prefix + type);
-				if (typeof attr != "undefined") {
+				var attr = elem._has(prefix + type);
+				if (attr) {
 					model(jQuery(elem), target)._storage(type)._initShow()._initTmpl()._initHandle();
 				}
 			});
@@ -672,6 +698,8 @@
 
 	kim.items = item;
 
+	kim.has = _has;
+
 	kim.stringify = _stringify;
 
 	jQuery.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error', "Boolean", "Array", "Object"], function(i, name) {
@@ -679,6 +707,8 @@
 			return _getConstructorName(obj).toLowerCase() === name.toLowerCase();
 		};
 	});
+
+	kim.isElement = _isElement;
 
 	jQuery.fn.kim = function(ops) {
 		return kim(this, ops);
