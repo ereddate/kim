@@ -76,7 +76,6 @@
 				<div ng-view="footerc">&copy;2015.</div>
 			</div>
 		</div>
-
 		<script src="jquery.js"></script>
 		<script src="kim.js"></script>
 		<script src="kim.route.js"></script>
@@ -89,8 +88,7 @@
 		<script src="kim.waterfall.js"></script>
 		<script src="kim.define.js"></script>
 		<script>
-		;
-		(function() {
+			kim.setup();
 			var data = [{
 				url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
 				index: 0,
@@ -506,8 +504,6 @@
 					console.log(a)
 				});
 			});
-
-		})()
 		</script>
 	</body>
 </html>

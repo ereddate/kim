@@ -5,7 +5,11 @@
 	//, "gesturestart", "gestureend", "gesturechange"
 
 	var item = ["page", "view", "control", "item"],
-		prefix = "ng-";
+		prefix = "ng-",
+		win = window,
+		doc = win.document,
+		navigator = win.navigator,
+		head;
 
 	function _getConstructorName(o) {
 		//加o.constructor是因为IE下的window和document
@@ -254,7 +258,7 @@
 	}
 
 	var support = {
-		touch: "ontouchend" in document
+		touch: "ontouchend" in doc
 	};
 
 	function getCoordinates(event) {
@@ -696,6 +700,82 @@
 		return this;
 	};
 
+	function _addMeta(name, content) {
+		var meta = doc.createElement('meta');
+
+		meta.setAttribute('name', name);
+		meta.setAttribute('content', content);
+		head.append(meta);
+	}
+
+	function _addIcon(href, sizes, precomposed) {
+		var link = doc.createElement('link');
+		link.setAttribute('rel', 'apple-touch-icon' + (precomposed ? '-precomposed' : ''));
+		link.setAttribute('href', href);
+		if (sizes) {
+			link.setAttribute('sizes', sizes);
+		}
+		head.append(link);
+	}
+
+	function _addStartupImage(href, media) {
+		var link = doc.createElement('link');
+		link.setAttribute('rel', 'apple-touch-startup-image');
+		link.setAttribute('href', href);
+		if (media) {
+			link.setAttribute('media', media);
+		}
+		head.append(link);
+	}
+
+	function _getHead() {
+		return doc.head || doc.getElementsByTagName('head')[0];
+	}
+
+	kim.setup = function(options, callback) {
+		head = jQuery(_getHead());
+		var args = arguments,
+			len = args.length;
+		if (len == 1 && kim.isFunction(args[0])) {
+			callback = options;
+			options = false;
+		}
+		var triggerFn = function() {
+			if (navigator.standalone) {
+				_addMeta('viewport', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0');
+			} else {
+				_addMeta('viewport', 'initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, minimum-ui');
+			}
+			_addMeta('apple-mobile-web-app-capable', 'yes');
+			_addMeta('apple-touch-fullscreen', 'yes');
+
+			if (options) {
+				var statusBarStyle = options.statusBarStyle || 'black';
+
+				if (statusBarStyle) {
+					_addMeta('apple-mobile-web-app-status-bar-style', statusBarStyle);
+				}
+			}
+
+			callback && callback();
+		};
+		win.addEventListener('DOMContentLoaded', function() {
+			if (navigator.standalone) {
+				setTimeout(function() {
+					setTimeout(function() {
+						triggerFn();
+					}, 1);
+				}, 1);
+			} else {
+				setTimeout(function() {
+					triggerFn();
+				}, 1);
+			}
+		}, false);
+
+		return kim;
+	};
+
 	kim.items = item;
 
 	kim.has = _has;
@@ -721,5 +801,5 @@
 	}
 
 	jQuery.kim = kim;
-	window.kim = kim;
+	win.kim = kim;
 })()
