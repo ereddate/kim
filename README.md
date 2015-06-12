@@ -33,7 +33,7 @@
 	<script src="kim.js"></script>
 	<script>
 		//define定义模块
-		define("init", function(require, exports, module){
+		kim.define("init", function(require, exports, module){
 			return function(){
 				//扩展KIM.MODEL自定义语义
 				jQuery.kim.modelExtend({
@@ -56,7 +56,7 @@
 		});
 		
 		//使用KIM
-		define(function(require, exports, module){
+		kim.define(function(require, exports, module){
 			var init = require("init");
 			init();
 
@@ -326,6 +326,8 @@ kim
 	has 判断是否包含， 可以判断标签属性、字符串字符、数组字段、对象字段，返回true 或 false，jQuery可以使用_has
 	
 	stringify 类型转换字符串
+	
+	setup 对于touch环境提供viewport、apple-mobile-web-app-capable、apple-touch-fullscreen、apple-mobile-web-app-status-bar-style支持，引用 kim.setup([{statusBarStyle:"blank"}[,function(){...}]] 或 function(){...});
 
 #DOM的操作
 
@@ -341,7 +343,7 @@ jQuery.kim.require.use(["a", "b"], function(){...}); 引入依赖
 
 或者 jQuery.kim.require.use("a b", function(){...}); 引入依赖
 
-define(["module name"[, ["module dependencies", ...]], ] function(require, exports, module){...}); 模块化开发。
+kim.define(["module name"[, ["module dependencies", ...]], ] function(require, exports, module){...}); 模块化开发。
 
 	可以使用nodejs grunt工具按情况配置合并、压缩、发布等。
 
