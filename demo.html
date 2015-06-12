@@ -181,7 +181,7 @@
 				title: "title2"
 			}];
 
-			define(function(require, exports, module) {
+			kim.define(function(require, exports, module) {
 				jQuery.kim.modelExtend({
 					test: function(elem) {
 						var self = this;
@@ -216,27 +216,19 @@
 						return this;
 					}
 				});
-			});
-
-			define("getWaterFall_get", function(require, exports, module){
+			}).define("getWaterFall_get", function(require, exports, module){
 				return function(render){
 					render(data);
 				}
-			});
-
-			define("init", function(require, exports, module) {
+			}).define("init", function(require, exports, module) {
 				return function(target){
 					//target.app["test"].item["gohomea"].click();
 				}
-			});
-
-			define("list_removeitem_click", function(require, exports, module) {
+			}).define("list_removeitem_click", function(require, exports, module) {
 				return function(target){
 					jQuery(target).parents(".ng-item").hide();
 				}
-			});
-
-			define("list_upitem_click", function(require, exports, module){
+			}).define("list_upitem_click", function(require, exports, module){
 				return function(elem, target){
 					var parent = target.app["test"].item["list_tmpl_"+jQuery(this).attr("data-id")];
 					if (!jQuery(this).data("isshow")){
@@ -252,21 +244,15 @@
 						}, "slow");
 					}
 				}
-			});
-
-			define("input_aerror", function(require, exports, module){
+			}).define("input_aerror", function(require, exports, module){
 				return function(target, tip){
 					jQuery(target).show().html(tip);
 				}
-			});
-
-			define("select_change", function(require, exports, module){
+			}).define("select_change", function(require, exports, module){
 				return function(elem, target){
 					target.app["test"].item["selectval"].html(jQuery(elem).val());
 				}
-			});
-
-			define("getselect_get", function(require, exports, module){
+			}).define("getselect_get", function(require, exports, module){
 				return function(render){
 					var data = [{
 						value:"",
@@ -286,36 +272,26 @@
 					}];
 					render(data);
 				}
-			});
-
-			define("pagenum_click", function(require, exports, module){
+			}).define("pagenum_click", function(require, exports, module){
 				return function(elem){
 					alert(jQuery(elem).attr("href"));
 				}
-			});
-
-			define("getform_get", function(require, exports, module){
+			}).define("getform_get", function(require, exports, module){
 				return function(render){
 					var data = [{
 						testval: "input data"
 					}];
 					render(data);
 				}
-			});
-
-			define("test_keyup", function(require, exports, module){
+			}).define("test_keyup", function(require, exports, module){
 				return function(elem, target){
 					target.app["test"].item["test_result"].html(jQuery(elem).val());
 				}
-			});
-
-			define("getnum_get", function(require, exports, module){
+			}).define("getnum_get", function(require, exports, module){
 				return function(render){
 					render([{num:0, shownum:1},{num:1, shownum:2}]);
 				}
-			});
-
-			define("getlist_post", function(require, exports, module){
+			}).define("getlist_post", function(require, exports, module){
 				return function(render){
 					var data = [
 						{
@@ -338,15 +314,11 @@
 					];
 					render(data);
 				}
-			});
-
-			define("gotab_click", function(require, exports, module){
+			}).define("gotab_click", function(require, exports, module){
 				return function(elem, target, page, name){
 					target.toggle("test", "page", page).find("ng-item").toggleClass('on', false).eq("ng-item-"+name).toggleClass('on');
 				}
-			});
-
-			define("waterfall_callback", function(require, exports, module){
+			}).define("waterfall_callback", function(require, exports, module){
 				return function(options, callback){
 					var self = this;
 					jQuery.extend(options, {
@@ -374,9 +346,7 @@
 					});
 					callback(options);
 				}
-			});
-
-			define("routeConfig", function(require, exports, module){
+			}).define("routeConfig", function(require, exports, module){
 				return {
 							root: ".",
 							config:{
@@ -402,13 +372,11 @@
 									alert(func);
 								},
 								approute: function(elem, id) {
-									alert(id)
+									//alert(id)
 								}
 							}
 						};
-			});
-
-			define(function(require, exports, module) {
+			}).define(function(require, exports, module) {
 				var init = require("init"),
 					list_removeitem_click = require("list_removeitem_click"),
 					list_upitem_click = require("list_upitem_click"),

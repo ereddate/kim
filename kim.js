@@ -749,29 +749,25 @@
 			_addMeta('apple-mobile-web-app-capable', 'yes');
 			_addMeta('apple-touch-fullscreen', 'yes');
 
-			if (options) {
-				var statusBarStyle = options.statusBarStyle || 'black';
+			var statusBarStyle = options && options.statusBarStyle || 'black';
 
-				if (statusBarStyle) {
-					_addMeta('apple-mobile-web-app-status-bar-style', statusBarStyle);
-				}
+			if (statusBarStyle) {
+				_addMeta('apple-mobile-web-app-status-bar-style', statusBarStyle);
 			}
 
 			callback && callback();
 		};
-		win.addEventListener('DOMContentLoaded', function() {
-			if (navigator.standalone) {
-				setTimeout(function() {
-					setTimeout(function() {
-						triggerFn();
-					}, 1);
-				}, 1);
-			} else {
+		if (navigator.standalone) {
+			setTimeout(function() {
 				setTimeout(function() {
 					triggerFn();
 				}, 1);
-			}
-		}, false);
+			}, 1);
+		} else {
+			setTimeout(function() {
+				triggerFn();
+			}, 1);
+		}
 
 		return kim;
 	};

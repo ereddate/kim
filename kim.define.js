@@ -115,7 +115,7 @@
 		_exec(options);
 	}
 
-	var define = function() {
+	kim.define = function() {
 		var args = arguments,
 			len = args.length,
 			name, dependencies, factory;
@@ -128,9 +128,8 @@
 		}
 
 		_analyDefine((!name && ("model_" + Math.random()) || name), dependencies, factory);
+		return this;
 	};
-
-	window.define = define;
 
 })()
 
