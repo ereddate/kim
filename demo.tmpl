@@ -1,0 +1,5 @@
+<div ng-item="list_tmpl_{{$index}}" ng-swipe="swipetest" ng-repeat="item in items">
+	<h1>{{item.title | filter : 'a'}}{{item.id * item.id * item.id}}</h1>
+	<p>{{item.decoration}}{{item.id * item.id + item.id | currency : '$'}}</p>
+	<a href="#" ng-tap="taptest" ng-item="list_removeitem" ng-click="list_removeitem_click" data-id="{{item.id}}">删除</a> <a href="#" ng-tap="taptest" ng-item="list_upitem" ng-click="list_upitem_click" data-id="{{item.id}}">收起</a>
+</div>

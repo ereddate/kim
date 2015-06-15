@@ -18,29 +18,6 @@ kim && kim.define && kim.define(function(require, exports, module) {
 		});
 		command && tmplElem.prop("outerHTML", html.join('')) || tmplElem.html(html.join(''));
 	}
-	jQuery.kim.getTmplCustomName = function(elem) {
-		var tmplElem = elem.data("tmplElem");
-		tmplElem.length == 0 && (tmplElem = elem);
-		var command = tmplElem.attr("ng-repeat"),
-			regIn = new RegExp("\\s*in\\s*", "gi");
-		command = typeof command == "string" && regIn.test(command) && command.split(' ') || [];
-		return command.length > 0 ? command[0] : false;
-	};
-	jQuery.kim.tmplFixData = function(elem, tmpl, data, n) {
-		var name = jQuery.kim.getTmplCustomName(elem);
-		if (name) {
-			var tempData = {
-				$index: n || 0
-			};
-			jQuery.each(data, function(i, sub) {
-				var reg = new RegExp(name + "\\." + i, "gi");
-				reg.test(tmpl) && (tempData[name + "." + i] = kim.stringify(sub));
-			});
-			return tempData;
-		} else {
-			return data;
-		}
-	};
 	jQuery.kim.modelExtend({
 		tmpl: function() {
 			var self = this;
@@ -52,10 +29,8 @@ kim && kim.define && kim.define(function(require, exports, module) {
 				var tmplElem = jQuery(elem).find("[ng-repeat]"),
 					tmpl = tmplElem.length > 0 && tmplElem.prop("outerHTML") || (tmplElem = elem, tmplElem[/select|input/.test(tmplElem[0].tagName.toLowerCase()) ? "val" : "html"]());
 				jQuery(elem).data("tmpl", tmpl).data("data", data).data("tmplElem", tmplElem);
-				var command = tmplElem.attr("ng-repeat"),
-					regIn = new RegExp("\\s*in\\s*", "gi");
-				command = typeof command == "string" && regIn.test(command) && command.split(' ') || [];
-				if (command.length > 0) _render(elem, tmplElem, "a", command[0]);
+				var name = jQuery.kim.getTmplCustomName(tmplElem);
+				if (name) _render(elem, tmplElem, "a", name);
 				else _render(elem, tmplElem, "b");
 
 				self.end(args);

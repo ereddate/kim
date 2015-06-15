@@ -365,6 +365,55 @@
 		});
 	}
 
+	function _getTmplCustomName(elem) {
+		var command = elem.attr("ng-repeat"),
+			regIn = new RegExp("\\s*in\\s*", "gi");
+		command = typeof command == "string" && regIn.test(command) && command.split(' ') || [];
+		return command.length > 0 ? command[0] : false;
+	}
+
+	function _tmplFixData(elem, tmpl, data, n) {
+		var name = _getTmplCustomName(jQuery(tmpl));
+		if (name) {
+			var tempData = {
+				$index: n || 0
+			};
+			jQuery.each(data, function(i, sub) {
+				var reg = new RegExp(name + "\\." + i, "gi");
+				reg.test(tmpl) && (tempData[name + "." + i] = kim.stringify(sub));
+			});
+			return tempData;
+		} else {
+			return data;
+		}
+	}
+
+	function _renderFile(url, data, success, error) {
+		var self = this;
+		jQuery.ajax({
+			url: url,
+			type: "get",
+			dataType: "html",
+			data: null,
+			beforeSend: function() {},
+			success: function(html) {
+				var elem = jQuery(html),
+					arr = [],
+					buildHtml = [];
+				jQuery.each(data, function(i, obj) {
+					arr.push(_tmplFixData(elem, html, obj));
+				});
+				jQuery.each(arr, function(i, obj) {
+					buildHtml.push(_tmpl(obj, html));
+				});
+				success && success(jQuery(buildHtml.join('')), html);
+			},
+			error: function(xhr, status, err) {
+				error && error(xhr, status, err);
+			}
+		}).always(function() {});
+	}
+
 	var model = function(elem, target) {
 		return new model.fn.init(elem, target);
 	};
@@ -490,7 +539,7 @@
 					className: className,
 					type: type
 				}).parents("." + prefix + "app").attr(prefix + "app");
-			if (target.app[app]) {
+			if (app && target.app[app]) {
 				if (!target.app[app][type]) target.app[app][type] = {};
 				target.app[app][type][name] = elem;
 			}
@@ -697,6 +746,15 @@
 		});
 		return this;
 	};
+
+	kim.renderFile = function(url, data, success, error) {
+		_renderFile.call(this, url, data, success, error);
+		return this;
+	};
+
+	kim.getTmplCustomName = _getTmplCustomName;
+
+	kim.tmplFixData = _tmplFixData;
 
 	kim.items = item;
 

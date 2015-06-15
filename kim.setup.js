@@ -101,7 +101,7 @@ kim && kim.define && kim.define(function(require, exports, module) {
 					icon = {};
 				}
 
-				if (_isTablet(ua)) {
+				if (_isTablet(ua) && /iPad/.test(ua)) {
 					if (devicePixelRatio >= 2) {
 						// Retina iPad - Landscape
 						if ('1496x2048' in startupImage) {
@@ -131,10 +131,10 @@ kim && kim.define && kim.define(function(require, exports, module) {
 							_addIcon(icon['72'], '72x72', isIconPrecomposed);
 						}
 					}
-				} else if (_isPhone(ua)) {
+				} else {
 					// Retina iPhone, iPod touch with iOS version >= 4.3
 					if (devicePixelRatio >= 2) {
-						if (/(iPhone)/.test(ua) && window.screen.height == 568) {
+						if (/(iPhone|iPod)/.test(ua) && window.screen.height == 568) {
 							_addStartupImage(startupImage['640x1096']);
 						} else {
 							_addStartupImage(startupImage['640x920']);
