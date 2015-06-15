@@ -310,6 +310,14 @@ head标签：kim.setup([...]);
 		}
 	}[, function(){...}]);
 	
+设备： kim.support
+
+	touch 返回true或false
+	
+	isPhone 返回true或false
+	
+	isTablet 返回true或false
+	
 #方法
 
 kim.fn
