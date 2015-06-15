@@ -361,6 +361,8 @@ kim
 	stringify 类型转换字符串
 	
 	setup 对于touch环境提供viewport、apple-mobile-web-app-capable、apple-touch-fullscreen、apple-mobile-web-app-status-bar-style支持，引用 kim.setup([{statusBarStyle:"blank"}[,function(){...}]] 或 function(){...});
+	
+	renderFile 读取外部模板文件，并返回dom标签。kim.renderFile(文件, 数据, 成功后的回调, 错误后的回调);
 
 #DOM的操作
 
