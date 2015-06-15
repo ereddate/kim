@@ -11,6 +11,7 @@ kim && kim.define && kim.define(function(require, exports, module) {
 	}
 
 	function _addIcon(href, sizes, precomposed) {
+		if (!href) return;
 		var link = document.createElement('link');
 		link.setAttribute('rel', 'apple-touch-icon' + (precomposed ? '-precomposed' : ''));
 		link.setAttribute('href', href);
@@ -21,6 +22,7 @@ kim && kim.define && kim.define(function(require, exports, module) {
 	}
 
 	function _addStartupImage(href, media) {
+		if (!href) return;
 		var link = document.createElement('link');
 		link.setAttribute('rel', 'apple-touch-startup-image');
 		link.setAttribute('href', href);
