@@ -1,5 +1,4 @@
-;
-(function() {
+kim && kim.define && kim.define(function(require, exports, module) {
 	function _render(elem, tmplElem, type, command) {
 		var data = elem.data("data"),
 			tmpl = elem.data("tmpl"),
@@ -65,4 +64,4 @@
 			return this;
 		}
 	})
-})()
+});

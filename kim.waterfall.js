@@ -1,5 +1,4 @@
-;
-(function() {
+kim && kim.define && kim.define(function(require, exports, module) {
 	/* waterfall */
 	var setting = {
 			column_width: 204, //列宽
@@ -252,4 +251,4 @@
 		}
 	});
 
-})()
+});

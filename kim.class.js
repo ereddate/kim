@@ -1,5 +1,4 @@
-;
-(function() {
+kim && kim.define && kim.define(function(require, exports, module) {
 	jQuery.fn.selected = function(bool) {
 		var bools = this.data("selected");
 		bools && this.removeClass(bools[bool]).addClass(bools[bool]);
@@ -21,4 +20,4 @@
 			return this;
 		}
 	});
-})()
+});

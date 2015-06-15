@@ -1,5 +1,4 @@
-;
-(function() {
+kim && kim.define && kim.define(function(require, exports, module) {
 	function _findClassElem(elem, name) {
 		return jQuery(elem).parents(".ng-app").find(".ng-page-" + name).length > 0 && jQuery(elem).parents(".ng-app").find(".ng-page-" + name) || jQuery(elem).parents(".ng-app").find(".ng-view-" + name).length > 0 && jQuery(elem).parents(".ng-app").find(".ng-view-" + name) || jQuery(elem).parents(".ng-app").find(".ng-control-" + name).length > 0 && jQuery(elem).parents(".ng-app").find(".ng-control-" + name).length || jQuery(elem).parents(".ng-app").find(".ng-item-" + name).length > 0 && jQuery(elem).parents(".ng-app").find(".ng-item-" + name);
 	}
@@ -153,4 +152,4 @@
 			return this;
 		}
 	});
-})()
+});

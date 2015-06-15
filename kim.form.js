@@ -1,5 +1,4 @@
-;
-(function() {
+kim && kim.define && kim.define(function(require, exports, module) {
 	jQuery.kim.modelExtend({
 		form: function() {
 			var self = this;
@@ -31,4 +30,4 @@
 			});
 		}
 	});
-})()
+});

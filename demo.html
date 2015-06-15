@@ -78,17 +78,17 @@
 		</div>
 		<script src="jquery.js"></script>
 		<script src="kim.js"></script>
+		<script src="kim.define.js"></script>
+		<script src="kim.setup.js"></script>
 		<script src="kim.route.js"></script>
 		<script src="kim.valid.js"></script>
 		<script src="kim.form.js"></script>
-		<!--script src="kim.list.js"></script-->
 		<script src="kim.tmpl.js"></script>
 		<script src="kim.class.js"></script>
 		<script src="kim.imgsrc.js"></script>
 		<script src="kim.waterfall.js"></script>
-		<script src="kim.define.js"></script>
 		<script>
-			kim.setup();
+			var startTime = new Date();
 			var data = [{
 				url: "http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg",
 				index: 0,
@@ -394,6 +394,7 @@
 					var getlist_post = result["getlist_post"],
 						gotab_click = result["gotab_click"],
 						getWaterFall_get = result["getWaterFall_get"];
+					kim.setup();
 
 					var a = jQuery(".main").kim({
 						initialization: function() {
@@ -470,6 +471,8 @@
 						}
 					});
 					console.log(a)
+					var endTime = new Date();
+					console.log((endTime - startTime)/1000)
 				});
 			});
 		</script>
