@@ -285,6 +285,31 @@ ng-route="路由初始方法"，目前只对目标内的A标签服务。
 		}
 	});
 	
+#touch环境的支持
+
+事件：tap和swipe
+
+head标签：kim.setup([...]);
+
+	kim.setup({
+		statusBarStyle: "black",
+		icon: {
+			57: 'resources/icons/Icon.png',
+			72: 'resources/icons/Icon~ipad.png',
+			114: 'resources/icons/Icon@2x.png',
+			144: 'resources/icons/Icon~ipad@2x.png'
+		} 或 icon: "resources/icons/Icon.png",
+		startupImage: {
+			'320x460': 'resources/startup/320x460.jpg',
+			'640x920': 'resources/startup/640x920.png',
+			'640x1096': 'resources/startup/640x1096.png',
+			'768x1004': 'resources/startup/768x1004.png',
+			'748x1024': 'resources/startup/748x1024.png',
+			'1536x2008': 'resources/startup/1536x2008.png',
+			'1496x2048': 'resources/startup/1496x2048.png'
+		}
+	}[, function(){...}]);
+	
 #方法
 
 kim.fn
