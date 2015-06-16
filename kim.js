@@ -389,7 +389,7 @@
 	}
 
 	function _renderFile(url, data, success, error) {
-		var self = this;
+		if (!url) return;
 		jQuery.ajax({
 			url: url,
 			type: "get",
@@ -748,7 +748,7 @@
 	};
 
 	kim.renderFile = function(url, data, success, error) {
-		_renderFile.call(this, url, data, success, error);
+		_renderFile(url, data, success, error);
 		return this;
 	};
 
