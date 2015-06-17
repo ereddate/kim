@@ -354,7 +354,7 @@ kim
 
 	filterExtend .filterExtend({...}) 模板数据过滤扩展，返回kim
 	
-	isArguments(object)或is['Function', 'String', 'Number', 'Date', 'RegExp', 'Error', "Boolean", "Array", "Object", "Element"] 类型判断，返回true或false
+	is .is("arguments", object), 目前支持['Function', 'String', 'Number', 'Date', 'RegExp', 'Error', "Boolean", "Array", "Object", "Element"] 类型判断，返回true或false
 	
 	has 判断是否包含， 可以判断标签属性、字符串字符、数组字段、对象字段，返回true 或 false，jQuery可以使用_has
 	
