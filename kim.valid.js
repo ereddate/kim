@@ -21,7 +21,7 @@ kim && kim.define && kim.define(function(require, exports, module) {
 		}));
 	}
 
-	jQuery.kim.validType = {
+	jQuery.kim.data.validType = {
 		addressmin5: function(elem, val, tip, callback) {
 			if (val.length < 5) {
 				func.call(this, elem, tip, "地址至少要输入5个字", callback);
@@ -138,8 +138,8 @@ kim && kim.define && kim.define(function(require, exports, module) {
 							jQuery(elem).data("result", false);
 							return false;
 						}
-						if (jQuery.kim.validType && (type in jQuery.kim.validType)) {
-							var bool = jQuery.kim.validType[type].call(self, elem, val, tip, callback);
+						if (jQuery.kim.data.validType && (type in jQuery.kim.data.validType)) {
+							var bool = jQuery.kim.data.validType[type].call(self, elem, val, tip, callback);
 							jQuery(elem).data("result", bool);
 							if (bool) {
 								done.call(self, elem, callback);

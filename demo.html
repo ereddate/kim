@@ -397,28 +397,6 @@
 					kim.setup();
 					console.log(kim.is("string", "string"));
 
-					kim.renderFile("demo.tmpl", [
-						{
-							id:0,
-							title:"adfasdfasdfas00",
-							decoration:"adfasdfasdfasdfasdfasdfasd"
-						},{
-							id:1,
-							title:"adfasdfasdfas11",
-							decoration:"adfasdfasdfasdfasdfasdfasd"
-						},{
-							id:2,
-							title:"adfasdfasdfas22",
-							decoration:"adfasdfasdfasdfasdfasdfasd"
-						},{
-							id:3,
-							title:"adfasdfasdfas33",
-							decoration:"adfasdfasdfasdfasdfasdfasd"
-						}
-					], function(elem, html){
-						console.log(elem)
-					});
-
 					var a = jQuery(".main").kim({
 						initialization: function() {
 							init(this);
@@ -492,6 +470,50 @@
 								//gotab_click(this, target, "service", "goservicec");
 							//}
 						}
+					});
+
+					a.buildFile("demo.tmpl", [
+						{
+							id:0,
+							title:"adfasdfasdfas00",
+							decoration:"adfasdfasdfasdfasdfasdfasd"
+						},{
+							id:1,
+							title:"adfasdfasdfas11",
+							decoration:"adfasdfasdfasdfasdfasdfasd"
+						},{
+							id:2,
+							title:"adfasdfasdfas22",
+							decoration:"adfasdfasdfasdfasdfasdfasd"
+						},{
+							id:3,
+							title:"adfasdfasdfas33",
+							decoration:"adfasdfasdfasdfasdfasdfasd"
+						}
+					], function(elem, html){
+						console.log(elem)
+					});
+
+					kim.renderFile("demo.tmpl", [
+						{
+							id:0,
+							title:"adfasdfasdfas00",
+							decoration:"adfasdfasdfasdfasdfasdfasd"
+						},{
+							id:1,
+							title:"adfasdfasdfas11",
+							decoration:"adfasdfasdfasdfasdfasdfasd"
+						},{
+							id:2,
+							title:"adfasdfasdfas22",
+							decoration:"adfasdfasdfasdfasdfasdfasd"
+						},{
+							id:3,
+							title:"adfasdfasdfas33",
+							decoration:"adfasdfasdfasdfasdfasdfasd"
+						}
+					], function(elem, html){
+						console.log(elem)
 					});
 					console.log(a)
 					var endTime = new Date();

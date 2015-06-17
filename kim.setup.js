@@ -57,14 +57,14 @@ kim && kim.define && kim.define(function(require, exports, module) {
 			(/MSIE 10/.test(ua) && /; Touch/.test(ua)));
 	}
 
-	kim.support.isPhone = _isPhone(ua);
-	kim.support.isTablet = _isTablet(ua);
+	kim.data.support.isPhone = _isPhone(ua);
+	kim.data.support.isTablet = _isTablet(ua);
 
 	kim.setup = function(options, callback) {
 		head = jQuery(_getHead());
 		var args = arguments,
 			len = args.length;
-		if (len == 1 && kim.isFunction(args[0])) {
+		if (len == 1 && kim.is("function", args[0])) {
 			callback = options;
 			options = false;
 		}
@@ -83,14 +83,14 @@ kim && kim.define && kim.define(function(require, exports, module) {
 				_addMeta('apple-mobile-web-app-status-bar-style', statusBarStyle);
 			}
 
-			if (kim.support.touch) {
+			if (kim.data.support.touch) {
 
 				var icon = options && options.icon,
 					devicePixelRatio = window.devicePixelRatio || 1,
 					startupImage = options && options.startupImage || {},
 					isIconPrecomposed = Boolean(options && options.isIconPrecomposed);
 
-				if (icon && kim.isString(icon)) {
+				if (icon && kim.is("string", icon)) {
 					icon = {
 						57: icon,
 						72: icon,

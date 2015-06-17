@@ -209,7 +209,7 @@
 			if (typeof data == "function")(data = data());
 			//console.log(temp.split('{{').length)
 			jQuery.each(data, function(name, val) {
-				var regex = new RegExp("\\s*" + name.replace(/\./gi, "\\.").replace(/\*/gi, "\\*").replace(/\s/gi, "\\s*"), "gi");
+				var regex = new RegExp("\\s*" + name.replace(/\./gi, "\\.").replace(/\*/gi, "\\*").replace(/\s/gi, "\\s*").replace(/\$/gi, "\\$"), "gi");
 				//console.log(regex)
 				temp = temp.replace(regex, typeof val == "string" ? val : _stringify(val));
 			});
@@ -388,7 +388,8 @@
 		}
 	}
 
-	function _renderFile(url, data, success, error) {
+	function _renderFile(url, data, success, error, build) {
+		var self = this;
 		if (!url) return;
 		jQuery.ajax({
 			url: url,
@@ -401,12 +402,16 @@
 					arr = [],
 					buildHtml = [];
 				jQuery.each(data, function(i, obj) {
-					arr.push(_tmplFixData(elem, html, obj));
+					arr.push(_tmplFixData(elem, html, obj, i));
 				});
 				jQuery.each(arr, function(i, obj) {
 					buildHtml.push(_tmpl(obj, html));
 				});
-				success && success(jQuery(buildHtml.join('')), html);
+				var elem = jQuery(buildHtml.join(''));
+				var a = jQuery.Callbacks();
+				build && a.add(build(elem));
+				success && a.add(success(elem, html));
+				a.fire();
 			},
 			error: function(xhr, status, err) {
 				error && error(xhr, status, err);
@@ -485,7 +490,7 @@
 			var self = this,
 				elem = self.elem,
 				target = self.target;
-			jQuery.each(target.model, function(name, obj) {
+			jQuery.each(kim.data.model, function(name, obj) {
 				var attr = jQuery(elem)._has(prefix + name)
 				if (attr) {
 					var command = jQuery(elem).attr(prefix + name);
@@ -496,7 +501,7 @@
 						//console.log(command);
 					}
 					if (typeof command == "string") {
-						target.model[name].call(target, elem, command);
+						kim.data.model[name].call(target, elem, command);
 						return true;
 					} else if (command && kim.is("array", command) && command.length > 0) {
 						var args = [elem, command[1]];
@@ -512,7 +517,7 @@
 							callbacks.fire(elem, target);
 						};
 						args.push(target);
-						target.model[name].apply(target, args);
+						kim.data.model[name].apply(target, args);
 					}
 				}
 			});
@@ -561,13 +566,15 @@
 		},
 		_initItem: function(end) {
 			var self = this,
-				elem = self.elem,
+				elems = self.elem,
 				target = self.target;
 			jQuery.each(item, function(i, type) {
-				var attr = elem._has(prefix + type);
-				if (attr) {
-					model(jQuery(elem), target)._storage(type)._initShow()._initTmpl()._initHandle();
-				}
+				jQuery.each(elems, function(i, elem) {
+					var attr = jQuery(elem)._has(prefix + type);
+					if (attr) {
+						model(jQuery(elem), target)._storage(type)._initShow()._initTmpl()._initHandle();
+					}
+				});
 			});
 			self._initChild();
 			return this;
@@ -711,16 +718,30 @@
 					}
 				});
 			return tagname;
+		},
+		buildFile: function(url, data, success, error) {
+			var self = this;
+			_renderFile(url, data, success, error, function(elem) {
+				model(elem, self)._initItem();
+			});
+			return this;
 		}
 	});
 
-	kim.fn.model = {};
-	kim.fn.filter = filter;
+	kim.data = {
+		model: {},
+		filter: filter
+	};
 
 	kim.query = function(selector) {
 		var obj = jQuery(selector);
 		if (obj.length == 0) obj = _find(selector);
 		return obj;
+	};
+
+	kim.renderFile = function(url, data, success, error) {
+		_renderFile(url, data, success, error);
+		return this;
 	};
 
 	kim.tmpl = function(data, tmpl) {
@@ -730,8 +751,8 @@
 	kim.modelExtend = function(args) {
 		if (typeof args == "undefined") return;
 		jQuery.each(args, function(name, val) {
-			if (!(name in kim.fn.model)) {
-				kim.fn.model[name] = val;
+			if (!(name in kim.data.model)) {
+				kim.data.model[name] = val;
 			}
 		});
 		return this;
@@ -740,15 +761,10 @@
 	kim.filterExtend = function(args) {
 		if (typeof args == "undefined") return;
 		jQuery.each(args, function(name, val) {
-			if (!(name in kim.fn.filter)) {
-				kim.fn.filter[name] = val;
+			if (!(name in kim.data.filter)) {
+				kim.data.filter[name] = val;
 			}
 		});
-		return this;
-	};
-
-	kim.renderFile = function(url, data, success, error) {
-		_renderFile(url, data, success, error);
 		return this;
 	};
 
@@ -756,9 +772,9 @@
 
 	kim.tmplFixData = _tmplFixData;
 
-	kim.items = item;
+	kim.data.items = item;
 
-	kim.support = support;
+	kim.data.support = support;
 
 	kim.has = _has;
 
@@ -766,7 +782,7 @@
 
 	kim.is = function(str, obj) {
 		var bool = false;
-			bool = /element/.test(str.toLowerCase()) ? _isElement(obj) : _getConstructorName(obj).toLowerCase() === str.toLowerCase();
+		bool = /element/.test(str.toLowerCase()) ? _isElement(obj) : _getConstructorName(obj).toLowerCase() === str.toLowerCase();
 		return bool;
 	}
 

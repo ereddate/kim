@@ -20,7 +20,7 @@
 
 	model.fn = model.prototype = {
 		init: function() {
-			this.cache = {};
+			kim.data.requireCache = {};
 			return this;
 		},
 		use: function(name, callback) {
@@ -57,7 +57,7 @@
 
 	function _require(name) {
 		var require = jQuery.kim.require,
-			options = require.cache[name] || false,
+			options = kim.data.requireCache[name] || false,
 			result;
 		if (name && options) {
 			if (options.status == 3) {
@@ -110,7 +110,7 @@
 		var ops = _analyRequire(factory);
 		jQuery.extend(options, ops);
 
-		jQuery.kim.require.cache[options.name] = options;
+		jQuery.kim.data.requireCache[options.name] = options;
 
 		_exec(options);
 	}
