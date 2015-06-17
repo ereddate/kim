@@ -56,9 +56,9 @@
 			return attr != "" && typeof attr != "undefined";
 		} else if (jQuery.isPlainObject(obj)) {
 			return name in obj;
-		} else if (kim.isArray(obj)) {
+		} else if (kim.is("array", obj)) {
 			return jQuery.inArray(name, obj) > 0 ? true : false;
-		} else if (kim.isString(obj)) {
+		} else if (kim.is("string", obj)) {
 			return (new RegExp(name, "gi")).test(obj);
 		}
 	}
@@ -110,9 +110,9 @@
 	}
 
 	function _tmplFilterVal(val, filterCondition) {
-		if (kim.isFunction(filterCondition)) {
+		if (kim.is("function", filterCondition)) {
 			return filterCondition(val);
-		} else if (kim.isObject(filterCondition)) {
+		} else if (kim.is("object", filterCondition)) {
 			if (jQuery.isPlainObject(filterCondition)) {
 				jQuery.each(filterCondition, function(name, oval) {
 					var oreg = new RegExp(oval, "gi");
@@ -169,9 +169,9 @@
 			return _stringify(val);
 		},
 		"limitTo": function(val, filterCondition) {
-			if (kim.isArray(val)) {
+			if (kim.is("array", val)) {
 				return val.slice(0, parseInt(filterCondition));
-			} else if (kim.isString(val)) {
+			} else if (kim.is("string", val)) {
 				return val.substr(0, parseInt(filterCondition));
 			}
 		},
@@ -182,7 +182,7 @@
 			return val.toUpperCase();
 		},
 		"orderBy": function(val, filterCondition) {
-			if (kim.isArray(val) && /reverse|sort/.test(filterCondition.toLowerCase())) {
+			if (kim.is("array", val) && /reverse|sort/.test(filterCondition.toLowerCase())) {
 				return val[filterCondition.toLowerCase()]();
 			}
 		},
@@ -193,7 +193,7 @@
 			return _currency(val);
 		},
 		"empty": function(val, filterCondition) {
-			return (typeof val == "string" && jQuery.trim(val) == "" || val == null || typeof val == "undefined" || kim.isObject(val) && jQuery.isEmptyObject(val) || kim.isArray(val) && val.length == 0) && filterCondition;
+			return (typeof val == "string" && jQuery.trim(val) == "" || val == null || typeof val == "undefined" || kim.is("object", val) && jQuery.isEmptyObject(val) || kim.is("array", val) && val.length == 0) && filterCondition;
 		},
 		"passcard": function(val, filterCondition) {
 			var regex = /(\d{4})(\d{4})(\d{4})(\d{4})(\d{0,})/gi.exec(val);
@@ -498,7 +498,7 @@
 					if (typeof command == "string") {
 						target.model[name].call(target, elem, command);
 						return true;
-					} else if (command && kim.isArray(command) && command.length > 0) {
+					} else if (command && kim.is("array", command) && command.length > 0) {
 						var args = [elem, command[1]];
 						jQuery.each(command[2].split(','), function(i, str) {
 							args.push(str);
@@ -764,13 +764,11 @@
 
 	kim.stringify = _stringify;
 
-	jQuery.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error', "Boolean", "Array", "Object"], function(i, name) {
-		kim["is" + name] = function(obj) {
-			return _getConstructorName(obj).toLowerCase() === name.toLowerCase();
-		};
-	});
-
-	kim.isElement = _isElement;
+	kim.is = function(str, obj) {
+		var bool = false;
+			bool = /element/.test(str.toLowerCase()) ? _isElement(obj) : _getConstructorName(obj).toLowerCase() === str.toLowerCase();
+		return bool;
+	}
 
 	jQuery.fn.kim = function(ops) {
 		return kim(this, ops);
