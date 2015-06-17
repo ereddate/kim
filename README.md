@@ -310,7 +310,7 @@ head标签：kim.setup([...]);
 		}
 	}[, function(){...}]);
 	
-设备： kim.support
+设备： kim.data.support
 
 	touch 返回true或false
 	
