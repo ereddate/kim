@@ -339,6 +339,8 @@ kim.fn
 	tmpl .tmpl(数据, 模板) 生成模板，返回String
 
 	getName .getName(element) 获取dom内部名，返回String
+	
+	buildFile .buildFile(url, data, success, error) 读取外部模板文件，向模板导入数据并解析，返回当前对象
 
 kim
 
