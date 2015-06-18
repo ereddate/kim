@@ -59,6 +59,12 @@
 		kim.define(function(require, exports, module){
 			var init = require("init");
 			init();
+			
+			//设置模板语法边界符$mark.start, $mark.end，名称不能变
+			kim.setTmplMark(function($mark){
+				$mark.start = "{{";
+				$mark.end = "}}";
+			});
 
 			//可以这样写jQuery.kim({...}) 或者 jQuery(".main").kim({...}) 或者 kim({...})
 			//jQuery.kim.require写法可以是 jQuery.kim.require.use(["a", "b"], function(){...})
@@ -365,6 +371,8 @@ kim
 	setup 对于touch环境提供viewport、apple-mobile-web-app-capable、apple-touch-fullscreen、apple-mobile-web-app-status-bar-style支持，引用 kim.setup([{statusBarStyle:"blank"}[,function(){...}]] 或 function(){...});
 	
 	renderFile 读取外部模板文件，并返回dom标签。kim.renderFile(文件, 数据, 成功后的回调, 错误后的回调);
+	
+	setTmplMark 设置模板语法边界符$mark.start, $mark.end，名称不能变;
 
 #DOM的操作
 
