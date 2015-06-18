@@ -205,8 +205,22 @@
 		}
 	};
 
-	var tmplCommand = new RegExp(tmplMark.start + "(\\$*[\\w\\.]*|\\s*\\$*([\\w\\.]*)\\s*\\|\\s*([\\w\\.]+)\\s*\\:\\s*(\\'*([^\\'])\\'*))" + tmplMark.end),
-		tmplDefault = new RegExp(tmplMark.start + "([\\s\\S]*)" + tmplMark.end);
+	function _fixRegString(string) {
+		var a = [];
+		jQuery.each(string.split(''), function(i, str) {
+			a.push("\\" + str);
+		});
+		return a.join('');
+	}
+
+	var tmplCommand, tmplDefault;
+
+	function _buildReg() {
+		tmplCommand = new RegExp(_fixRegString(tmplMark.start) + "(\\$*[\\w\\.]*|\\s*\\$*([\\w\\.]*)\\s*\\|\\s*([\\w\\.]+)\\s*\\:\\s*(\\'*([^\\'])\\'*))" + _fixRegString(tmplMark.end));
+		tmplDefault = new RegExp(_fixRegString(tmplMark.start) + "([\\s\\S]*)" + _fixRegString(tmplMark.end));
+	}
+
+	_buildReg();
 
 	function _tmpl(data, temp) {
 		if (data && temp) {
@@ -738,7 +752,7 @@
 
 	kim.setTmplMark = function(callback) {
 		var mark = {};
-		callback && typeof callback == "function" && (jQuery.Callbacks()).add(callback(mark)).add((tmplMark.start = mark.start, tmplMark.end = mark.end)).fire();
+		callback && typeof callback == "function" && (jQuery.Callbacks()).add(callback(mark)).add((tmplMark.start = mark.start, tmplMark.end = mark.end, _buildReg())).fire();
 		//console.log(tmplMark)
 		return this;
 	};
