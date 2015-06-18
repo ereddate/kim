@@ -7,7 +7,11 @@
 	var item = ["page", "view", "control", "item"],
 		prefix = "ng-",
 		win = window,
-		doc = win.document;
+		doc = win.document,
+		tmplMark = {
+			start: "{{",
+			end: "}}"
+		};
 
 	function _getConstructorName(o) {
 		//加o.constructor是因为IE下的window和document
@@ -59,7 +63,7 @@
 		} else if (kim.is("array", obj)) {
 			return jQuery.inArray(name, obj) > 0 ? true : false;
 		} else if (kim.is("string", obj)) {
-			return (new RegExp(name, "gi")).test(obj);
+			return (new RegExp(name, "igm")).test(obj);
 		}
 	}
 
@@ -115,14 +119,14 @@
 		} else if (kim.is("object", filterCondition)) {
 			if (jQuery.isPlainObject(filterCondition)) {
 				jQuery.each(filterCondition, function(name, oval) {
-					var oreg = new RegExp(oval, "gi");
+					var oreg = new RegExp(oval, "igm");
 					if (oreg.test(val)) {
 						return val.replace(oreg, "");
 					}
 				});
 			}
 		}
-		var strRegex = new RegExp(filterCondition, "gi");
+		var strRegex = new RegExp(filterCondition, "igm");
 		return (val + "").replace(strRegex, "");
 	}
 
@@ -163,7 +167,7 @@
 
 	var filter = {
 		"filter": function(val, filterCondition) {
-			return _tmplFilterVal(val.replace(/(^\")|(\"$)/gi, ""), filterCondition);
+			return _tmplFilterVal(val.replace(/(^\")|(\"$)/igm, ""), filterCondition);
 		},
 		"json": function(val, filterCondition) {
 			return _stringify(val);
@@ -196,45 +200,43 @@
 			return (typeof val == "string" && jQuery.trim(val) == "" || val == null || typeof val == "undefined" || kim.is("object", val) && jQuery.isEmptyObject(val) || kim.is("array", val) && val.length == 0) && filterCondition;
 		},
 		"passcard": function(val, filterCondition) {
-			var regex = /(\d{4})(\d{4})(\d{4})(\d{4})(\d{0,})/gi.exec(val);
+			var regex = /(\d{4})(\d{4})(\d{4})(\d{4})(\d{0,})/igm.exec(val);
 			return regex && regex.join(' ') || val;
 		}
 	};
 
-	var tmplCommand = /\{\{(\$*[\w\.]*|\s*\$*([\w\.]*)\s*\|\s*([\w\.]+)\s*\:\s*(\'*([^\'])\'*))\}\}/,
-		tmplDefault = /\{\{([\s\S]*)\}\}/;
+	var tmplCommand = new RegExp(tmplMark.start + "(\\$*[\\w\\.]*|\\s*\\$*([\\w\\.]*)\\s*\\|\\s*([\\w\\.]+)\\s*\\:\\s*(\\'*([^\\'])\\'*))" + tmplMark.end),
+		tmplDefault = new RegExp(tmplMark.start + "([\\s\\S]*)" + tmplMark.end);
 
 	function _tmpl(data, temp) {
 		if (data && temp) {
 			if (typeof data == "function")(data = data());
-			//console.log(temp.split('{{').length)
 			jQuery.each(data, function(name, val) {
-				var regex = new RegExp("\\s*" + name.replace(/\./gi, "\\.").replace(/\*/gi, "\\*").replace(/\s/gi, "\\s*").replace(/\$/gi, "\\$"), "gi");
+				var regex = new RegExp("\\s*" + name.replace(/\./igm, "\\.").replace(/\*/igm, "\\*").replace(/\s/igm, "\\s*").replace(/\$/igm, "\\$"), "igm");
 				//console.log(regex)
 				temp = temp.replace(regex, typeof val == "string" ? val : _stringify(val));
 			});
-			var split = temp.split('{{'),
+			var split = temp.split(tmplMark.start),
 				//len = split.length,
 				html = [];
 			html.push(split[0]);
 			//console.log(data)
 			jQuery.each(split, function(i, sub) {
 				if (i > 0) {
-					var str = "{{" + sub;
+					var str = tmplMark.start + sub;
 					var obj = str,
 						command = tmplCommand.exec(obj),
 						isNull = false;
 					command = !command ? (isNull = true, tmplDefault.exec(obj)) : command;
-					//console.log(command)
 					var str = command[1],
 						strA = str.split(' | '),
 						val = "";
 
 					if (strA.length > 1) {
 						var filterCommand = !isNull ? command[3] : strA[1].split(' : ')[0],
-							filterCondition = !isNull ? command[5] : strA[1].split(' : ')[1].replace(/\'/gi, "");
+							filterCondition = !isNull ? command[5] : strA[1].split(' : ')[1].replace(/\'/igm, "");
 						if (filterCommand in filter) {
-							val = !isNull ? filter[filterCommand](strA[0].replace("{{", ""), filterCondition) : filter[filterCommand](/\s*\*\s*/.test(strA[0]) ? new Function("return " + strA[0].replace("{{", ""))() : strA[0].replace("{{", ""), filterCondition);
+							val = !isNull ? filter[filterCommand](strA[0].replace(tmplMark.start, ""), filterCondition) : filter[filterCommand](/\s*[\*\+\-\/]\s*/.test(strA[0]) ? new Function("return " + strA[0].replace(tmplMark.start, ""))() : strA[0].replace(tmplMark.start, ""), filterCondition);
 							if (val) {
 								obj = obj.replace(command[0], val);
 								html.push(obj);
@@ -367,7 +369,7 @@
 
 	function _getTmplCustomName(elem) {
 		var command = elem.attr("ng-repeat"),
-			regIn = new RegExp("\\s*in\\s*", "gi");
+			regIn = new RegExp("\\s*in\\s*", "igm");
 		command = typeof command == "string" && regIn.test(command) && command.split(' ') || [];
 		return command.length > 0 ? command[0] : false;
 	}
@@ -379,7 +381,7 @@
 				$index: n || 0
 			};
 			jQuery.each(data, function(i, sub) {
-				var reg = new RegExp(name + "\\." + i, "gi");
+				var reg = new RegExp(name + "\\." + i, "igm");
 				reg.test(tmpl) && (tempData[name + "." + i] = kim.stringify(sub));
 			});
 			return tempData;
@@ -495,7 +497,7 @@
 				if (attr) {
 					var command = jQuery(elem).attr(prefix + name);
 					if (/\(/.test(command)) {
-						var regex = new RegExp("(" + command.replace(/\)/, ")\\\)").replace(/\(/, ")\\\((").replace(/(\_|\-)/gi, "\\$1"));
+						var regex = new RegExp("(" + command.replace(/\)/, ")\\\)").replace(/\(/, ")\\\((").replace(/(\_|\-)/igm, "\\$1"));
 						//console.log(regex)
 						command = regex.exec(command);
 						//console.log(command);
@@ -668,7 +670,7 @@
 		},
 		find: function(val) {
 			var self = this;
-			var obj = jQuery(self).find("." + val.replace(/\./gi, ""));
+			var obj = jQuery(self).find("." + val.replace(/\./igm, ""));
 			if (obj.length == 0) {
 				obj = _find(val);
 			}
@@ -730,7 +732,15 @@
 
 	kim.data = {
 		model: {},
-		filter: filter
+		filter: filter,
+		tmplMark: tmplMark
+	};
+
+	kim.setTmplMark = function(callback) {
+		var mark = {};
+		callback && typeof callback == "function" && (jQuery.Callbacks()).add(callback(mark)).add((tmplMark.start = mark.start, tmplMark.end = mark.end)).fire();
+		//console.log(tmplMark)
+		return this;
 	};
 
 	kim.query = function(selector) {

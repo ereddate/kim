@@ -397,6 +397,11 @@
 					kim.setup();
 					console.log(kim.is("string", "string"));
 
+					kim.setTmplMark(function($mark){
+						$mark.start = "{{";
+						$mark.end = "}}";
+					});
+
 					var a = jQuery(".main").kim({
 						initialization: function() {
 							init(this);
