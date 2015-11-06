@@ -166,42 +166,46 @@
 	}
 
 	var filter = {
-		"filter": function(val, filterCondition) {
+		filter: function(val, filterCondition) {
 			return _tmplFilterVal(val.replace(/(^\")|(\"$)/igm, ""), filterCondition);
 		},
-		"json": function(val, filterCondition) {
+		json: function(val, filterCondition) {
 			return _stringify(val);
 		},
-		"limitTo": function(val, filterCondition) {
+		limitTo: function(val, filterCondition) {
 			if (kim.is("array", val)) {
 				return val.slice(0, parseInt(filterCondition));
 			} else if (kim.is("string", val)) {
 				return val.substr(0, parseInt(filterCondition));
 			}
 		},
-		"lowercase": function(val, filterCondition) {
+		lowercase: function(val, filterCondition) {
 			return val.toLowerCase();
 		},
-		"uppercase": function(val, filterCondition) {
+		uppercase: function(val, filterCondition) {
 			return val.toUpperCase();
 		},
-		"orderBy": function(val, filterCondition) {
+		orderBy: function(val, filterCondition) {
 			if (kim.is("array", val) && /reverse|sort/.test(filterCondition.toLowerCase())) {
 				return val[filterCondition.toLowerCase()]();
 			}
 		},
-		"date": function(val, filterCondition) {
+		date: function(val, filterCondition) {
 			return _date(val);
 		},
-		"currency": function(val, filterCondition) {
+		currency: function(val, filterCondition) {
 			return _currency(val);
 		},
-		"empty": function(val, filterCondition) {
+		empty: function(val, filterCondition) {
 			return (typeof val == "string" && jQuery.trim(val) == "" || val == null || typeof val == "undefined" || kim.is("object", val) && jQuery.isEmptyObject(val) || kim.is("array", val) && val.length == 0) && filterCondition;
 		},
-		"passcard": function(val, filterCondition) {
+		passcard: function(val, filterCondition) {
 			var regex = /(\d{4})(\d{4})(\d{4})(\d{4})(\d{0,})/igm.exec(val);
 			return regex && regex.join(' ') || val;
+		},
+		data: function(val, filterCondition) {
+			console.log(val)
+			console.log(filterCondition)
 		}
 	};
 
@@ -222,14 +226,37 @@
 
 	_buildReg();
 
+	function _tmplStringify(data, temp, customName) {
+		//console.log(data)
+		//console.log(customName)
+		jQuery.each(data, function(name, val) {
+			//console.log(name)
+			var hasName = new RegExp(customName+".","igm"),
+				regex = new RegExp("\\s*" + (customName ? hasName.test(name) ? name : customName+"."+name : name).replace(/\./igm, "\\.").replace(/\*/igm, "\\*").replace(/\s/igm, "\\s*").replace(/\$/igm, "\\$"), "igm");
+			//console.log(regex)
+			temp = temp.replace(regex, typeof val == "string" ? val : _stringify(val));
+		});
+		//console.log(temp)
+		return temp;
+	}
+
 	function _tmpl(data, temp) {
 		if (data && temp) {
+			//console.log(temp)
 			if (typeof data == "function")(data = data());
-			jQuery.each(data, function(name, val) {
-				var regex = new RegExp("\\s*" + name.replace(/\./igm, "\\.").replace(/\*/igm, "\\*").replace(/\s/igm, "\\s*").replace(/\$/igm, "\\$"), "igm");
-				//console.log(regex)
-				temp = temp.replace(regex, typeof val == "string" ? val : _stringify(val));
-			});
+			//console.log(data)
+			//console.log(typeof data)
+			//console.log(typeof data == "object" && "length" in data)
+			//console.log(_getTmplCustomName(jQuery(temp)))
+			var customName = _getTmplCustomName(jQuery(temp));
+			if (typeof data == "array" || (typeof data == "object" && "length" in data)) {
+				jQuery.each(data, function(i, obj) {
+					temp = _tmplStringify(obj, temp, customName);
+				});
+			} else {
+				temp = _tmplStringify(data, temp, customName);
+			}
+			//console.log(temp)
 			var split = temp.split(tmplMark.start),
 				//len = split.length,
 				html = [];
@@ -258,13 +285,14 @@
 						}
 						return true;
 					} else {
+						//console.log(command[0])
+						//console.log(command[1])
 						obj = !isNull ? obj.replace(command[0], command[1]) : obj.replace(command[0], new Function("return " + command[1])());
 					}
 
 					html.push(obj);
 				}
 			});
-			//console.log(html.join(''))
 			return html.join('');
 		} else {
 			return "";
@@ -390,6 +418,7 @@
 
 	function _tmplFixData(elem, tmpl, data, n) {
 		var name = _getTmplCustomName(jQuery(tmpl));
+		//console.log(name)
 		if (name) {
 			var tempData = {
 				$index: n || 0
@@ -417,16 +446,23 @@
 				var elem = jQuery(html),
 					arr = [],
 					buildHtml = [];
-				jQuery.each(data, function(i, obj) {
-					arr.push(_tmplFixData(elem, html, obj, i));
-				});
+				//console.log(data)
+				if (typeof data == "array") {
+					jQuery.each(data, function(i, obj) {
+						arr.push(_tmplFixData(elem, html, obj, i));
+					});
+				} else {
+					arr.push(data);
+				}
+				//console.log(arr)
 				jQuery.each(arr, function(i, obj) {
+					console.log(obj)
 					buildHtml.push(_tmpl(obj, html));
 				});
 				var elem = jQuery(buildHtml.join(''));
 				var a = jQuery.Callbacks();
 				build && a.add(build(elem));
-				success && a.add(success(elem, html));
+				success && a.add(success(elem, buildHtml.join('')));
 				a.fire();
 			},
 			error: function(xhr, status, err) {
