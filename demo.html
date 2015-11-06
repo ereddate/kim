@@ -38,7 +38,7 @@
 					    </div>
 					</div>
 				</div>
-				<div ng-view="footera">&copy;2015.</div>
+				<div ng-view="footera" ng-include="footer.html | data : includefooter"></div>
 			</div>
 			<div ng-page="product">
 				<div ng-view="headerb">
@@ -51,7 +51,7 @@
 					</div>
 					2
 				</div>
-				<div ng-view="footerb">&copy;2015.</div>
+				<div ng-view="footerb" ng-include="footer.html | data : includefooter"></div>
 			</div>
 			<div ng-page="service">
 				<div ng-view="headerc">
@@ -73,7 +73,7 @@
 					</div>
 					3
 				</div>
-				<div ng-view="footerc">&copy;2015.</div>
+				<div ng-view="footerc" ng-include="footer.html | data : includefooter"></div>
 			</div>
 		</div>
 		<script src="jquery.js"></script>
@@ -87,6 +87,7 @@
 		<script src="kim.class.js"></script>
 		<script src="kim.imgsrc.js"></script>
 		<script src="kim.waterfall.js"></script>
+		<script src="kim.include.js"></script>
 		<script>
 			var startTime = new Date();
 			var data = [{
@@ -181,6 +182,8 @@
 				title: "title2"
 			}];
 
+			console.log(kim.data.model)
+
 			kim.define(function(require, exports, module) {
 				jQuery.kim.modelExtend({
 					test: function(elem) {
@@ -216,6 +219,10 @@
 						return this;
 					}
 				});
+			}).define("includefooter", function(require, exports, module){
+				return {
+					time: "2015"
+				};
 			}).define("getWaterFall_get", function(require, exports, module){
 				return function(render){
 					render(data);
@@ -414,6 +421,9 @@
 							}
 						},
 						handle: {
+							includefooter: function(){
+								return require("includefooter");
+							},
 							waterfall_callback: function(options, callback){
 								waterfall_callback.call(this, options, callback);
 							},
