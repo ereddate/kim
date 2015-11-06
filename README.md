@@ -28,6 +28,10 @@
 					<div ng-item="waterfall_item" class="cell">{{code}}</div>
 				</div>
 			</div>
+			<div ng-view="footer" ng-include="footer.html | data : includefooter">
+				//footer.html 代码如下
+				//<span ng-tmpl="footer_content">{{$time}}</span>
+			</div>
 		</div>
 	</div>
 	<script src="kim.js"></script>
@@ -53,6 +57,10 @@
 					}
 				})
 			}
+		}).define("includefooter", function(){
+			return {
+				time: "2015"
+			};
 		});
 		
 		//使用KIM
@@ -84,6 +92,9 @@
 						}
 					},
 					handle:{
+						includefooter: function(){
+							return require("includefooter");
+						},
 						waterfall_callback: function(options, callback){
 							jQuery.extend(options, {
 								column_width: 230,
@@ -195,6 +206,8 @@ ng-tmpl 数据模板 ng-tmpl="导入数据的方法名([导入后的回调])"
 ng-route 路由，目前只导航ng-app ng-page，会与ng-show ng-click产生冲突，尽量不要一起使用
 
 ng-form form是valid的延伸，只提供form提交不提供ajax提交，详细使用请查看demo.html
+
+ng-include 引入模板并编译 ng-include="页面地址 | data : 数据获取方法"
 
 ng-插件名
 
