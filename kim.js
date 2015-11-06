@@ -249,7 +249,7 @@
 			//console.log(typeof data == "object" && "length" in data)
 			//console.log(_getTmplCustomName(jQuery(temp)))
 			var customName = _getTmplCustomName(jQuery(temp));
-			if (typeof data == "array" || (typeof data == "object" && "length" in data)) {
+			if (kim.is("array", data) || (typeof data == "object" && "length" in data)) {
 				jQuery.each(data, function(i, obj) {
 					temp = _tmplStringify(obj, temp, customName);
 				});
@@ -447,7 +447,7 @@
 					arr = [],
 					buildHtml = [];
 				//console.log(data)
-				if (typeof data == "array") {
+				if (kim.is("array", data)) {
 					jQuery.each(data, function(i, obj) {
 						arr.push(_tmplFixData(elem, html, obj, i));
 					});
@@ -543,11 +543,11 @@
 				elem = self.elem,
 				target = self.target;
 			jQuery.each(kim.data.model, function(name, obj) {
-				var attr = jQuery(elem)._has(prefix + name)
+				var attr = jQuery(elem)._has(prefix + name);
 				if (attr) {
 					var command = jQuery(elem).attr(prefix + name);
-					if (/\(/.test(command)) {
-						var regex = new RegExp("(" + command.replace(/\)/, ")\\\)").replace(/\(/, ")\\\((").replace(/(\_|\-)/igm, "\\$1"));
+					if (/\[/.test(command)) {
+						var regex = new RegExp("(" + command.replace(/\]/, ")\\\]").replace(/(\s*\|\s*handle\s*\:\s*\[)/, ")\\\s*\\\|\\\s*handle\\\s*\\\:\\\s*\\\[(").replace(/(\_|\-)/igm, "\\$1"));
 						//console.log(regex)
 						command = regex.exec(command);
 						//console.log(command);

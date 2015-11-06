@@ -18,7 +18,7 @@
 				</div>
 				<div ng-view="maina" ng-show="show">
 					<img ng-item="aaab" src="" ng-src="http://y2.ifengimg.com/a/2015_19/c353c45804e1675.jpg" />
-					<div ng-control="list" ng-tmpl="getlist_post(list_callback,list_callback,list_callback,list_callback)">
+					<div ng-control="list" ng-tmpl="getlist_post | handle : [list_callback,list_callback,list_callback,list_callback]">
 						<span>不是模板</span>
 						<div ng-item="list_tmpl_{{$index}}" ng-swipe="swipetest" ng-repeat="item in items">
 							<h1>{{item.title | filter : 'a'}}{{item.id * item.id * item.id}}</h1>
