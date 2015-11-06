@@ -204,8 +204,8 @@
 			return regex && regex.join(' ') || val;
 		},
 		data: function(val, filterCondition) {
-			console.log(val)
-			console.log(filterCondition)
+			//console.log(val)
+			//console.log(filterCondition)
 		}
 	};
 
@@ -456,7 +456,7 @@
 				}
 				//console.log(arr)
 				jQuery.each(arr, function(i, obj) {
-					console.log(obj)
+					//console.log(obj)
 					buildHtml.push(_tmpl(obj, html));
 				});
 				var elem = jQuery(buildHtml.join(''));
