@@ -18,6 +18,7 @@ kim && kim.define && kim.define(function(require, exports, module) {
 			}
 
 			function _find(n, id) {
+				if (id == "") return;
 				var active = jQuery("[" + finds[n] + "=" + id + "]");
 				if (active.length > 0) {
 					jQuery("[" + finds[n] + "]").hide().attr("ng-show", "hide");

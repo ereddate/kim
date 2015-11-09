@@ -517,14 +517,28 @@
 				attrs = elem[0].attributes;
 			jQuery.each(attrs, function(i, eventname) {
 				if (eventsReg.test(attrs[i].name)) {
-					var eventhandle = jQuery(elem).attr(prefix + eventname);
+					var evt = attrs[i].name.replace(prefix, "");
+					var eventhandle = jQuery(elem).attr(prefix + evt);
 					if (target.config.handle[eventhandle]) {
-						if (support.touch && /^tap|swipe/.test(eventname)) {
-							/tap/.test(eventname) && jQuery.kim.tap(elem, target.config.handle[eventhandle]) || /swipe/.test(eventname) && jQuery.kim.swipe(elem, target.config.handle[eventhandle]);
+						if (support.touch && /^tap|swipe/.test(evt)) {
+							/tap/.test(evt) && jQuery.kim.tap(elem, target.config.handle[eventhandle]) || /swipe/.test(evt) && jQuery.kim.swipe(elem, target.config.handle[eventhandle]);
 						} else {
-							jQuery(elem).on(eventname, function(e) {
-								/click/.test(eventname) && e.preventDefault();
+							jQuery(elem).on(evt, function(e) {
+								/click/.test(evt) && e.preventDefault();
 								target.config.handle[eventhandle].call(this, e, target);
+							});
+						}
+					}else{
+						if (support.touch && /^tap|swipe/.test(evt)) {
+							/tap/.test(evt) && jQuery.kim.tap(elem, function(){
+								alert("tap")
+							}) || /swipe/.test(evt) && jQuery.kim.swipe(elem, function(){
+								alert("swipe")
+							});
+						} else {
+							jQuery(elem).on(evt, function(e) {
+								/click/.test(evt) && e.preventDefault();
+								alert(evt)
 							});
 						}
 					}
