@@ -2,6 +2,8 @@
 (function() {
 
 	var events = ["load", "click", "change", "blur", "focus", "contextmenu", "formchange", "forminput", "input", "invalid", "reset", "select", "submit", "keyup", "keydown", "keypress", "drag", "dragend", "dragenter", "dragleave", "dragover", "dragstart", "drop", "mousedown", "mouseup", "mouseover", "mouseout", "mousemove", "mousewheel", "scroll", "dblclick", "error", "resize", "unload", "abort", "canplay", "canplaythrough", "durationchange", "emptied", "ended", "loadeddata", "loadedmetadata", "loadstart", "pause", "play", "playing", "progress", "ratechange", "readystatechange", "seeked", "seeking", "stalled", "suspend", "timeupdate", "volumechange", "waiting", "afterprint", "beforeprint", "beforeunload", "haschange", "message", "offline", "online", "pagehide", "pageshow", "popstate", "redo", "storage", "undo", "tap", "swipe"];
+
+	var eventsReg = new RegExp("ng\\\-(" + events.join('|') + ")", "igm");
 	//, "gesturestart", "gestureend", "gesturechange"
 
 	var item = ["page", "view", "control", "item"],
@@ -56,8 +58,7 @@
 
 	function _has(obj, name) {
 		if (_isElement(obj)) {
-			var attr = jQuery.trim(jQuery(obj).attr(name));
-			return attr != "" && typeof attr != "undefined";
+			return (prefix + name) in jQuery(obj)[0].attributes;
 		} else if (jQuery.isPlainObject(obj)) {
 			return name in obj;
 		} else if (kim.is("array", obj)) {
@@ -231,8 +232,8 @@
 		//console.log(customName)
 		jQuery.each(data, function(name, val) {
 			//console.log(name)
-			var hasName = new RegExp(customName+".","igm"),
-				regex = new RegExp("\\s*" + (customName ? hasName.test(name) ? name : customName+"."+name : name).replace(/\./igm, "\\.").replace(/\*/igm, "\\*").replace(/\s/igm, "\\s*").replace(/\$/igm, "\\$"), "igm");
+			var hasName = new RegExp(customName + ".", "igm"),
+				regex = new RegExp("\\s*" + (customName ? hasName.test(name) ? name : customName + "." + name : name).replace(/\./igm, "\\.").replace(/\*/igm, "\\*").replace(/\s/igm, "\\s*").replace(/\$/igm, "\\$"), "igm");
 			//console.log(regex)
 			temp = temp.replace(regex, typeof val == "string" ? val : _stringify(val));
 		});
@@ -300,7 +301,8 @@
 	}
 
 	var support = {
-		touch: "ontouchend" in doc
+		touch: "ontouchend" in doc,
+		prefix: prefix
 	};
 
 	function getCoordinates(event) {
@@ -485,7 +487,7 @@
 			var self = this,
 				elem = self.elem,
 				target = self.target,
-				attr = elem._has(prefix + "app");
+				attr = elem._has("app");
 			if (attr) {
 				if (!target.app) target.app = {};
 				var name = (attr ? elem.attr(prefix + "app") : "app" + Math.random());
@@ -511,10 +513,10 @@
 		_initHandle: function() {
 			var self = this,
 				target = self.target,
-				elem = self.elem;
-			jQuery.each(events, function(i, eventname) {
-				var attr = jQuery(elem)._has(prefix + eventname);
-				if (elem && attr) {
+				elem = self.elem,
+				attrs = elem[0].attributes;
+			jQuery.each(attrs, function(i, eventname) {
+				if (eventsReg.test(attrs[i].name)) {
 					var eventhandle = jQuery(elem).attr(prefix + eventname);
 					if (target.config.handle[eventhandle]) {
 						if (support.touch && /^tap|swipe/.test(eventname)) {
@@ -526,6 +528,7 @@
 							});
 						}
 					}
+					return false;
 				}
 			});
 			return this;
@@ -534,7 +537,7 @@
 			var self = this,
 				elem = self.elem,
 				target = self.target,
-				show = jQuery(elem)._has(prefix + "show");
+				show = jQuery(elem)._has("show");
 			show && jQuery(elem)[jQuery(elem).attr(prefix + "show") == "show" ? "show" : "hide"]();
 			return this;
 		},
@@ -543,7 +546,7 @@
 				elem = self.elem,
 				target = self.target;
 			jQuery.each(kim.data.model, function(name, obj) {
-				var attr = jQuery(elem)._has(prefix + name);
+				var attr = jQuery(elem)._has(name);
 				if (attr) {
 					var command = jQuery(elem).attr(prefix + name);
 					if (/\[/.test(command)) {
@@ -588,7 +591,7 @@
 			var self = this,
 				elem = self.elem,
 				target = self.target,
-				attr = elem._has(prefix + type),
+				attr = elem._has(type),
 				name = (attr ? elem.attr(prefix + type) : type + Math.random()),
 				className = prefix + type + " " + prefix + type + "-" + name,
 				app = elem.addClass(className).data("ngName", {
@@ -622,7 +625,7 @@
 				target = self.target;
 			jQuery.each(item, function(i, type) {
 				jQuery.each(elems, function(i, elem) {
-					var attr = jQuery(elem)._has(prefix + type);
+					var attr = jQuery(elem)._has(type);
 					if (attr) {
 						model(jQuery(elem), target)._storage(type)._initShow()._initTmpl()._initHandle();
 					}
