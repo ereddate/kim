@@ -528,19 +528,6 @@
 								target.config.handle[eventhandle].call(this, e, target);
 							});
 						}
-					}else{
-						if (support.touch && /^tap|swipe/.test(evt)) {
-							/tap/.test(evt) && jQuery.kim.tap(elem, function(){
-								alert("tap")
-							}) || /swipe/.test(evt) && jQuery.kim.swipe(elem, function(){
-								alert("swipe")
-							});
-						} else {
-							jQuery(elem).on(evt, function(e) {
-								/click/.test(evt) && e.preventDefault();
-								alert(evt)
-							});
-						}
 					}
 					return false;
 				}
