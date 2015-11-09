@@ -7,7 +7,6 @@ kim && kim.define && kim.define(function(require, exports, module) {
 				elem = args[0];
 
 			var action = jQuery(elem).attr("action") || "",
-				method = jQuery(elem).attr("method") || "post",
 				submit = jQuery(elem).find('[type=submit]');
 
 			function _valid(elem) {
@@ -22,10 +21,25 @@ kim && kim.define && kim.define(function(require, exports, module) {
 
 			submit.length > 0 && jQuery(elem).off("submit").on("submit", function(e) {
 				e.preventDefault();
-				var res = _valid(this),
-					name = jQuery(this).attr("ng-form");
+				var form = jQuery(this),
+					res = _valid(this),
+					name = form.attr("ng-form"),
+					type = form.attr("ng-type"),
+					data = form.attr("ng-data"),
+					callback = self.config.handle[form.attr("ng-form-success")] || window[form.attr("ng-form-success")],
+					error = self.config.handle[form.attr("ng-form-error")] || window[form.attr("ng-form-error")],
+					method = form.attr("method") || "post";
 				if (res) {
-					jQuery(this).attr("action", self.config.form[name] && self.config.form[name][action] || action).off("submit").submit();
+					form.attr("action", self.config.form[name] && self.config.form[name][action] || action);
+					if (type.toLowerCase() != "ajax") {
+						form.off("submit").submit();
+					} else {
+						jQuery[method](form.attr("action") + "?" + form.serialize(), function(data) {
+							callback.call(form, data);
+						}, data).error(function(err) {
+							error.call(form, err);
+						});
+					}
 				}
 			});
 		}
