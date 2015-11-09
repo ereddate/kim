@@ -207,6 +207,12 @@ ng-route 路由，目前只导航ng-app ng-page，会与ng-show ng-click产生�
 
 ng-form form是valid的延伸，只提供form提交不提供ajax提交，详细使用请查看demo.html
 
+	ng-formr提供form表单和ajax两种提交方式（ng-type="form|ajax"），ajax提交需提供如下：
+	
+	ng-data 数据类型
+	
+	ng-form-success 成功回调 ng-form-error 错误回调
+
 ng-include 引入模板并编译 ng-include="页面地址 | data : 数据获取方法"
 
 ng-插件名
